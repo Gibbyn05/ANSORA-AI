@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { runInterviewTurn, summarizeInterview, analyzeCandidate } from '@/lib/openai/prompts'
+import { runInterviewTurn, summarizeInterview, analyzeCandidate } from '@/lib/gemini/prompts'
 import type { InterviewMessage } from '@/types'
 
 // POST - Send intervjumelding og motta AI-svar

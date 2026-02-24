@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { scoreCandidate, analyzeCandidate } from '@/lib/openai/prompts'
-import { generateRejectionEmail } from '@/lib/openai/prompts'
+import { scoreCandidate, analyzeCandidate } from '@/lib/gemini/prompts'
+import { generateRejectionEmail } from '@/lib/gemini/prompts'
 import { sendEmail, createRejectionEmailHtml } from '@/lib/email/send'
 
 // GET - Hent en søknad
