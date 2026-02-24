@@ -142,7 +142,7 @@ export default async function ApplicationDetailPage({
               </div>
 
               {/* Score */}
-              {application.score !== null && (
+              {application.score != null && (
                 <div className={`mt-4 p-4 rounded-xl text-center ${
                   application.score >= 80 ? 'bg-green-50' :
                   application.score >= 60 ? 'bg-yellow-50' :

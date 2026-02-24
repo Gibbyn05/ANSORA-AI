@@ -233,7 +233,7 @@ export default async function CompanyDashboard() {
                         </div>
 
                         <div className="flex items-center gap-3">
-                          {app.score !== null && (
+                          {app.score != null && (
                             <div className={`text-sm font-bold px-2.5 py-1 rounded-lg ${
                               app.score >= 80 ? 'bg-green-50 text-green-700' :
                               app.score >= 60 ? 'bg-yellow-50 text-yellow-700' :

@@ -143,7 +143,7 @@ export default async function CompanyJobDetailPage({
                         </div>
                       </td>
                       <td className="py-3 pr-4">
-                        {app.score !== null ? (
+                        {app.score != null ? (
                           <div className={`inline-flex items-center font-bold text-sm px-2.5 py-1 rounded-lg ${
                             app.score >= 80 ? 'bg-green-50 text-green-700' :
                             app.score >= 60 ? 'bg-yellow-50 text-yellow-700' :

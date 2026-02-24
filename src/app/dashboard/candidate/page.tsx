@@ -183,7 +183,7 @@ export default async function CandidateDashboard() {
                       <Badge variant={STATUS_VARIANT[app.status as ApplicationStatus] || 'neutral'}>
                         {translateStatus(app.status)}
                       </Badge>
-                      {app.score !== null && (
+                      {app.score != null && (
                         <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                           app.score >= 80 ? 'bg-green-100 text-green-700' :
                           app.score >= 60 ? 'bg-yellow-100 text-yellow-700' :
