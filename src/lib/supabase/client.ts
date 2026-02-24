@@ -4,7 +4,7 @@ export function createClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  if (!url || !key) {
+  if (!url || !key || !url.startsWith('https://')) {
     // Supabase not configured — return a no-op stub so the app renders
     // without throwing. Auth operations will return empty/error responses.
     return {
