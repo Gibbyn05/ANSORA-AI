@@ -37,17 +37,21 @@ function createStubClient() {
   } as unknown as ReturnType<typeof createServerClient>
 }
 
+function isValidUrl(url: string): boolean {
+  try { new URL(url); return true } catch { return false }
+}
+
 export async function createClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  if (!url || !key) {
+  if (!url || !key || !isValidUrl(url)) {
     return createStubClient()
   }
 
-  const cookieStore = await cookies()
-
-  return createServerClient(url, key, {
+  try {
+    const cookieStore = await cookies()
+    return createServerClient(url, key, {
     cookies: {
       getAll() {
         return cookieStore.getAll()
@@ -63,6 +67,9 @@ export async function createClient() {
       },
     },
   })
+  } catch {
+    return createStubClient()
+  }
 }
 
 // Admin-klient for server-side operasjoner som krever elevated privileges
@@ -70,13 +77,13 @@ export async function createAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-  if (!url || !key) {
+  if (!url || !key || !isValidUrl(url)) {
     return createStubClient()
   }
 
-  const cookieStore = await cookies()
-
-  return createServerClient(url, key, {
+  try {
+    const cookieStore = await cookies()
+    return createServerClient(url, key, {
     cookies: {
       getAll() {
         return cookieStore.getAll()
@@ -92,4 +99,7 @@ export async function createAdminClient() {
       },
     },
   })
+  } catch {
+    return createStubClient()
+  }
 }
