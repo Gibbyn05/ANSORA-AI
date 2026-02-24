@@ -65,7 +65,8 @@ export async function POST(req: NextRequest) {
     // Parse CV-tekst med pdf-parse (server-side)
     let cvText = ''
     try {
-      const pdfParse = (await import('pdf-parse')).default
+      const pdfParseModule = await import('pdf-parse')
+      const pdfParse = pdfParseModule.default ?? pdfParseModule
       const pdfData = await pdfParse(Buffer.from(cvBuffer))
       cvText = pdfData.text
     } catch (pdfError) {
