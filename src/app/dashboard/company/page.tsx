@@ -160,7 +160,7 @@ export default async function CompanyDashboard() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {jobs.map((job) => {
+                  {jobs.map((job: Job) => {
                     const jobApplications = applications?.filter((a: Application) => a.job_id === job.id) || []
                     return (
                       <Link key={job.id} href={`/dashboard/company/jobs/${job.id}`}>
@@ -213,7 +213,7 @@ export default async function CompanyDashboard() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {applications.slice(0, 8).map((app) => (
+                  {applications.slice(0, 8).map((app: Application) => (
                     <Link key={app.id} href={`/dashboard/company/applications/${app.id}`}>
                       <div className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer group">
                         {/* Avatar */}

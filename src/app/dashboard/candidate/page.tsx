@@ -161,7 +161,7 @@ export default async function CandidateDashboard() {
             </div>
           ) : (
             <div className="space-y-3">
-              {applications.map((app) => (
+              {applications.map((app: Application) => (
                 <div key={app.id} className="border border-gray-100 rounded-xl p-4 hover:border-primary/30 hover:shadow-sm transition-all">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-3">
