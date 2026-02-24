@@ -11,7 +11,7 @@ export async function GET(
     const supabase = await createClient()
 
     const { data, error } = await supabase
-      .from('references')
+      .from('job_references')
       .select(`
         id,
         referee_name,
@@ -49,7 +49,7 @@ export async function PATCH(
     const response = await req.json()
 
     const { data, error } = await supabase
-      .from('references')
+      .from('job_references')
       .update({
         response,
         responded_at: new Date().toISOString(),

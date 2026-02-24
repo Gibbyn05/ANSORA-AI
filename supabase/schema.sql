@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS applications (
 );
 
 -- Referanser
-CREATE TABLE IF NOT EXISTS references (
+CREATE TABLE IF NOT EXISTS job_references (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   application_id UUID NOT NULL REFERENCES applications(id) ON DELETE CASCADE,
   referee_name TEXT NOT NULL,
@@ -109,7 +109,7 @@ ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
 ALTER TABLE jobs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE candidates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE applications ENABLE ROW LEVEL SECURITY;
-ALTER TABLE references ENABLE ROW LEVEL SECURITY;
+ALTER TABLE job_references ENABLE ROW LEVEL SECURITY;
 ALTER TABLE job_offers ENABLE ROW LEVEL SECURITY;
 
 -- Companies RLS
@@ -179,7 +179,7 @@ CREATE POLICY "Oppdatering av søknader" ON applications
   );
 
 -- References RLS
-CREATE POLICY "Rekrutterere kan se referanser" ON references
+CREATE POLICY "Rekrutterere kan se referanser" ON job_references
   FOR SELECT USING (
     application_id IN (
       SELECT a.id FROM applications a
@@ -189,7 +189,7 @@ CREATE POLICY "Rekrutterere kan se referanser" ON references
     )
   );
 
-CREATE POLICY "Kan opprette referanser" ON references
+CREATE POLICY "Kan opprette referanser" ON job_references
   FOR INSERT WITH CHECK (
     application_id IN (
       SELECT a.id FROM applications a
@@ -199,7 +199,7 @@ CREATE POLICY "Kan opprette referanser" ON references
     )
   );
 
-CREATE POLICY "Kan oppdatere referanser" ON references
+CREATE POLICY "Kan oppdatere referanser" ON job_references
   FOR UPDATE USING (true);
 
 -- Job offers RLS
@@ -251,4 +251,4 @@ CREATE INDEX IF NOT EXISTS idx_applications_status ON applications(status);
 CREATE INDEX IF NOT EXISTS idx_applications_score ON applications(score DESC);
 CREATE INDEX IF NOT EXISTS idx_candidates_user_id ON candidates(user_id);
 CREATE INDEX IF NOT EXISTS idx_companies_user_id ON companies(user_id);
-CREATE INDEX IF NOT EXISTS idx_references_application_id ON references(application_id);
+CREATE INDEX IF NOT EXISTS idx_references_application_id ON job_references(application_id);

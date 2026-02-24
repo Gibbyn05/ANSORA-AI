@@ -54,7 +54,7 @@ export default async function ApplicationDetailPage({
 
   // Hent referanser
   const { data: references } = await supabase
-    .from('references')
+    .from('job_references')
     .select('*')
     .eq('application_id', id)
 

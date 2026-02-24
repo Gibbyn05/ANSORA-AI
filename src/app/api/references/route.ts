@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
 
     // Opprett referanse i databasen
     const { data: reference, error: refError } = await supabase
-      .from('references')
+      .from('job_references')
       .insert({
         application_id: applicationId,
         referee_name: refereeName,
