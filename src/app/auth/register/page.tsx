@@ -52,6 +52,8 @@ export default function RegisterPage() {
     if (signUpError) {
       if (signUpError.message.includes('already registered')) {
         setError('Denne e-postadressen er allerede registrert. Prøv å logge inn.')
+      } else if (signUpError.message === 'Failed to fetch' || signUpError.message.includes('fetch')) {
+        setError('Kunne ikke koble til serveren. Sjekk at Supabase-prosjektet er aktivt og at miljøvariablene er satt i Vercel.')
       } else {
         setError(signUpError.message)
       }

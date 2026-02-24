@@ -28,7 +28,11 @@ export default function LoginPage() {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) {
-      setError('Feil e-post eller passord. Prøv igjen.')
+      if (error.message === 'Failed to fetch' || error.message.includes('fetch')) {
+        setError('Kunne ikke koble til serveren. Sjekk at Supabase-prosjektet er aktivt og at miljøvariablene er satt i Vercel.')
+      } else {
+        setError('Feil e-post eller passord. Prøv igjen.')
+      }
       setLoading(false)
       return
     }
