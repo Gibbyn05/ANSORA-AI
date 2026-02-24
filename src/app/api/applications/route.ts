@@ -65,7 +65,8 @@ export async function POST(req: NextRequest) {
     // Parse CV-tekst med pdf-parse (server-side)
     let cvText = ''
     try {
-      const pdfParseModule = await import('pdf-parse')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const pdfParseModule = await import('pdf-parse') as any
       const pdfParse = pdfParseModule.default ?? pdfParseModule
       const pdfData = await pdfParse(Buffer.from(cvBuffer))
       cvText = pdfData.text
