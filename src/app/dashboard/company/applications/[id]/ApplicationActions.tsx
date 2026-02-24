@@ -281,7 +281,7 @@ export function ApplicationActions({
         )}
 
         {/* Avslå */}
-        {currentStatus !== 'rejected' && currentStatus !== 'hired' && (
+        {(
           <Button
             onClick={() => updateStatus('reject')}
             loading={loading === 'reject'}
