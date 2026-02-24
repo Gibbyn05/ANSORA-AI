@@ -2,9 +2,9 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -18,6 +18,12 @@ export default function LoginPage() {
   const [error, setError] = useState('')
 
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const err = searchParams.get('error')
+    if (err) setError(decodeURIComponent(err))
+  }, [searchParams])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,6 +36,8 @@ export default function LoginPage() {
     if (error) {
       if (error.message === 'Failed to fetch' || error.message.includes('fetch')) {
         setError('Kunne ikke koble til serveren. Sjekk at Supabase-prosjektet er aktivt og at miljøvariablene er satt i Vercel.')
+      } else if (error.message.toLowerCase().includes('email not confirmed')) {
+        setError('E-posten din er ikke bekreftet ennå. Sjekk innboksen din og klikk på bekreftelseslenken.')
       } else {
         setError('Feil e-post eller passord. Prøv igjen.')
       }
