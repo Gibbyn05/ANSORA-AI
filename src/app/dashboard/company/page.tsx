@@ -9,7 +9,7 @@ import {
   TrendingUp, Clock, CheckCircle2
 } from 'lucide-react'
 import Link from 'next/link'
-import type { Industry, ApplicationStatus } from '@/types'
+import type { Industry, ApplicationStatus, Job, Application } from '@/types'
 
 const STATUS_VARIANT: Record<ApplicationStatus, 'default' | 'success' | 'warning' | 'danger' | 'info' | 'neutral'> = {
   pending: 'neutral',
@@ -45,7 +45,7 @@ export default async function CompanyDashboard() {
     .eq('company_id', company.id)
     .order('created_at', { ascending: false })
 
-  const jobIds = jobs?.map((j) => j.id) || []
+  const jobIds = jobs?.map((j: Job) => j.id) || []
 
   // Hent søknader
   const { data: applications } = jobIds.length > 0
@@ -61,9 +61,9 @@ export default async function CompanyDashboard() {
     : { data: [] }
 
   const totalJobs = jobs?.length || 0
-  const publishedJobs = jobs?.filter((j) => j.status === 'published').length || 0
+  const publishedJobs = jobs?.filter((j: Job) => j.status === 'published').length || 0
   const totalApplications = applications?.length || 0
-  const pendingApplications = applications?.filter((a) => a.status === 'pending').length || 0
+  const pendingApplications = applications?.filter((a: Application) => a.status === 'pending').length || 0
 
   return (
     <div className="min-h-screen bg-bg-light">
@@ -108,13 +108,13 @@ export default async function CompanyDashboard() {
             {
               icon: BarChart3,
               label: 'Under vurdering',
-              value: applications?.filter((a) => a.status === 'reviewing').length || 0,
+              value: applications?.filter((a: Application) => a.status === 'reviewing').length || 0,
               color: 'text-blue-600 bg-blue-50',
             },
             {
               icon: CheckCircle2,
               label: 'Ansatt',
-              value: applications?.filter((a) => a.status === 'hired').length || 0,
+              value: applications?.filter((a: Application) => a.status === 'hired').length || 0,
               color: 'text-green-600 bg-green-50',
             },
           ].map((stat) => (
@@ -161,7 +161,7 @@ export default async function CompanyDashboard() {
               ) : (
                 <div className="space-y-2">
                   {jobs.map((job) => {
-                    const jobApplications = applications?.filter((a) => a.job_id === job.id) || []
+                    const jobApplications = applications?.filter((a: Application) => a.job_id === job.id) || []
                     return (
                       <Link key={job.id} href={`/dashboard/company/jobs/${job.id}`}>
                         <div className="p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer group">

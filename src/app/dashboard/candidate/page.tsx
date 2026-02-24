@@ -9,7 +9,7 @@ import {
   ArrowRight, Upload, Bot, Award
 } from 'lucide-react'
 import Link from 'next/link'
-import type { ApplicationStatus, Industry, JobOffer } from '@/types'
+import type { ApplicationStatus, Industry, JobOffer, Application } from '@/types'
 
 const STATUS_VARIANT: Record<ApplicationStatus, 'default' | 'success' | 'warning' | 'danger' | 'info' | 'neutral'> = {
   pending: 'neutral',
@@ -62,14 +62,14 @@ export default async function CandidateDashboard() {
     `)
     .in(
       'application_id',
-      applications?.map((a) => a.id) || []
+      applications?.map((a: Application) => a.id) || []
     )
     .eq('status', 'pending')
 
   const totalApps = applications?.length || 0
-  const activeApps = applications?.filter((a) => !['rejected', 'hired'].includes(a.status)).length || 0
-  const interviewApps = applications?.filter((a) => a.status === 'interview').length || 0
-  const hiredApps = applications?.filter((a) => a.status === 'hired').length || 0
+  const activeApps = applications?.filter((a: Application) => !['rejected', 'hired'].includes(a.status)).length || 0
+  const interviewApps = applications?.filter((a: Application) => a.status === 'interview').length || 0
+  const hiredApps = applications?.filter((a: Application) => a.status === 'hired').length || 0
 
   return (
     <div className="min-h-screen bg-bg-light">

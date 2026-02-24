@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/Badge'
 import { translateStatus, formatDate } from '@/lib/utils'
 import { ArrowLeft, CheckCircle2, XCircle, MessageSquare, UserCheck, Send, FileText, Bot } from 'lucide-react'
 import Link from 'next/link'
-import type { ApplicationStatus, AIAnalysis, InterviewMessage } from '@/types'
+import type { ApplicationStatus, AIAnalysis, InterviewMessage, Reference } from '@/types'
 import { ApplicationActions } from './ApplicationActions'
 
 const STATUS_VARIANT: Record<ApplicationStatus, 'default' | 'success' | 'warning' | 'danger' | 'info' | 'neutral'> = {
@@ -329,7 +329,7 @@ export default async function ApplicationDetailPage({
               <Card>
                 <CardHeader title="Referanser" />
                 <div className="space-y-4">
-                  {references.map((ref) => (
+                  {references.map((ref: Reference) => (
                     <div key={ref.id} className="border border-gray-100 rounded-xl p-4">
                       <div className="flex items-start justify-between mb-2">
                         <div>
