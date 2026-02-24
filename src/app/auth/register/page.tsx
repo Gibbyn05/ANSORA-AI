@@ -24,12 +24,13 @@ export default function RegisterPage() {
   const [success, setSuccess] = useState(false)
 
   const router = useRouter()
-  const supabase = createClient()
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
+
+    const supabase = createClient()
 
     if (password.length < 8) {
       setError('Passordet må være minst 8 tegn')
