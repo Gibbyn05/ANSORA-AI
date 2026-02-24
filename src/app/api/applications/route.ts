@@ -188,7 +188,7 @@ export async function GET(req: NextRequest) {
           .select('id')
           .eq('company_id', company?.id)
 
-        const jobIds = jobs?.map((j) => j.id) || []
+        const jobIds = jobs?.map((j: { id: string }) => j.id) || []
         if (jobIds.length > 0) {
           query = query.in('job_id', jobIds)
         }
