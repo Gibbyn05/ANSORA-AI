@@ -1,0 +1,385 @@
+'use client'
+
+import { useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { Button } from '@/components/ui/Button'
+import { Textarea } from '@/components/ui/Input'
+import { Card } from '@/components/ui/Card'
+import {
+  Upload, FileText, CheckCircle2, ArrowRight, ArrowLeft,
+  Sparkles, Send, AlertCircle, Loader2
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
+import React from 'react'
+
+export default function ApplyPage({
+  params,
+}: {
+  params: Promise<{ jobId: string }>
+}) {
+  const resolvedParams = React.use(params)
+  const jobId = resolvedParams.jobId
+  const router = useRouter()
+
+  const [step, setStep] = useState<'upload' | 'questions' | 'submitted'>('upload')
+  const [cvFile, setCvFile] = useState<File | null>(null)
+  const [coverLetter, setCoverLetter] = useState('')
+  const [uploading, setUploading] = useState(false)
+  const [applicationId, setApplicationId] = useState('')
+  const [followUpQuestions, setFollowUpQuestions] = useState<string[]>([])
+  const [answers, setAnswers] = useState<Record<string, string>>({})
+  const [submittingAnswers, setSubmittingAnswers] = useState(false)
+  const [error, setError] = useState('')
+  const [isDragging, setIsDragging] = useState(false)
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+    const file = e.dataTransfer.files[0]
+    if (file && file.type === 'application/pdf') {
+      setCvFile(file)
+    } else {
+      setError('Kun PDF-filer støttes')
+    }
+  }, [])
+
+  const handleUpload = async () => {
+    if (!cvFile) {
+      setError('Last opp CV-en din')
+      return
+    }
+
+    setUploading(true)
+    setError('')
+
+    try {
+      const formData = new FormData()
+      formData.append('jobId', jobId)
+      formData.append('cv', cvFile)
+      if (coverLetter) formData.append('coverLetter', coverLetter)
+
+      const res = await fetch('/api/applications', {
+        method: 'POST',
+        body: formData,
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Feil ved innsending av søknad')
+      }
+
+      setApplicationId(data.data.id)
+      setFollowUpQuestions(data.followUpQuestions || [])
+
+      if (data.followUpQuestions && data.followUpQuestions.length > 0) {
+        setStep('questions')
+      } else {
+        setStep('submitted')
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Feil ved innsending')
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const handleSubmitAnswers = async () => {
+    setSubmittingAnswers(true)
+    setError('')
+
+    try {
+      const answerMap: Record<string, string> = {}
+      followUpQuestions.forEach((q, i) => {
+        answerMap[q] = answers[i] || ''
+      })
+
+      const res = await fetch(`/api/applications/${applicationId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'submit_answers',
+          answers: answerMap,
+        }),
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+
+      setStep('submitted')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Feil ved innsending av svar')
+    } finally {
+      setSubmittingAnswers(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-bg-light flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-2xl">
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <Link href="/" className="inline-flex items-center gap-2 mb-2">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">A</span>
+            </div>
+            <span className="text-navy font-bold text-xl">Ansora</span>
+          </Link>
+          <h1 className="text-2xl font-bold text-navy mt-4">
+            {step === 'upload' && 'Send inn søknad'}
+            {step === 'questions' && 'Oppfølgingsspørsmål'}
+            {step === 'submitted' && 'Søknad mottatt!'}
+          </h1>
+          <p className="text-gray-500 mt-1 text-sm">
+            {step === 'upload' && 'Last opp CV-en din for å komme i gang'}
+            {step === 'questions' && 'AI har generert spørsmål basert på din bakgrunn og stillingen'}
+            {step === 'submitted' && 'Din søknad er nå registrert og under vurdering'}
+          </p>
+        </div>
+
+        {/* Stegindikator */}
+        <div className="flex items-center justify-center gap-4 mb-8">
+          {[
+            { label: 'Last opp CV', key: 'upload' },
+            { label: 'Spørsmål', key: 'questions' },
+            { label: 'Ferdig', key: 'submitted' },
+          ].map((s, i) => (
+            <React.Fragment key={s.key}>
+              <div className={`flex items-center gap-2 ${
+                step === s.key ? 'text-primary' : 'text-gray-400'
+              }`}>
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${
+                  step === s.key
+                    ? 'border-primary bg-primary text-white'
+                    : (i === 0 && (step === 'questions' || step === 'submitted')) ||
+                      (i === 1 && step === 'submitted')
+                    ? 'border-green-500 bg-green-500 text-white'
+                    : 'border-gray-300 text-gray-400'
+                }`}>
+                  {(i === 0 && (step === 'questions' || step === 'submitted')) ||
+                   (i === 1 && step === 'submitted')
+                    ? <CheckCircle2 className="w-3.5 h-3.5" />
+                    : i + 1}
+                </div>
+                <span className="hidden sm:block text-sm font-medium">{s.label}</span>
+              </div>
+              {i < 2 && <div className="w-8 h-0.5 bg-gray-200" />}
+            </React.Fragment>
+          ))}
+        </div>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-6 flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            {error}
+          </div>
+        )}
+
+        {/* Steg 1: Last opp CV */}
+        {step === 'upload' && (
+          <Card>
+            <div className="space-y-6">
+              {/* Filopplasting */}
+              <div>
+                <label className="label">CV (PDF) *</label>
+                <div
+                  onDrop={handleDrop}
+                  onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
+                  onDragLeave={() => setIsDragging(false)}
+                  className={cn(
+                    'border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer',
+                    isDragging
+                      ? 'border-primary bg-primary/5'
+                      : cvFile
+                      ? 'border-green-400 bg-green-50'
+                      : 'border-gray-200 hover:border-primary/50 hover:bg-gray-50'
+                  )}
+                  onClick={() => document.getElementById('cv-upload')?.click()}
+                >
+                  {cvFile ? (
+                    <div className="flex flex-col items-center gap-2">
+                      <CheckCircle2 className="w-10 h-10 text-green-500" />
+                      <p className="font-semibold text-green-700">{cvFile.name}</p>
+                      <p className="text-sm text-green-600">
+                        {(cvFile.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
+                      <button
+                        type="button"
+                        className="text-sm text-gray-500 hover:text-red-600 mt-2"
+                        onClick={(e) => { e.stopPropagation(); setCvFile(null) }}
+                      >
+                        Fjern fil
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center">
+                        <Upload className="w-7 h-7 text-gray-400" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-navy">Dra og slipp CV her</p>
+                        <p className="text-sm text-gray-500 mt-1">eller klikk for å velge fil</p>
+                      </div>
+                      <p className="text-xs text-gray-400 bg-gray-100 px-3 py-1 rounded-full">
+                        Kun PDF, maks 10 MB
+                      </p>
+                    </div>
+                  )}
+                </div>
+                <input
+                  id="cv-upload"
+                  type="file"
+                  accept="application/pdf"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) setCvFile(file)
+                  }}
+                />
+              </div>
+
+              <Textarea
+                label="Søknadsbrev (valgfritt)"
+                value={coverLetter}
+                onChange={(e) => setCoverLetter(e.target.value)}
+                rows={5}
+                placeholder="Fortell litt om deg selv og hvorfor du søker denne stillingen..."
+                helperText="Valgfritt, men kan styrke søknaden din"
+              />
+
+              <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-start gap-3">
+                <Sparkles className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-navy">AI analyserer din søknad</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    CV-en din parses automatisk og AI genererer skreddersydde spørsmål basert på din bakgrunn og stillingens krav.
+                  </p>
+                </div>
+              </div>
+
+              <Button
+                onClick={handleUpload}
+                loading={uploading}
+                size="lg"
+                className="w-full"
+              >
+                {uploading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Analyserer CV...
+                  </>
+                ) : (
+                  <>
+                    <FileText className="w-4 h-4" />
+                    Send søknad
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </Button>
+            </div>
+          </Card>
+        )}
+
+        {/* Steg 2: Oppfølgingsspørsmål */}
+        {step === 'questions' && (
+          <Card>
+            <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 mb-6 flex items-start gap-3">
+              <Sparkles className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-primary">AI-genererte spørsmål</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Disse spørsmålene er laget spesifikt for deg basert på din CV og stillingens krav
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {followUpQuestions.map((question, index) => (
+                <div key={index}>
+                  <label className="label">
+                    Spørsmål {index + 1} av {followUpQuestions.length}
+                  </label>
+                  <p className="text-sm font-medium text-navy mb-2">{question}</p>
+                  <Textarea
+                    value={answers[index] || ''}
+                    onChange={(e) => setAnswers(prev => ({ ...prev, [index]: e.target.value }))}
+                    rows={3}
+                    placeholder="Skriv ditt svar her..."
+                  />
+                </div>
+              ))}
+
+              <div className="flex gap-3 pt-2">
+                <Button
+                  variant="secondary"
+                  onClick={() => setStep('upload')}
+                  size="lg"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Tilbake
+                </Button>
+                <Button
+                  onClick={handleSubmitAnswers}
+                  loading={submittingAnswers}
+                  size="lg"
+                  className="flex-1"
+                >
+                  <Send className="w-4 h-4" />
+                  Send inn svar
+                </Button>
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {/* Steg 3: Ferdig */}
+        {step === 'submitted' && (
+          <Card className="text-center py-12">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle2 className="w-10 h-10 text-green-500" />
+            </div>
+            <h2 className="text-2xl font-bold text-navy mb-3">Søknad sendt!</h2>
+            <p className="text-gray-500 mb-8 max-w-sm mx-auto">
+              Din søknad er mottatt og er nå under AI-analyse. Du vil høre fra oss snart!
+            </p>
+
+            <div className="bg-blue-50 border border-blue-100 rounded-xl p-5 mb-8 text-left">
+              <h3 className="font-semibold text-navy mb-3 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                Neste steg
+              </h3>
+              <ul className="space-y-2 text-sm text-gray-600">
+                <li className="flex items-start gap-2">
+                  <span className="w-5 h-5 bg-primary/10 rounded-full flex items-center justify-center text-primary text-xs font-bold flex-shrink-0 mt-0.5">1</span>
+                  Rekrutterer gjennomgår din søknad og AI-analysen
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-5 h-5 bg-primary/10 rounded-full flex items-center justify-center text-primary text-xs font-bold flex-shrink-0 mt-0.5">2</span>
+                  Du kan bli invitert til et AI-intervju direkte i appen
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-5 h-5 bg-primary/10 rounded-full flex items-center justify-center text-primary text-xs font-bold flex-shrink-0 mt-0.5">3</span>
+                  Rekrutterer kontakter deg med neste steg
+                </li>
+              </ul>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link href="/dashboard/candidate">
+                <Button size="lg">
+                  Se mine søknader
+                </Button>
+              </Link>
+              <Link href="/jobs">
+                <Button variant="secondary" size="lg">
+                  Se flere stillinger
+                </Button>
+              </Link>
+            </div>
+          </Card>
+        )}
+      </div>
+    </div>
+  )
+}
