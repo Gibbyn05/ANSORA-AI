@@ -1,5 +1,5 @@
 import type { Job, Candidate, AIAnalysis, InterviewMessage } from '@/types'
-import { openai } from './client'
+import { genAI } from './client'
 
 // ===== STILLINGSANNONSE GENERATOR =====
 export async function generateJobDescription(params: {
@@ -31,13 +31,13 @@ Annonsen skal:
 - Ikke inneholde diskriminerende språk
 - Være mellom 300-500 ord`
 
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.7,
+  const model = genAI.getGenerativeModel({
+    model: 'gemini-1.5-flash',
+    generationConfig: { temperature: 0.7 },
   })
 
-  return response.choices[0].message.content || ''
+  const result = await model.generateContent(prompt)
+  return result.response.text()
 }
 
 // ===== OPPFØLGINGSSPØRSMÅL GENERATOR =====
@@ -66,17 +66,19 @@ Generer spørsmål som:
 Svar kun med en JSON-array av spørsmål, ingen annen tekst:
 ["Spørsmål 1", "Spørsmål 2", ...]`
 
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.6,
-    response_format: { type: 'json_object' },
+  const model = genAI.getGenerativeModel({
+    model: 'gemini-1.5-flash',
+    generationConfig: {
+      temperature: 0.6,
+      responseMimeType: 'application/json',
+    },
   })
 
+  const result = await model.generateContent(prompt)
   try {
-    const content = response.choices[0].message.content || '{}'
+    const content = result.response.text()
     const parsed = JSON.parse(content)
-    return parsed.questions || parsed || []
+    return Array.isArray(parsed) ? parsed : parsed.questions || []
   } catch {
     return []
   }
@@ -115,15 +117,17 @@ Svar med JSON:
   "reasoning": "Kort begrunnelse på norsk"
 }`
 
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.3,
-    response_format: { type: 'json_object' },
+  const model = genAI.getGenerativeModel({
+    model: 'gemini-1.5-flash',
+    generationConfig: {
+      temperature: 0.3,
+      responseMimeType: 'application/json',
+    },
   })
 
+  const result = await model.generateContent(prompt)
   try {
-    const parsed = JSON.parse(response.choices[0].message.content || '{}')
+    const parsed = JSON.parse(result.response.text())
     return {
       score: Math.min(100, Math.max(0, parsed.score || 0)),
       reasoning: parsed.reasoning || '',
@@ -165,15 +169,17 @@ Svar med JSON:
   "summary": "En kort, balansert oppsummering på 2-3 setninger"
 }`
 
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o',
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.5,
-    response_format: { type: 'json_object' },
+  const model = genAI.getGenerativeModel({
+    model: 'gemini-1.5-pro',
+    generationConfig: {
+      temperature: 0.5,
+      responseMimeType: 'application/json',
+    },
   })
 
+  const result = await model.generateContent(prompt)
   try {
-    const parsed = JSON.parse(response.choices[0].message.content || '{}')
+    const parsed = JSON.parse(result.response.text())
     return {
       strengths: parsed.strengths || [],
       areasToExplore: parsed.areasToExplore || [],
@@ -203,7 +209,7 @@ export async function runInterviewTurn(params: {
   const lang = params.language || 'norsk'
   const isFirstMessage = params.conversationHistory.length === 0
 
-  const systemPrompt = `Du er en profesjonell og vennlig rekrutterer som gjennomfører et strukturert jobbintervju på ${lang}.
+  const systemInstruction = `Du er en profesjonell og vennlig rekrutterer som gjennomfører et strukturert jobbintervju på ${lang}.
 
 STILLING: ${params.job.title} ved ${params.job.location}
 BESKRIVELSE: ${params.job.description}
@@ -217,26 +223,34 @@ Retningslinjer:
 - Vær profesjonell men vennlig
 - Dekk: motivasjon, erfaring, kompetanse, kulturell match
 - Ha 6-8 spørsmål totalt
-- Avslutt med å informere at intervjuet er fullført og takk for deltagelse
+- Avslutt med å informere at intervjuet er fullført og takk for deltagelse`
 
-${isFirstMessage ? 'Start med å ønske kandidaten velkommen og still det første spørsmålet.' : ''}`
-
-  const messages = [
-    { role: 'system' as const, content: systemPrompt },
-    ...params.conversationHistory.map((m) => ({
-      role: m.role as 'assistant' | 'user',
-      content: m.content,
-    })),
-  ]
-
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o',
-    messages,
-    temperature: 0.7,
-    max_tokens: 300,
+  const model = genAI.getGenerativeModel({
+    model: 'gemini-1.5-pro',
+    systemInstruction,
+    generationConfig: {
+      temperature: 0.7,
+      maxOutputTokens: 300,
+    },
   })
 
-  return response.choices[0].message.content || ''
+  if (isFirstMessage) {
+    const result = await model.generateContent(
+      'Start med å ønske kandidaten velkommen og still det første spørsmålet.'
+    )
+    return result.response.text()
+  }
+
+  // Bygg chat-historikk – alle meldinger unntatt den siste
+  const history = params.conversationHistory.slice(0, -1).map((m) => ({
+    role: m.role === 'assistant' ? ('model' as const) : ('user' as const),
+    parts: [{ text: m.content }],
+  }))
+
+  const chat = model.startChat({ history })
+  const lastMessage = params.conversationHistory[params.conversationHistory.length - 1]
+  const result = await chat.sendMessage(lastMessage.content)
+  return result.response.text()
 }
 
 // ===== INTERVJUOPPSUMMERING =====
@@ -262,13 +276,13 @@ Oppsummeringen skal inkludere:
 
 Hold oppsummeringen på 150-250 ord.`
 
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.5,
+  const model = genAI.getGenerativeModel({
+    model: 'gemini-1.5-flash',
+    generationConfig: { temperature: 0.5 },
   })
 
-  return response.choices[0].message.content || ''
+  const result = await model.generateContent(prompt)
+  return result.response.text()
 }
 
 // ===== AVVISNINGSE-POST =====
@@ -296,13 +310,13 @@ E-posten skal:
 
 Skriv kun e-postteksten, ingen emne-linje.`
 
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.8,
+  const model = genAI.getGenerativeModel({
+    model: 'gemini-1.5-flash',
+    generationConfig: { temperature: 0.8 },
   })
 
-  return response.choices[0].message.content || ''
+  const result = await model.generateContent(prompt)
+  return result.response.text()
 }
 
 // ===== ONBOARDING-EPOST =====
@@ -328,13 +342,13 @@ E-posten skal:
 - Være entusiastisk men profesjonell
 - Være 150-200 ord`
 
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.7,
+  const model = genAI.getGenerativeModel({
+    model: 'gemini-1.5-flash',
+    generationConfig: { temperature: 0.7 },
   })
 
-  return response.choices[0].message.content || ''
+  const result = await model.generateContent(prompt)
+  return result.response.text()
 }
 
 // ===== SPRÅKDETEKSJON =====
@@ -343,12 +357,14 @@ export async function detectLanguage(text: string): Promise<string> {
 
 "${text.substring(0, 200)}"`
 
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o-mini',
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0,
-    max_tokens: 10,
+  const model = genAI.getGenerativeModel({
+    model: 'gemini-1.5-flash',
+    generationConfig: {
+      temperature: 0,
+      maxOutputTokens: 10,
+    },
   })
 
-  return response.choices[0].message.content?.trim() || 'Norwegian'
+  const result = await model.generateContent(prompt)
+  return result.response.text().trim() || 'Norwegian'
 }
