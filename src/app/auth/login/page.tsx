@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { LogIn, Eye, EyeOff } from 'lucide-react'
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -56,6 +56,68 @@ export default function LoginPage() {
   }
 
   return (
+    <div className="card shadow-md">
+      <form onSubmit={handleLogin} className="space-y-5">
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
+
+        <Input
+          label="E-postadresse"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="din@epost.no"
+          required
+          autoComplete="email"
+        />
+
+        <div className="relative">
+          <Input
+            label="Passord"
+            type={showPassword ? 'text' : 'password'}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            required
+            autoComplete="current-password"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-[38px] text-gray-400 hover:text-gray-600"
+          >
+            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+          </button>
+        </div>
+
+        <Button
+          type="submit"
+          loading={loading}
+          className="w-full"
+          size="lg"
+        >
+          <LogIn className="w-4 h-4" />
+          Logg inn
+        </Button>
+      </form>
+
+      <div className="mt-6 text-center">
+        <p className="text-sm text-gray-500">
+          Har du ikke konto?{' '}
+          <Link href="/auth/register" className="text-primary font-semibold hover:underline">
+            Registrer deg
+          </Link>
+        </p>
+      </div>
+    </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
     <div className="min-h-screen bg-bg-light flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         {/* Logo */}
@@ -70,63 +132,9 @@ export default function LoginPage() {
           <p className="text-gray-500 mt-1 text-sm">Velkommen tilbake!</p>
         </div>
 
-        <div className="card shadow-md">
-          <form onSubmit={handleLogin} className="space-y-5">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                {error}
-              </div>
-            )}
-
-            <Input
-              label="E-postadresse"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="din@epost.no"
-              required
-              autoComplete="email"
-            />
-
-            <div className="relative">
-              <Input
-                label="Passord"
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                autoComplete="current-password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-[38px] text-gray-400 hover:text-gray-600"
-              >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
-            </div>
-
-            <Button
-              type="submit"
-              loading={loading}
-              className="w-full"
-              size="lg"
-            >
-              <LogIn className="w-4 h-4" />
-              Logg inn
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-500">
-              Har du ikke konto?{' '}
-              <Link href="/auth/register" className="text-primary font-semibold hover:underline">
-                Registrer deg
-              </Link>
-            </p>
-          </div>
-        </div>
+        <Suspense fallback={<div className="card shadow-md h-48 animate-pulse" />}>
+          <LoginForm />
+        </Suspense>
 
         <p className="text-center text-xs text-gray-400 mt-6">
           <Link href="/" className="hover:text-gray-600">← Tilbake til forsiden</Link>
