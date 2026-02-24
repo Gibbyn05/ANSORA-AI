@@ -73,6 +73,7 @@ export interface Application {
   score?: number
   status: ApplicationStatus
   ai_analysis?: AIAnalysis
+  interview_completed?: boolean
   interview_transcript?: InterviewMessage[]
   interview_summary?: string
   follow_up_answers?: Record<string, string>

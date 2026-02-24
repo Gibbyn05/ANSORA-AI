@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/Badge'
 import { translateStatus, getIndustryLabel, formatDate } from '@/lib/utils'
 import { ArrowLeft, Users, MapPin, Percent, BarChart3 } from 'lucide-react'
 import Link from 'next/link'
-import type { Industry, ApplicationStatus } from '@/types'
+import type { Industry, ApplicationStatus, Application } from '@/types'
 
 const STATUS_VARIANT: Record<ApplicationStatus, 'default' | 'success' | 'warning' | 'danger' | 'info' | 'neutral'> = {
   pending: 'neutral',
@@ -117,7 +117,7 @@ export default async function CompanyJobDetailPage({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {applications.map((app, index) => (
+                  {applications.map((app: Application, index: number) => (
                     <tr key={app.id} className="hover:bg-gray-50 transition-colors group">
                       <td className="py-3 pr-4">
                         <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
