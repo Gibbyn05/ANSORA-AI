@@ -32,7 +32,7 @@ Annonsen skal:
 - Være mellom 300-500 ord`
 
   const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.0-flash',
     generationConfig: { temperature: 0.7 },
   })
 
@@ -67,7 +67,7 @@ Svar kun med en JSON-array av spørsmål, ingen annen tekst:
 ["Spørsmål 1", "Spørsmål 2", ...]`
 
   const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.0-flash',
     generationConfig: {
       temperature: 0.6,
       responseMimeType: 'application/json',
@@ -118,7 +118,7 @@ Svar med JSON:
 }`
 
   const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.0-flash',
     generationConfig: {
       temperature: 0.3,
       responseMimeType: 'application/json',
@@ -170,7 +170,7 @@ Svar med JSON:
 }`
 
   const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-pro',
+    model: 'gemini-2.0-flash',
     generationConfig: {
       temperature: 0.5,
       responseMimeType: 'application/json',
@@ -226,7 +226,7 @@ Retningslinjer:
 - Avslutt med å informere at intervjuet er fullført og takk for deltagelse`
 
   const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-pro',
+    model: 'gemini-2.0-flash',
     systemInstruction,
     generationConfig: {
       temperature: 0.7,
@@ -277,7 +277,7 @@ Oppsummeringen skal inkludere:
 Hold oppsummeringen på 150-250 ord.`
 
   const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.0-flash',
     generationConfig: { temperature: 0.5 },
   })
 
@@ -311,7 +311,7 @@ E-posten skal:
 Skriv kun e-postteksten, ingen emne-linje.`
 
   const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.0-flash',
     generationConfig: { temperature: 0.8 },
   })
 
@@ -343,7 +343,7 @@ E-posten skal:
 - Være 150-200 ord`
 
   const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.0-flash',
     generationConfig: { temperature: 0.7 },
   })
 
@@ -358,7 +358,7 @@ export async function detectLanguage(text: string): Promise<string> {
 "${text.substring(0, 200)}"`
 
   const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.0-flash',
     generationConfig: {
       temperature: 0,
       maxOutputTokens: 10,
