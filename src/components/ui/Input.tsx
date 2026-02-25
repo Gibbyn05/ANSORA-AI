@@ -28,8 +28,8 @@ export function Input({ label, error, helperText, className, id, ...props }: Inp
         )}
         {...props}
       />
-      {error && <p className="mt-1.5 text-sm text-red-600">{error}</p>}
-      {helperText && !error && <p className="mt-1.5 text-sm text-gray-500">{helperText}</p>}
+      {error && <p className="mt-1.5 text-sm text-red-400">{error}</p>}
+      {helperText && !error && <p className="mt-1.5 text-sm text-[#666]">{helperText}</p>}
     </div>
   )
 }
@@ -59,8 +59,8 @@ export function Textarea({ label, error, helperText, className, id, ...props }: 
         )}
         {...props}
       />
-      {error && <p className="mt-1.5 text-sm text-red-600">{error}</p>}
-      {helperText && !error && <p className="mt-1.5 text-sm text-gray-500">{helperText}</p>}
+      {error && <p className="mt-1.5 text-sm text-red-400">{error}</p>}
+      {helperText && !error && <p className="mt-1.5 text-sm text-[#666]">{helperText}</p>}
     </div>
   )
 }
@@ -102,7 +102,7 @@ export function Select({ label, error, options, placeholder, className, id, ...p
           </option>
         ))}
       </select>
-      {error && <p className="mt-1.5 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-1.5 text-sm text-red-400">{error}</p>}
     </div>
   )
 }

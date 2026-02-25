@@ -16,12 +16,21 @@
   box-sizing: border-box;
 }
 
+html {
+  color-scheme: dark;
+}
+
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: var(--bg-light);
   color: var(--text-gray);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+select option {
+  background-color: #1a1a1a;
+  color: #ffffff;
 }
 
 @layer components {
