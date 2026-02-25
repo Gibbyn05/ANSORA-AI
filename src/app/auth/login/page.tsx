@@ -44,23 +44,8 @@ function LoginForm() {
       return
     }
 
-    // Redirect basert på rolle – bruk window.location for full reload
-    // slik at session-cookies sendes riktig med neste request
-    const role = data.user?.user_metadata?.role
-    if (role === 'company') {
-      window.location.href = '/dashboard/company'
-    } else if (role === 'candidate') {
-      window.location.href = '/dashboard/candidate'
-    } else {
-      // Rolle mangler i metadata – sjekk databasen
-      const supabaseCheck = createClient()
-      const { data: company } = await supabaseCheck
-        .from('companies')
-        .select('id')
-        .eq('user_id', data.user.id)
-        .maybeSingle()
-      window.location.href = company ? '/dashboard/company' : '/dashboard/candidate'
-    }
+    // Full reload til /dashboard – server-siden router til riktig dashboard
+    window.location.href = '/dashboard'
   }
 
   return (

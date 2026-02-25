@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Navbar } from '@/components/ui/Navbar'
 import { Card, CardHeader } from '@/components/ui/Card'
@@ -28,13 +28,24 @@ export default async function CompanyDashboard() {
   if (!user) redirect('/auth/login')
 
   // Hent bedriftsinfo
-  const { data: company } = await supabase
+  let { data: company } = await supabase
     .from('companies')
     .select('*')
     .eq('user_id', user.id)
     .single()
 
-  if (!company) redirect('/auth/login')
+  // Auto-opprett profil hvis den mangler (f.eks. e-post bekreftet før callback-ruten var fikset)
+  if (!company) {
+    const admin = await createAdminClient()
+    const name = (user.user_metadata?.name as string | undefined) ?? user.email ?? 'Bedrift'
+    const { data: created } = await admin
+      .from('companies')
+      .insert({ user_id: user.id, name, email: user.email ?? '' })
+      .select('*')
+      .single()
+    if (!created) redirect('/auth/login')
+    company = created
+  }
 
   // Hent stillinger
   const { data: jobs } = await supabase

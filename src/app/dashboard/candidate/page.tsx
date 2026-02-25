@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Navbar } from '@/components/ui/Navbar'
 import { Card, CardHeader } from '@/components/ui/Card'
@@ -28,13 +28,24 @@ export default async function CandidateDashboard() {
   if (!user) redirect('/auth/login')
 
   // Hent kandidatprofil
-  const { data: candidate } = await supabase
+  let { data: candidate } = await supabase
     .from('candidates')
     .select('*')
     .eq('user_id', user.id)
     .single()
 
-  if (!candidate) redirect('/auth/login')
+  // Auto-opprett profil hvis den mangler
+  if (!candidate) {
+    const admin = await createAdminClient()
+    const name = (user.user_metadata?.name as string | undefined) ?? user.email ?? 'Kandidat'
+    const { data: created } = await admin
+      .from('candidates')
+      .insert({ user_id: user.id, name, email: user.email ?? '' })
+      .select('*')
+      .single()
+    if (!created) redirect('/auth/login')
+    candidate = created
+  }
 
   // Hent søknader
   const { data: applications } = await supabase
