@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -17,7 +17,6 @@ function LoginForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const router = useRouter()
   const searchParams = useSearchParams()
 
   useEffect(() => {
@@ -45,27 +44,23 @@ function LoginForm() {
       return
     }
 
-    // Redirect basert på rolle
+    // Redirect basert på rolle – bruk window.location for full reload
+    // slik at session-cookies sendes riktig med neste request
     const role = data.user?.user_metadata?.role
     if (role === 'company') {
-      router.push('/dashboard/company')
+      window.location.href = '/dashboard/company'
     } else if (role === 'candidate') {
-      router.push('/dashboard/candidate')
+      window.location.href = '/dashboard/candidate'
     } else {
-      // Rolle mangler i metadata – prøv å finne profil i databasen
+      // Rolle mangler i metadata – sjekk databasen
       const supabaseCheck = createClient()
       const { data: company } = await supabaseCheck
         .from('companies')
         .select('id')
         .eq('user_id', data.user.id)
         .maybeSingle()
-      if (company) {
-        router.push('/dashboard/company')
-      } else {
-        router.push('/dashboard/candidate')
-      }
+      window.location.href = company ? '/dashboard/company' : '/dashboard/candidate'
     }
-    router.refresh()
   }
 
   return (
