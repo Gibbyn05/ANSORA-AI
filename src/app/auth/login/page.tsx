@@ -49,8 +49,21 @@ function LoginForm() {
     const role = data.user?.user_metadata?.role
     if (role === 'company') {
       router.push('/dashboard/company')
-    } else {
+    } else if (role === 'candidate') {
       router.push('/dashboard/candidate')
+    } else {
+      // Rolle mangler i metadata – prøv å finne profil i databasen
+      const supabaseCheck = createClient()
+      const { data: company } = await supabaseCheck
+        .from('companies')
+        .select('id')
+        .eq('user_id', data.user.id)
+        .maybeSingle()
+      if (company) {
+        router.push('/dashboard/company')
+      } else {
+        router.push('/dashboard/candidate')
+      }
     }
     router.refresh()
   }

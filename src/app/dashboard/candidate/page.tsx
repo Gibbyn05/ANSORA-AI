@@ -25,9 +25,7 @@ export default async function CandidateDashboard() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user || user.user_metadata?.role !== 'candidate') {
-    redirect('/auth/login')
-  }
+  if (!user) redirect('/auth/login')
 
   // Hent kandidatprofil
   const { data: candidate } = await supabase
@@ -36,7 +34,7 @@ export default async function CandidateDashboard() {
     .eq('user_id', user.id)
     .single()
 
-  if (!candidate) redirect('/auth/register')
+  if (!candidate) redirect('/auth/login')
 
   // Hent søknader
   const { data: applications } = await supabase

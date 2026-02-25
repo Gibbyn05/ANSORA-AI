@@ -25,9 +25,7 @@ export default async function CompanyDashboard() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user || user.user_metadata?.role !== 'company') {
-    redirect('/auth/login')
-  }
+  if (!user) redirect('/auth/login')
 
   // Hent bedriftsinfo
   const { data: company } = await supabase
@@ -36,7 +34,7 @@ export default async function CompanyDashboard() {
     .eq('user_id', user.id)
     .single()
 
-  if (!company) redirect('/auth/register')
+  if (!company) redirect('/auth/login')
 
   // Hent stillinger
   const { data: jobs } = await supabase
