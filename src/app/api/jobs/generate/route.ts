@@ -42,8 +42,8 @@ export async function POST(req: NextRequest) {
     const msg = error instanceof Error ? error.message : String(error)
     console.error('Feil ved generering av stillingsannonse:', msg)
 
-    if (!process.env.GEMINI_API_KEY) {
-      return NextResponse.json({ error: 'GEMINI_API_KEY er ikke konfigurert i Vercel' }, { status: 500 })
+    if (!process.env.OPENAI_API_KEY) {
+      return NextResponse.json({ error: 'OPENAI_API_KEY er ikke konfigurert' }, { status: 500 })
     }
     return NextResponse.json({ error: `AI-generering feilet: ${msg}` }, { status: 500 })
   }
