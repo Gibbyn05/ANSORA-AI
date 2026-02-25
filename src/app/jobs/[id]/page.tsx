@@ -1,13 +1,203 @@
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/ui/Navbar'
 import { Badge } from '@/components/ui/Badge'
-import { Card } from '@/components/ui/Card'
 import { getIndustryLabel, formatDate } from '@/lib/utils'
-import { MapPin, Clock, Percent, Building2, ArrowLeft, Users } from 'lucide-react'
+import {
+  MapPin, Clock, Building2, ArrowLeft, Users,
+  CheckCircle2, Briefcase, Gift, UserCheck, Globe,
+  Percent, Sparkles,
+} from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ApplyButton } from './ApplyButton'
 import type { Industry } from '@/types'
+
+// ── Description parser ──────────────────────────────────────────────────────
+
+type SectionType = 'intro' | 'om-stillingen' | 'vi-soker' | 'vi-tilbyr' | 'avslutning' | 'annet'
+
+type Section = {
+  title: string | null
+  lines: string[]
+  type: SectionType
+}
+
+function getSectionType(title: string | null): SectionType {
+  if (!title) return 'intro'
+  const t = title.toLowerCase()
+  if (t.includes('om stilling') || t.includes('arbeidsoppgave') || t.includes('rolle') || t.includes('oppgave')) return 'om-stillingen'
+  if (t.includes('søker') || t.includes('krav') || t.includes('kvalifikasjon') || t.includes('deg som')) return 'vi-soker'
+  if (t.includes('tilbyr') || t.includes('fordel') || t.includes('vi gir') || t.includes('hos oss')) return 'vi-tilbyr'
+  return 'annet'
+}
+
+function parseDescription(text: string): Section[] {
+  const sections: Section[] = []
+  let current: { title: string | null; lines: string[] } = { title: null, lines: [] }
+
+  const flush = () => {
+    if (current.lines.some((l) => l.trim())) {
+      sections.push({ title: current.title, lines: current.lines, type: getSectionType(current.title) })
+    }
+  }
+
+  for (const line of text.split('\n')) {
+    if (line.match(/^#{1,3} /)) {
+      flush()
+      current = { title: line.replace(/^#+\s+/, '').trim(), lines: [] }
+    } else {
+      current.lines.push(line)
+    }
+  }
+  flush()
+
+  // Mark last text-only section as closing paragraph
+  if (sections.length > 0) {
+    const last = sections[sections.length - 1]
+    const hasBullets = last.lines.some((l) => l.trim().startsWith('-') || l.trim().startsWith('•'))
+    if (!hasBullets && last.lines.filter((l) => l.trim()).length <= 4) {
+      sections[sections.length - 1] = { ...last, type: 'avslutning' }
+    }
+  }
+
+  return sections
+}
+
+// ── Section renderer ─────────────────────────────────────────────────────────
+
+const sectionConfig: Record<SectionType, {
+  icon: React.ComponentType<{ className?: string }>
+  iconBg: string
+  iconColor: string
+  border: string
+  titleColor: string
+}> = {
+  'om-stillingen': {
+    icon: Briefcase,
+    iconBg: 'bg-blue-50',
+    iconColor: 'text-blue-600',
+    border: 'border-blue-100',
+    titleColor: 'text-blue-800',
+  },
+  'vi-soker': {
+    icon: UserCheck,
+    iconBg: 'bg-green-50',
+    iconColor: 'text-green-600',
+    border: 'border-green-100',
+    titleColor: 'text-green-800',
+  },
+  'vi-tilbyr': {
+    icon: Gift,
+    iconBg: 'bg-purple-50',
+    iconColor: 'text-purple-600',
+    border: 'border-purple-100',
+    titleColor: 'text-purple-800',
+  },
+  'annet': {
+    icon: Sparkles,
+    iconBg: 'bg-gray-50',
+    iconColor: 'text-gray-500',
+    border: 'border-gray-100',
+    titleColor: 'text-navy',
+  },
+  'intro': {
+    icon: Sparkles,
+    iconBg: 'bg-gray-50',
+    iconColor: 'text-gray-400',
+    border: 'border-gray-100',
+    titleColor: 'text-navy',
+  },
+  'avslutning': {
+    icon: Sparkles,
+    iconBg: 'bg-gray-50',
+    iconColor: 'text-gray-400',
+    border: 'border-gray-100',
+    titleColor: 'text-navy',
+  },
+}
+
+const bulletIconColors: Record<SectionType, string> = {
+  'om-stillingen': 'text-blue-500',
+  'vi-soker': 'text-green-500',
+  'vi-tilbyr': 'text-purple-500',
+  'annet': 'text-gray-400',
+  'intro': 'text-gray-400',
+  'avslutning': 'text-gray-400',
+}
+
+function DescriptionSection({ section }: { section: Section }) {
+  const paras = section.lines.filter((l) => l.trim())
+  const bulletColor = bulletIconColors[section.type]
+
+  if (section.type === 'intro') {
+    return (
+      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl p-6">
+        {paras.map((line, i) => (
+          <p key={i} className="text-gray-700 leading-relaxed text-base font-medium">{line}</p>
+        ))}
+      </div>
+    )
+  }
+
+  if (section.type === 'avslutning') {
+    return (
+      <div className="border-t border-gray-100 pt-6 mt-2">
+        {paras.map((line, i) => (
+          <p key={i} className="text-gray-600 leading-relaxed italic text-sm">{line}</p>
+        ))}
+      </div>
+    )
+  }
+
+  const cfg = sectionConfig[section.type]
+  const Icon = cfg.icon
+
+  const bullets: string[] = []
+  const prose: string[] = []
+  for (const line of paras) {
+    const trimmed = line.trim()
+    if (trimmed.startsWith('-') || trimmed.startsWith('•') || trimmed.startsWith('*')) {
+      bullets.push(trimmed.replace(/^[-•*]\s+/, ''))
+    } else {
+      prose.push(trimmed)
+    }
+  }
+
+  return (
+    <div className={`rounded-2xl border ${cfg.border} overflow-hidden`}>
+      {/* Section header */}
+      <div className={`${cfg.iconBg} px-6 py-4 flex items-center gap-3`}>
+        <div className={`w-8 h-8 rounded-lg ${cfg.iconBg} flex items-center justify-center`}>
+          <Icon className={`w-5 h-5 ${cfg.iconColor}`} />
+        </div>
+        <h2 className={`font-bold text-base ${cfg.titleColor}`}>{section.title}</h2>
+      </div>
+
+      {/* Content */}
+      <div className="bg-white px-6 py-5 space-y-4">
+        {prose.length > 0 && (
+          <div className="space-y-2">
+            {prose.map((line, i) => (
+              <p key={i} className="text-gray-600 leading-relaxed text-sm">{line}</p>
+            ))}
+          </div>
+        )}
+        {bullets.length > 0 && (
+          <ul className="space-y-2.5">
+            {bullets.map((item, i) => (
+              <li key={i} className="flex items-start gap-3">
+                <CheckCircle2 className={`w-4 h-4 mt-0.5 flex-shrink-0 ${bulletColor}`} />
+                <span className="text-gray-700 text-sm leading-relaxed">{item}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function JobDetailPage({
   params,
@@ -23,22 +213,17 @@ export default async function JobDetailPage({
 
   const { data: job } = await supabase
     .from('jobs')
-    .select(`
-      *,
-      companies (id, name, logo, website, description)
-    `)
+    .select(`*, companies (id, name, logo, website, description)`)
     .eq('id', id)
     .single()
 
   if (!job) notFound()
 
-  // Tell antall søkere
   const { count: applicationCount } = await supabase
     .from('applications')
     .select('id', { count: 'exact', head: true })
     .eq('job_id', id)
 
-  // Sjekk om kandidaten allerede har søkt
   let hasApplied = false
   if (user && userRole === 'candidate') {
     const { data: candidate } = await supabase
@@ -54,154 +239,220 @@ export default async function JobDetailPage({
         .eq('job_id', id)
         .eq('candidate_id', candidate.id)
         .single()
-
       hasApplied = !!existingApp
     }
   }
 
-  const paragraphs = job.description.split('\n').filter(Boolean)
+  const sections = parseDescription(job.description)
+
+  // Days since posted
+  const postedDays = Math.floor(
+    (Date.now() - new Date(job.created_at).getTime()) / (1000 * 60 * 60 * 24)
+  )
+  const isNew = postedDays <= 3
 
   return (
     <div className="min-h-screen bg-bg-light">
       <Navbar userRole={userRole} userName={userName} />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Link href="/jobs" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-navy mb-6 transition-colors">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Link
+          href="/jobs"
+          className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-navy mb-6 transition-colors"
+        >
           <ArrowLeft className="w-4 h-4" />
           Tilbake til stillinger
         </Link>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Hoveddel */}
-          <div className="lg:col-span-2 space-y-6">
-            <Card>
-              <div className="flex items-start justify-between gap-4 mb-6">
-                <div>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    <Badge variant="info">{getIndustryLabel(job.industry as Industry)}</Badge>
-                    <Badge variant="neutral">{job.percentage}%</Badge>
-                    {job.status === 'published' && <Badge variant="success">Aktiv</Badge>}
-                  </div>
-                  <h1 className="text-2xl font-bold text-navy">{job.title}</h1>
-                  <p className="text-gray-500 font-medium mt-1">
-                    {job.companies?.name || 'Bedrift'}
-                  </p>
-                </div>
-                {job.companies?.logo && (
+        {/* ── Hero card ── */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-6">
+          {/* Top gradient strip */}
+          <div className="h-2 bg-gradient-to-r from-primary to-indigo-500" />
+
+          <div className="p-6 sm:p-8">
+            <div className="flex flex-col sm:flex-row sm:items-start gap-5">
+              {/* Company logo */}
+              <div className="flex-shrink-0">
+                {job.companies?.logo ? (
                   <img
                     src={job.companies.logo}
                     alt={job.companies.name}
-                    className="w-16 h-16 rounded-xl object-contain border border-gray-100"
+                    className="w-16 h-16 rounded-2xl object-contain border border-gray-100 bg-gray-50"
                   />
+                ) : (
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-indigo-600 flex items-center justify-center">
+                    <Building2 className="w-8 h-8 text-white" />
+                  </div>
                 )}
               </div>
 
-              <div className="flex flex-wrap gap-4 text-sm text-gray-500 pb-6 border-b border-gray-100">
-                <span className="flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4" />
-                  {job.location}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Percent className="w-4 h-4" />
-                  {job.percentage}% stilling
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Clock className="w-4 h-4" />
-                  Publisert {formatDate(job.created_at)}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Users className="w-4 h-4" />
-                  {applicationCount || 0} søkere
-                </span>
+              {/* Title + company + badges */}
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap gap-2 mb-2">
+                  <Badge variant="info">{getIndustryLabel(job.industry as Industry)}</Badge>
+                  {job.status === 'published' && <Badge variant="success">Aktiv</Badge>}
+                  {isNew && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                      ✦ Ny
+                    </span>
+                  )}
+                </div>
+
+                <h1 className="text-2xl sm:text-3xl font-bold text-navy leading-tight">{job.title}</h1>
+                <p className="text-gray-500 font-medium mt-1 text-lg">
+                  {job.companies?.name || 'Bedrift'}
+                </p>
+
+                {/* Metadata pills */}
+                <div className="flex flex-wrap gap-3 mt-4">
+                  <MetaPill icon={MapPin} label={job.location} />
+                  <MetaPill icon={Percent} label={`${job.percentage}% stilling`} />
+                  <MetaPill icon={Clock} label={
+                    postedDays === 0 ? 'Publisert i dag' :
+                    postedDays === 1 ? 'Publisert i går' :
+                    `Publisert for ${postedDays} dager siden`
+                  } />
+                  <MetaPill icon={Users} label={`${applicationCount || 0} søkere`} />
+                </div>
               </div>
 
-              {/* Stillingsannonse */}
-              <div className="mt-6 prose prose-sm max-w-none text-gray-600 space-y-3">
-                {paragraphs.map((para: string, i: number) => {
-                  if (para.startsWith('##')) {
-                    return (
-                      <h2 key={i} className="text-lg font-bold text-navy mt-6 mb-2">
-                        {para.replace(/^##\s+/, '')}
-                      </h2>
-                    )
-                  }
-                  if (para.startsWith('#')) {
-                    return (
-                      <h1 key={i} className="text-xl font-bold text-navy mt-6 mb-2">
-                        {para.replace(/^#\s+/, '')}
-                      </h1>
-                    )
-                  }
-                  if (para.startsWith('-') || para.startsWith('•')) {
-                    return (
-                      <li key={i} className="list-disc list-inside text-gray-600">
-                        {para.replace(/^[-•]\s+/, '')}
-                      </li>
-                    )
-                  }
-                  return <p key={i} className="text-gray-600 leading-relaxed">{para}</p>
-                })}
+              {/* CTA on desktop */}
+              <div className="hidden sm:block flex-shrink-0 w-48">
+                <ApplyButton
+                  jobId={job.id}
+                  userRole={userRole}
+                  hasApplied={hasApplied}
+                  isLoggedIn={!!user}
+                />
               </div>
-            </Card>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Main grid ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+          {/* Left: description */}
+          <div className="lg:col-span-2 space-y-4">
+            {sections.map((section, i) => (
+              <DescriptionSection key={i} section={section} />
+            ))}
           </div>
 
-          {/* Sidebar */}
+          {/* Right: sidebar */}
           <div className="space-y-4">
-            {/* Søk-knapp */}
-            <Card>
+
+            {/* Apply card */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
               <ApplyButton
                 jobId={job.id}
                 userRole={userRole}
                 hasApplied={hasApplied}
                 isLoggedIn={!!user}
               />
-            </Card>
+              {!hasApplied && userRole === 'candidate' && (
+                <p className="text-xs text-gray-400 text-center mt-3 leading-relaxed">
+                  Din CV og profil sendes til bedriften
+                </p>
+              )}
+            </div>
 
-            {/* Om bedriften */}
+            {/* Job specs */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+              <h3 className="font-semibold text-navy mb-4 text-sm uppercase tracking-wide">
+                Stillingsinformasjon
+              </h3>
+              <div className="space-y-3">
+                <SpecRow label="Bransje" value={getIndustryLabel(job.industry as Industry)} />
+                <SpecRow label="Stillingsprosent" value={`${job.percentage}%`} />
+                <SpecRow label="Arbeidssted" value={job.location} />
+                <SpecRow label="Antall søkere" value={`${applicationCount || 0}`} />
+              </div>
+            </div>
+
+            {/* Company card */}
             {job.companies && (
-              <Card>
-                <h3 className="font-semibold text-navy mb-3 flex items-center gap-2">
-                  <Building2 className="w-4 h-4" />
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <h3 className="font-semibold text-navy mb-4 text-sm uppercase tracking-wide flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-gray-400" />
                   Om bedriften
                 </h3>
-                <p className="font-medium text-navy text-sm">{job.companies.name}</p>
+
+                <div className="flex items-center gap-3 mb-3">
+                  {job.companies.logo ? (
+                    <img
+                      src={job.companies.logo}
+                      alt={job.companies.name}
+                      className="w-10 h-10 rounded-xl object-contain border border-gray-100 bg-gray-50"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-indigo-600 flex items-center justify-center">
+                      <Building2 className="w-5 h-5 text-white" />
+                    </div>
+                  )}
+                  <p className="font-semibold text-navy text-sm">{job.companies.name}</p>
+                </div>
+
                 {job.companies.description && (
-                  <p className="text-sm text-gray-500 mt-2 leading-relaxed">
+                  <p className="text-sm text-gray-500 leading-relaxed mb-3">
                     {job.companies.description}
                   </p>
                 )}
+
                 {job.companies.website && (
                   <a
                     href={job.companies.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-primary text-sm hover:underline mt-2 block"
+                    className="inline-flex items-center gap-1.5 text-primary text-sm hover:underline font-medium"
                   >
-                    Besøk nettside →
+                    <Globe className="w-3.5 h-3.5" />
+                    Besøk nettside
                   </a>
                 )}
-              </Card>
+              </div>
             )}
+          </div>
+        </div>
 
-            {/* Stillingsinformasjon */}
-            <Card>
-              <h3 className="font-semibold text-navy mb-3">Stillingsinformasjon</h3>
-              <dl className="space-y-2 text-sm">
-                {[
-                  { label: 'Bransje', value: getIndustryLabel(job.industry as Industry) },
-                  { label: 'Stillingsprosent', value: `${job.percentage}%` },
-                  { label: 'Arbeidssted', value: job.location },
-                ].map((item) => (
-                  <div key={item.label} className="flex justify-between">
-                    <dt className="text-gray-500">{item.label}</dt>
-                    <dd className="font-medium text-navy text-right">{item.value}</dd>
-                  </div>
-                ))}
-              </dl>
-            </Card>
+        {/* Mobile apply button */}
+        <div className="sm:hidden mt-6">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+            <ApplyButton
+              jobId={job.id}
+              userRole={userRole}
+              hasApplied={hasApplied}
+              isLoggedIn={!!user}
+            />
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+// ── Small helpers ─────────────────────────────────────────────────────────────
+
+function MetaPill({
+  icon: Icon,
+  label,
+}: {
+  icon: React.ComponentType<{ className?: string }>
+  label: string
+}) {
+  return (
+    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-50 border border-gray-100 text-xs font-medium text-gray-600">
+      <Icon className="w-3.5 h-3.5 text-gray-400" />
+      {label}
+    </span>
+  )
+}
+
+function SpecRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
+      <span className="text-xs text-gray-400 font-medium">{label}</span>
+      <span className="text-sm font-semibold text-navy">{value}</span>
     </div>
   )
 }
