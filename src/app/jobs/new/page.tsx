@@ -62,10 +62,20 @@ export default function NewJobPage() {
       setDescription(data.description)
       setStep('preview')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Feil ved generering')
+      setError('AI-generering feilet. Du kan skrive stillingsannonsen manuelt ved å klikke "Skriv manuelt" nedenfor.')
     } finally {
       setGenerating(false)
     }
+  }
+
+  const handleManual = () => {
+    if (!title || !industry || !percentage || !location) {
+      setError('Fyll ut tittel, bransje, stillingsprosent og arbeidssted')
+      return
+    }
+    setError('')
+    setDescription('')
+    setStep('preview')
   }
 
   const handleSave = async (status: 'draft' | 'published') => {
@@ -206,19 +216,24 @@ export default function NewJobPage() {
                 helperText="Legg til stikkord som beskriver kulturen og arbeidsmiljøet"
               />
 
-              <div className="pt-2">
+              <div className="pt-2 flex flex-col sm:flex-row gap-3">
                 <Button
                   onClick={handleGenerate}
                   loading={generating}
                   size="lg"
-                  className="w-full sm:w-auto"
                 >
                   <Sparkles className="w-5 h-5" />
-                  {generating ? 'Genererer annonse...' : 'Generer stillingsannonse med AI'}
+                  {generating ? 'Genererer annonse...' : 'Generer med AI'}
                 </Button>
-                <p className="text-xs text-gray-400 mt-2">
-                  AI vil skrive en profesjonell stillingsannonse basert på informasjonen du har fylt ut
-                </p>
+                <Button
+                  onClick={handleManual}
+                  variant="secondary"
+                  size="lg"
+                  disabled={generating}
+                >
+                  <FileText className="w-5 h-5" />
+                  Skriv manuelt
+                </Button>
               </div>
             </div>
           </Card>
