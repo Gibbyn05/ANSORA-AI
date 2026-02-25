@@ -75,7 +75,7 @@ export default async function CompanyDashboard() {
   const pendingApplications = applications?.filter((a: Application) => a.status === 'pending').length || 0
 
   return (
-    <div className="min-h-screen bg-bg-light">
+    <div className="min-h-screen bg-[#0a0a0a]">
       <Navbar
         userRole="company"
         userName={company.name}
@@ -85,8 +85,8 @@ export default async function CompanyDashboard() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-navy">Rekrutteringsdashboard</h1>
-            <p className="text-gray-500 mt-1">Velkommen tilbake, {company.name}</p>
+            <h1 className="text-2xl font-bold text-white">Rekrutteringsdashboard</h1>
+            <p className="text-[#999] mt-1">Velkommen tilbake, {company.name}</p>
           </div>
           <Link href="/jobs/new">
             <button className="btn-primary flex items-center gap-2">
@@ -104,27 +104,27 @@ export default async function CompanyDashboard() {
               label: 'Aktive stillinger',
               value: publishedJobs,
               total: totalJobs,
-              color: 'text-primary bg-primary/10',
+              color: 'text-[#d7fe03] bg-[#d7fe03]/10',
               change: `${totalJobs} totalt`,
             },
             {
               icon: Users,
               label: 'Totale søkere',
               value: totalApplications,
-              color: 'text-purple-600 bg-purple-50',
+              color: 'text-purple-400 bg-purple-900/30',
               change: `${pendingApplications} venter`,
             },
             {
               icon: BarChart3,
               label: 'Under vurdering',
               value: applications?.filter((a: Application) => a.status === 'reviewing').length || 0,
-              color: 'text-blue-600 bg-blue-50',
+              color: 'text-blue-400 bg-blue-900/30',
             },
             {
               icon: CheckCircle2,
               label: 'Ansatt',
               value: applications?.filter((a: Application) => a.status === 'hired').length || 0,
-              color: 'text-green-600 bg-green-50',
+              color: 'text-green-400 bg-green-900/30',
             },
           ].map((stat) => (
             <Card key={stat.label} padding="md">
@@ -133,10 +133,10 @@ export default async function CompanyDashboard() {
                   <stat.icon className="w-5 h-5" />
                 </div>
               </div>
-              <div className="text-2xl font-bold text-navy">{stat.value}</div>
-              <div className="text-sm text-gray-500 mt-0.5">{stat.label}</div>
+              <div className="text-2xl font-bold text-white">{stat.value}</div>
+              <div className="text-sm text-[#999] mt-0.5">{stat.label}</div>
               {stat.change && (
-                <div className="text-xs text-gray-400 mt-1">{stat.change}</div>
+                <div className="text-xs text-[#666] mt-1">{stat.change}</div>
               )}
             </Card>
           ))}
@@ -150,7 +150,7 @@ export default async function CompanyDashboard() {
                 title="Mine stillinger"
                 action={
                   <Link href="/jobs/new">
-                    <button className="text-primary text-sm font-semibold hover:underline flex items-center gap-1">
+                    <button className="text-[#d7fe03] text-sm font-semibold hover:underline flex items-center gap-1">
                       <Plus className="w-3.5 h-3.5" /> Ny
                     </button>
                   </Link>
@@ -159,8 +159,8 @@ export default async function CompanyDashboard() {
 
               {!jobs || jobs.length === 0 ? (
                 <div className="text-center py-8">
-                  <Briefcase className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500 text-sm">Ingen stillinger ennå</p>
+                  <Briefcase className="w-10 h-10 text-[#333] mx-auto mb-3" />
+                  <p className="text-[#999] text-sm">Ingen stillinger ennå</p>
                   <Link href="/jobs/new">
                     <button className="btn-primary mt-4 text-sm py-2 px-4">
                       Opprett første stilling
@@ -173,17 +173,17 @@ export default async function CompanyDashboard() {
                     const jobApplications = applications?.filter((a: Application) => a.job_id === job.id) || []
                     return (
                       <Link key={job.id} href={`/dashboard/company/jobs/${job.id}`}>
-                        <div className="p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer group">
+                        <div className="p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group">
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex-1 min-w-0">
-                              <p className="font-medium text-navy text-sm truncate group-hover:text-primary transition-colors">
+                              <p className="font-medium text-white text-sm truncate group-hover:text-[#d7fe03] transition-colors">
                                 {job.title}
                               </p>
-                              <p className="text-xs text-gray-400 mt-0.5">
+                              <p className="text-xs text-[#666] mt-0.5">
                                 {getIndustryLabel(job.industry as Industry)} · {job.percentage}%
                               </p>
                             </div>
-                            <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-primary transition-colors flex-shrink-0 mt-0.5" />
+                            <ArrowRight className="w-4 h-4 text-[#444] group-hover:text-[#d7fe03] transition-colors flex-shrink-0 mt-0.5" />
                           </div>
                           <div className="flex items-center gap-2 mt-2">
                             <Badge
@@ -191,7 +191,7 @@ export default async function CompanyDashboard() {
                             >
                               {translateStatus(job.status)}
                             </Badge>
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs text-[#666]">
                               {jobApplications.length} søker{jobApplications.length !== 1 ? 'e' : ''}
                             </span>
                           </div>
@@ -214,9 +214,9 @@ export default async function CompanyDashboard() {
 
               {!applications || applications.length === 0 ? (
                 <div className="text-center py-12">
-                  <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500 font-medium">Ingen søknader ennå</p>
-                  <p className="text-sm text-gray-400 mt-1">
+                  <Users className="w-12 h-12 text-[#333] mx-auto mb-3" />
+                  <p className="text-[#999] font-medium">Ingen søknader ennå</p>
+                  <p className="text-sm text-[#666] mt-1">
                     Publiser en stilling for å begynne å motta søknader
                   </p>
                 </div>
@@ -224,19 +224,19 @@ export default async function CompanyDashboard() {
                 <div className="space-y-3">
                   {applications.slice(0, 8).map((app: Application) => (
                     <Link key={app.id} href={`/dashboard/company/applications/${app.id}`}>
-                      <div className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer group">
+                      <div className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group">
                         {/* Avatar */}
-                        <div className="w-10 h-10 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                          <span className="text-primary font-bold text-sm">
+                        <div className="w-10 h-10 bg-[#d7fe03]/10 rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-[#d7fe03] font-bold text-sm">
                             {app.candidates?.name?.charAt(0).toUpperCase()}
                           </span>
                         </div>
 
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-navy text-sm group-hover:text-primary transition-colors">
+                          <p className="font-medium text-white text-sm group-hover:text-[#d7fe03] transition-colors">
                             {app.candidates?.name}
                           </p>
-                          <p className="text-xs text-gray-500 truncate">
+                          <p className="text-xs text-[#999] truncate">
                             {app.jobs?.title}
                           </p>
                         </div>
@@ -244,10 +244,10 @@ export default async function CompanyDashboard() {
                         <div className="flex items-center gap-3">
                           {app.score != null && (
                             <div className={`text-sm font-bold px-2.5 py-1 rounded-lg ${
-                              app.score >= 80 ? 'bg-green-50 text-green-700' :
-                              app.score >= 60 ? 'bg-yellow-50 text-yellow-700' :
-                              app.score >= 40 ? 'bg-orange-50 text-orange-700' :
-                              'bg-red-50 text-red-700'
+                              app.score >= 80 ? 'bg-green-900/40 text-green-400' :
+                              app.score >= 60 ? 'bg-yellow-900/40 text-yellow-400' :
+                              app.score >= 40 ? 'bg-orange-900/40 text-orange-400' :
+                              'bg-red-900/40 text-red-400'
                             }`}>
                               {app.score}
                             </div>
@@ -255,7 +255,7 @@ export default async function CompanyDashboard() {
                           <Badge variant={STATUS_VARIANT[app.status as ApplicationStatus] || 'neutral'}>
                             {translateStatus(app.status)}
                           </Badge>
-                          <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-primary transition-colors" />
+                          <ArrowRight className="w-4 h-4 text-[#444] group-hover:text-[#d7fe03] transition-colors" />
                         </div>
                       </div>
                     </Link>
@@ -263,7 +263,7 @@ export default async function CompanyDashboard() {
 
                   {applications.length > 8 && (
                     <div className="text-center pt-2">
-                      <p className="text-sm text-gray-400">
+                      <p className="text-sm text-[#666]">
                         +{applications.length - 8} flere søknader
                       </p>
                     </div>

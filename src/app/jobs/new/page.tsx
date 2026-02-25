@@ -109,18 +109,18 @@ export default function NewJobPage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg-light">
+    <div className="min-h-screen bg-[#0a0a0a]">
       <Navbar />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/dashboard/company" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-navy mb-4 transition-colors">
+          <Link href="/dashboard/company" className="inline-flex items-center gap-2 text-sm text-[#666] hover:text-white mb-4 transition-colors">
             <ArrowLeft className="w-4 h-4" />
             Tilbake til dashboard
           </Link>
-          <h1 className="text-2xl font-bold text-navy">Opprett ny stilling</h1>
-          <p className="text-gray-500 mt-1">
+          <h1 className="text-2xl font-bold text-white">Opprett ny stilling</h1>
+          <p className="text-[#999] mt-1">
             Fyll ut informasjonen og la AI generere en profesjonell stillingsannonse
           </p>
         </div>
@@ -131,29 +131,29 @@ export default function NewJobPage() {
             <div key={label} className="flex items-center gap-2">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
                 step === 'form' && i === 0
-                  ? 'bg-primary text-white'
+                  ? 'bg-[#d7fe03] text-black'
                   : step === 'preview' && i === 1
-                  ? 'bg-primary text-white'
+                  ? 'bg-[#d7fe03] text-black'
                   : step === 'preview' && i === 0
                   ? 'bg-green-500 text-white'
-                  : 'bg-gray-100 text-gray-400'
+                  : 'bg-white/10 text-[#555]'
               }`}>
                 {step === 'preview' && i === 0 ? <CheckCircle2 className="w-4 h-4" /> : i + 1}
               </div>
               <span className={`text-sm font-medium hidden sm:block ${
                 (step === 'form' && i === 0) || (step === 'preview' && i === 1)
-                  ? 'text-navy'
-                  : 'text-gray-400'
+                  ? 'text-white'
+                  : 'text-[#555]'
               }`}>
                 {label}
               </span>
-              {i < 1 && <div className="w-8 h-0.5 bg-gray-200 mx-1" />}
+              {i < 1 && <div className="w-8 h-0.5 bg-white/10 mx-1" />}
             </div>
           ))}
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-6">
+          <div className="bg-red-900/20 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg text-sm mb-6">
             {error}
           </div>
         )}
@@ -243,8 +243,8 @@ export default function NewJobPage() {
           <div className="space-y-6">
             <Card>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-navy flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-primary" />
+                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-[#d7fe03]" />
                   Generert stillingsannonse
                 </h2>
                 <Button
@@ -257,11 +257,11 @@ export default function NewJobPage() {
                 </Button>
               </div>
 
-              <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6 flex items-start gap-3">
-                <Sparkles className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+              <div className="bg-blue-900/20 border border-blue-500/20 rounded-xl p-4 mb-6 flex items-start gap-3">
+                <Sparkles className="w-5 h-5 text-[#d7fe03] flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-primary">Generert av AI</p>
-                  <p className="text-xs text-blue-600 mt-0.5">
+                  <p className="text-sm font-medium text-[#d7fe03]">Generert av AI</p>
+                  <p className="text-xs text-[#999] mt-0.5">
                     Du kan redigere teksten nedenfor før du publiserer
                   </p>
                 </div>
@@ -278,7 +278,7 @@ export default function NewJobPage() {
 
             {/* Stillingsoversikt */}
             <Card>
-              <h3 className="font-semibold text-navy mb-4">Stillingsoversikt</h3>
+              <h3 className="font-semibold text-white mb-4">Stillingsoversikt</h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
                 {[
                   { icon: Briefcase, label: 'Tittel', value: title },
@@ -287,11 +287,11 @@ export default function NewJobPage() {
                   { icon: FileText, label: 'Bransje', value: INDUSTRY_OPTIONS.find(o => o.value === industry)?.label || industry },
                 ].map((item) => (
                   <div key={item.label} className="flex flex-col gap-1">
-                    <span className="text-gray-400 text-xs flex items-center gap-1">
+                    <span className="text-[#555] text-xs flex items-center gap-1">
                       <item.icon className="w-3.5 h-3.5" />
                       {item.label}
                     </span>
-                    <span className="font-medium text-navy">{item.value}</span>
+                    <span className="font-medium text-white">{item.value}</span>
                   </div>
                 ))}
               </div>

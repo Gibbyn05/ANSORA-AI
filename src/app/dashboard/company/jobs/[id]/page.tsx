@@ -52,11 +52,11 @@ export default async function CompanyJobDetailPage({
     .order('score', { ascending: false, nullsFirst: false })
 
   return (
-    <div className="min-h-screen bg-bg-light">
+    <div className="min-h-screen bg-[#0a0a0a]">
       <Navbar userRole="company" />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Link href="/dashboard/company" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-navy mb-6">
+        <Link href="/dashboard/company" className="inline-flex items-center gap-2 text-sm text-[#666] hover:text-white mb-6 transition-colors">
           <ArrowLeft className="w-4 h-4" />
           Tilbake til dashboard
         </Link>
@@ -71,8 +71,8 @@ export default async function CompanyJobDetailPage({
                 </Badge>
                 <Badge variant="info">{getIndustryLabel(job.industry as Industry)}</Badge>
               </div>
-              <h1 className="text-xl font-bold text-navy">{job.title}</h1>
-              <div className="flex flex-wrap gap-4 mt-2 text-sm text-gray-500">
+              <h1 className="text-xl font-bold text-white">{job.title}</h1>
+              <div className="flex flex-wrap gap-4 mt-2 text-sm text-[#999]">
                 <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{job.location}</span>
                 <span className="flex items-center gap-1"><Percent className="w-3.5 h-3.5" />{job.percentage}%</span>
                 <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" />{applications?.length || 0} søkere</span>
@@ -90,71 +90,71 @@ export default async function CompanyJobDetailPage({
 
           {!applications || applications.length === 0 ? (
             <div className="text-center py-12">
-              <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500">Ingen søknader mottatt ennå</p>
+              <Users className="w-12 h-12 text-[#333] mx-auto mb-3" />
+              <p className="text-[#999]">Ingen søknader mottatt ennå</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-100">
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide py-3 pr-4">
+                  <tr className="border-b border-white/10">
+                    <th className="text-left text-xs font-semibold text-[#666] uppercase tracking-wide py-3 pr-4">
                       Rang
                     </th>
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide py-3 pr-4">
+                    <th className="text-left text-xs font-semibold text-[#666] uppercase tracking-wide py-3 pr-4">
                       Kandidat
                     </th>
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide py-3 pr-4">
+                    <th className="text-left text-xs font-semibold text-[#666] uppercase tracking-wide py-3 pr-4">
                       Score
                     </th>
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide py-3 pr-4">
+                    <th className="text-left text-xs font-semibold text-[#666] uppercase tracking-wide py-3 pr-4">
                       Status
                     </th>
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide py-3 pr-4">
+                    <th className="text-left text-xs font-semibold text-[#666] uppercase tracking-wide py-3 pr-4">
                       Søknadsdato
                     </th>
                     <th className="py-3"></th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody className="divide-y divide-white/5">
                   {applications.map((app: Application, index: number) => (
-                    <tr key={app.id} className="hover:bg-gray-50 transition-colors group">
+                    <tr key={app.id} className="hover:bg-white/5 transition-colors group">
                       <td className="py-3 pr-4">
                         <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-                          index === 0 ? 'bg-yellow-100 text-yellow-700' :
-                          index === 1 ? 'bg-gray-100 text-gray-600' :
-                          index === 2 ? 'bg-orange-50 text-orange-600' :
-                          'bg-gray-50 text-gray-500'
+                          index === 0 ? 'bg-yellow-900/40 text-yellow-400' :
+                          index === 1 ? 'bg-white/10 text-[#999]' :
+                          index === 2 ? 'bg-orange-900/30 text-orange-400' :
+                          'bg-white/5 text-[#666]'
                         }`}>
                           {index + 1}
                         </span>
                       </td>
                       <td className="py-3 pr-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 bg-primary/10 rounded-full flex items-center justify-center">
-                            <span className="text-primary font-bold text-sm">
+                          <div className="w-9 h-9 bg-[#d7fe03]/10 rounded-full flex items-center justify-center">
+                            <span className="text-[#d7fe03] font-bold text-sm">
                               {app.candidates?.name?.charAt(0).toUpperCase()}
                             </span>
                           </div>
                           <div>
-                            <p className="font-medium text-navy text-sm">{app.candidates?.name}</p>
-                            <p className="text-xs text-gray-400">{app.candidates?.email}</p>
+                            <p className="font-medium text-white text-sm">{app.candidates?.name}</p>
+                            <p className="text-xs text-[#666]">{app.candidates?.email}</p>
                           </div>
                         </div>
                       </td>
                       <td className="py-3 pr-4">
                         {app.score != null ? (
                           <div className={`inline-flex items-center font-bold text-sm px-2.5 py-1 rounded-lg ${
-                            app.score >= 80 ? 'bg-green-50 text-green-700' :
-                            app.score >= 60 ? 'bg-yellow-50 text-yellow-700' :
-                            app.score >= 40 ? 'bg-orange-50 text-orange-700' :
-                            'bg-red-50 text-red-700'
+                            app.score >= 80 ? 'bg-green-900/40 text-green-400' :
+                            app.score >= 60 ? 'bg-yellow-900/40 text-yellow-400' :
+                            app.score >= 40 ? 'bg-orange-900/40 text-orange-400' :
+                            'bg-red-900/40 text-red-400'
                           }`}>
                             <BarChart3 className="w-3.5 h-3.5 mr-1" />
                             {app.score}/100
                           </div>
                         ) : (
-                          <span className="text-gray-300 text-sm">–</span>
+                          <span className="text-[#444] text-sm">–</span>
                         )}
                       </td>
                       <td className="py-3 pr-4">
@@ -162,12 +162,12 @@ export default async function CompanyJobDetailPage({
                           {translateStatus(app.status)}
                         </Badge>
                       </td>
-                      <td className="py-3 pr-4 text-sm text-gray-500">
+                      <td className="py-3 pr-4 text-sm text-[#999]">
                         {formatDate(app.created_at)}
                       </td>
                       <td className="py-3">
                         <Link href={`/dashboard/company/applications/${app.id}`}>
-                          <button className="text-primary text-sm font-semibold hover:underline opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button className="text-[#d7fe03] text-sm font-semibold hover:underline opacity-0 group-hover:opacity-100 transition-opacity">
                             Se detaljer →
                           </button>
                         </Link>

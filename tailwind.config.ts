@@ -9,10 +9,11 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: '#1A73E8',
-        navy: '#0D1B3E',
-        'text-gray': '#555555',
-        'bg-light': '#F8FBFF',
+        primary: '#d7fe03',
+        navy: '#ffffff',
+        'text-gray': '#999999',
+        'bg-light': '#0a0a0a',
+        'dark-card': '#111111',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

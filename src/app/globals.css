@@ -5,10 +5,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --primary: #1A73E8;
-  --navy: #0D1B3E;
-  --text-gray: #555555;
-  --bg-light: #F8FBFF;
+  --primary: #d7fe03;
+  --navy: #ffffff;
+  --text-gray: #999999;
+  --bg-light: #0a0a0a;
+  --dark-card: #111111;
 }
 
 * {
@@ -25,27 +26,27 @@ body {
 
 @layer components {
   .btn-primary {
-    @apply bg-primary text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply bg-primary text-black font-semibold px-6 py-3 rounded-lg hover:bg-[#c8ef00] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-[#0a0a0a] disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-secondary {
-    @apply bg-white text-navy font-semibold px-6 py-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2;
+    @apply bg-[#1a1a1a] text-white font-semibold px-6 py-3 rounded-lg border border-white/10 hover:bg-[#222] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-2 focus:ring-offset-[#0a0a0a];
   }
 
   .btn-danger {
-    @apply bg-red-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-red-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2;
+    @apply bg-red-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-red-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-[#0a0a0a];
   }
 
   .card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-100 p-6;
+    @apply bg-[#111111] rounded-xl border border-white/10 p-6;
   }
 
   .input {
-    @apply w-full px-4 py-3 rounded-lg border border-gray-200 text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 placeholder-gray-400;
+    @apply w-full px-4 py-3 rounded-lg border border-white/10 text-white bg-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 placeholder-[#555];
   }
 
   .label {
-    @apply block text-sm font-medium text-gray-700 mb-1.5;
+    @apply block text-sm font-medium text-[#ccc] mb-1.5;
   }
 
   .badge {
@@ -57,11 +58,11 @@ body {
   }
 
   .page-title {
-    @apply text-2xl font-bold text-navy;
+    @apply text-2xl font-bold text-white;
   }
 
   .page-subtitle {
-    @apply text-text-gray mt-1;
+    @apply text-[#999] mt-1;
   }
 }
 
@@ -95,14 +96,14 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #F8FBFF;
+  background: #111111;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #D1D5DB;
+  background: #333;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9CA3AF;
+  background: #444;
 }

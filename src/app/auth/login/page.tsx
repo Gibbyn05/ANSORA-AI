@@ -52,7 +52,7 @@ function LoginForm() {
     <div className="card shadow-md">
       <form onSubmit={handleLogin} className="space-y-5">
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+          <div className="bg-red-900/20 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg text-sm">
             {error}
           </div>
         )}
@@ -80,7 +80,7 @@ function LoginForm() {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-[38px] text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-[38px] text-[#666] hover:text-[#999]"
           >
             {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
           </button>
@@ -98,9 +98,9 @@ function LoginForm() {
       </form>
 
       <div className="mt-6 text-center">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-[#999]">
           Har du ikke konto?{' '}
-          <Link href="/auth/register" className="text-primary font-semibold hover:underline">
+          <Link href="/auth/register" className="text-[#d7fe03] font-semibold hover:underline">
             Registrer deg
           </Link>
         </p>
@@ -111,26 +111,26 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-bg-light flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/30">
-              <span className="text-white font-bold text-lg">A</span>
+            <div className="w-10 h-10 bg-[#d7fe03] rounded-xl flex items-center justify-center shadow-lg shadow-[#d7fe03]/20">
+              <span className="text-black font-bold text-lg">A</span>
             </div>
-            <span className="text-navy font-bold text-2xl">Ansora</span>
+            <span className="text-white font-bold text-2xl">Ansora</span>
           </Link>
-          <h1 className="text-2xl font-bold text-navy">Logg inn</h1>
-          <p className="text-gray-500 mt-1 text-sm">Velkommen tilbake!</p>
+          <h1 className="text-2xl font-bold text-white">Logg inn</h1>
+          <p className="text-[#999] mt-1 text-sm">Velkommen tilbake!</p>
         </div>
 
         <Suspense fallback={<div className="card shadow-md h-48 animate-pulse" />}>
           <LoginForm />
         </Suspense>
 
-        <p className="text-center text-xs text-gray-400 mt-6">
-          <Link href="/" className="hover:text-gray-600">← Tilbake til forsiden</Link>
+        <p className="text-center text-xs text-[#666] mt-6">
+          <Link href="/" className="hover:text-[#999]">← Tilbake til forsiden</Link>
         </p>
       </div>
     </div>

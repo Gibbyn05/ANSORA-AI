@@ -116,22 +116,22 @@ export default function ApplyPage({
   }
 
   return (
-    <div className="min-h-screen bg-bg-light flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-2xl">
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">A</span>
+            <div className="w-8 h-8 bg-[#d7fe03] rounded-lg flex items-center justify-center">
+              <span className="text-black font-bold text-sm">A</span>
             </div>
-            <span className="text-navy font-bold text-xl">Ansora</span>
+            <span className="text-white font-bold text-xl">Ansora</span>
           </Link>
-          <h1 className="text-2xl font-bold text-navy mt-4">
+          <h1 className="text-2xl font-bold text-white mt-4">
             {step === 'upload' && 'Send inn søknad'}
             {step === 'questions' && 'Oppfølgingsspørsmål'}
             {step === 'submitted' && 'Søknad mottatt!'}
           </h1>
-          <p className="text-gray-500 mt-1 text-sm">
+          <p className="text-[#999] mt-1 text-sm">
             {step === 'upload' && 'Last opp CV-en din for å komme i gang'}
             {step === 'questions' && 'AI har generert spørsmål basert på din bakgrunn og stillingen'}
             {step === 'submitted' && 'Din søknad er nå registrert og under vurdering'}
@@ -147,15 +147,15 @@ export default function ApplyPage({
           ].map((s, i) => (
             <React.Fragment key={s.key}>
               <div className={`flex items-center gap-2 ${
-                step === s.key ? 'text-primary' : 'text-gray-400'
+                step === s.key ? 'text-[#d7fe03]' : 'text-[#555]'
               }`}>
                 <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${
                   step === s.key
-                    ? 'border-primary bg-primary text-white'
+                    ? 'border-[#d7fe03] bg-[#d7fe03] text-black'
                     : (i === 0 && (step === 'questions' || step === 'submitted')) ||
                       (i === 1 && step === 'submitted')
                     ? 'border-green-500 bg-green-500 text-white'
-                    : 'border-gray-300 text-gray-400'
+                    : 'border-white/20 text-[#555]'
                 }`}>
                   {(i === 0 && (step === 'questions' || step === 'submitted')) ||
                    (i === 1 && step === 'submitted')
@@ -164,13 +164,13 @@ export default function ApplyPage({
                 </div>
                 <span className="hidden sm:block text-sm font-medium">{s.label}</span>
               </div>
-              {i < 2 && <div className="w-8 h-0.5 bg-gray-200" />}
+              {i < 2 && <div className="w-8 h-0.5 bg-white/10" />}
             </React.Fragment>
           ))}
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-6 flex items-center gap-2">
+          <div className="bg-red-900/20 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg text-sm mb-6 flex items-center gap-2">
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
             {error}
           </div>
@@ -190,23 +190,23 @@ export default function ApplyPage({
                   className={cn(
                     'border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer',
                     isDragging
-                      ? 'border-primary bg-primary/5'
+                      ? 'border-[#d7fe03] bg-[#d7fe03]/5'
                       : cvFile
-                      ? 'border-green-400 bg-green-50'
-                      : 'border-gray-200 hover:border-primary/50 hover:bg-gray-50'
+                      ? 'border-green-500 bg-green-900/20'
+                      : 'border-white/10 hover:border-[#d7fe03]/50 hover:bg-white/5'
                   )}
                   onClick={() => document.getElementById('cv-upload')?.click()}
                 >
                   {cvFile ? (
                     <div className="flex flex-col items-center gap-2">
-                      <CheckCircle2 className="w-10 h-10 text-green-500" />
-                      <p className="font-semibold text-green-700">{cvFile.name}</p>
-                      <p className="text-sm text-green-600">
+                      <CheckCircle2 className="w-10 h-10 text-green-400" />
+                      <p className="font-semibold text-green-400">{cvFile.name}</p>
+                      <p className="text-sm text-green-400/70">
                         {(cvFile.size / 1024 / 1024).toFixed(2)} MB
                       </p>
                       <button
                         type="button"
-                        className="text-sm text-gray-500 hover:text-red-600 mt-2"
+                        className="text-sm text-[#666] hover:text-red-400 mt-2"
                         onClick={(e) => { e.stopPropagation(); setCvFile(null) }}
                       >
                         Fjern fil
@@ -214,14 +214,14 @@ export default function ApplyPage({
                     </div>
                   ) : (
                     <div className="flex flex-col items-center gap-3">
-                      <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center">
-                        <Upload className="w-7 h-7 text-gray-400" />
+                      <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center">
+                        <Upload className="w-7 h-7 text-[#555]" />
                       </div>
                       <div>
-                        <p className="font-semibold text-navy">Dra og slipp CV her</p>
-                        <p className="text-sm text-gray-500 mt-1">eller klikk for å velge fil</p>
+                        <p className="font-semibold text-white">Dra og slipp CV her</p>
+                        <p className="text-sm text-[#999] mt-1">eller klikk for å velge fil</p>
                       </div>
-                      <p className="text-xs text-gray-400 bg-gray-100 px-3 py-1 rounded-full">
+                      <p className="text-xs text-[#555] bg-white/5 px-3 py-1 rounded-full">
                         Kun PDF, maks 10 MB
                       </p>
                     </div>
@@ -248,11 +248,11 @@ export default function ApplyPage({
                 helperText="Valgfritt, men kan styrke søknaden din"
               />
 
-              <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-start gap-3">
-                <Sparkles className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+              <div className="bg-blue-900/20 border border-blue-500/20 rounded-xl p-4 flex items-start gap-3">
+                <Sparkles className="w-5 h-5 text-[#d7fe03] flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-navy">AI analyserer din søknad</p>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-sm font-medium text-white">AI analyserer din søknad</p>
+                  <p className="text-xs text-[#999] mt-1">
                     CV-en din parses automatisk og AI genererer skreddersydde spørsmål basert på din bakgrunn og stillingens krav.
                   </p>
                 </div>
@@ -284,11 +284,11 @@ export default function ApplyPage({
         {/* Steg 2: Oppfølgingsspørsmål */}
         {step === 'questions' && (
           <Card>
-            <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 mb-6 flex items-start gap-3">
-              <Sparkles className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+            <div className="bg-[#d7fe03]/5 border border-[#d7fe03]/20 rounded-xl p-4 mb-6 flex items-start gap-3">
+              <Sparkles className="w-5 h-5 text-[#d7fe03] flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-primary">AI-genererte spørsmål</p>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-sm font-medium text-[#d7fe03]">AI-genererte spørsmål</p>
+                <p className="text-xs text-[#999] mt-1">
                   Disse spørsmålene er laget spesifikt for deg basert på din CV og stillingens krav
                 </p>
               </div>
@@ -300,7 +300,7 @@ export default function ApplyPage({
                   <label className="label">
                     Spørsmål {index + 1} av {followUpQuestions.length}
                   </label>
-                  <p className="text-sm font-medium text-navy mb-2">{question}</p>
+                  <p className="text-sm font-medium text-white mb-2">{question}</p>
                   <Textarea
                     value={answers[index] || ''}
                     onChange={(e) => setAnswers(prev => ({ ...prev, [index]: e.target.value }))}
@@ -336,30 +336,30 @@ export default function ApplyPage({
         {/* Steg 3: Ferdig */}
         {step === 'submitted' && (
           <Card className="text-center py-12">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle2 className="w-10 h-10 text-green-500" />
+            <div className="w-20 h-20 bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle2 className="w-10 h-10 text-green-400" />
             </div>
-            <h2 className="text-2xl font-bold text-navy mb-3">Søknad sendt!</h2>
-            <p className="text-gray-500 mb-8 max-w-sm mx-auto">
+            <h2 className="text-2xl font-bold text-white mb-3">Søknad sendt!</h2>
+            <p className="text-[#999] mb-8 max-w-sm mx-auto">
               Din søknad er mottatt og er nå under AI-analyse. Du vil høre fra oss snart!
             </p>
 
-            <div className="bg-blue-50 border border-blue-100 rounded-xl p-5 mb-8 text-left">
-              <h3 className="font-semibold text-navy mb-3 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-primary" />
+            <div className="bg-blue-900/20 border border-blue-500/20 rounded-xl p-5 mb-8 text-left">
+              <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#d7fe03]" />
                 Neste steg
               </h3>
-              <ul className="space-y-2 text-sm text-gray-600">
+              <ul className="space-y-2 text-sm text-[#999]">
                 <li className="flex items-start gap-2">
-                  <span className="w-5 h-5 bg-primary/10 rounded-full flex items-center justify-center text-primary text-xs font-bold flex-shrink-0 mt-0.5">1</span>
+                  <span className="w-5 h-5 bg-[#d7fe03]/10 rounded-full flex items-center justify-center text-[#d7fe03] text-xs font-bold flex-shrink-0 mt-0.5">1</span>
                   Rekrutterer gjennomgår din søknad og AI-analysen
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="w-5 h-5 bg-primary/10 rounded-full flex items-center justify-center text-primary text-xs font-bold flex-shrink-0 mt-0.5">2</span>
+                  <span className="w-5 h-5 bg-[#d7fe03]/10 rounded-full flex items-center justify-center text-[#d7fe03] text-xs font-bold flex-shrink-0 mt-0.5">2</span>
                   Du kan bli invitert til et AI-intervju direkte i appen
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="w-5 h-5 bg-primary/10 rounded-full flex items-center justify-center text-primary text-xs font-bold flex-shrink-0 mt-0.5">3</span>
+                  <span className="w-5 h-5 bg-[#d7fe03]/10 rounded-full flex items-center justify-center text-[#d7fe03] text-xs font-bold flex-shrink-0 mt-0.5">3</span>
                   Rekrutterer kontakter deg med neste steg
                 </li>
               </ul>
