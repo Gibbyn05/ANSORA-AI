@@ -23,15 +23,28 @@ Krav og kvalifikasjoner: ${params.requirements}
 ${params.keywords ? `Stikkord: ${params.keywords}` : ''}
 ${params.companyName ? `Bedrift: ${params.companyName}` : ''}
 
-Annonsen skal:
-- Starte med en kort, fengende ingress (2-3 setninger)
-- Ha en seksjon "Om stillingen" med konkrete arbeidsoppgaver
-- Ha en seksjon "Vi søker deg som" med klare krav og ønskede egenskaper
-- Ha en seksjon "Vi tilbyr" med attraktive fordeler
-- Avslutte med en oppfordring til å søke
-- Være profesjonell, inkluderende og tillitsvekkende
-- Ikke inneholde diskriminerende språk
-- Være mellom 300-500 ord`
+Annonsen skal ha nøyaktig denne strukturen med markdown-overskrifter:
+
+[Kort fengende ingress på 2-3 setninger uten overskrift]
+
+## Om stillingen
+[Konkrete arbeidsoppgaver som punktliste med - ]
+
+## Vi søker deg som
+[Klare krav og ønskede egenskaper som punktliste med - ]
+
+## Vi tilbyr
+[Attraktive fordeler som punktliste med - ]
+
+[Avsluttende oppfordring til å søke, 1-2 setninger uten overskrift]
+
+Regler:
+- Bruk alltid ## for seksjonsoverskrifter, aldri **bold** som overskrift
+- Bruk - for alle punktlister
+- Ingen **bold** eller *kursiv* i teksten
+- Profesjonell, inkluderende og tillitsvekkende tone
+- Ikke diskriminerende språk
+- 300-500 ord totalt`
 
   const response = await openai.chat.completions.create({
     model: MODEL,

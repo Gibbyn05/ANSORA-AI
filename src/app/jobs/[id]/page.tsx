@@ -31,25 +31,63 @@ function getSectionType(title: string | null): SectionType {
   return 'annet'
 }
 
+/** Remove markdown syntax from a plain text string */
+function strip(text: string): string {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '$1')  // **bold**
+    .replace(/\*(.+?)\*/g, '$1')       // *italic*
+    .replace(/^#+\s+/, '')             // ## heading prefix
+    .replace(/:$/, '')                 // trailing colon
+    .trim()
+}
+
+/** Returns true when a line is a standalone heading (not content) */
+function isHeadingLine(line: string): boolean {
+  const t = line.trim()
+  if (t.match(/^#{1,3} /)) return true
+  // **Heading:** or **Heading** on its own line
+  if (t.match(/^\*\*[^*]+:?\*\*\s*$/) || t.match(/^\*\*[^*]+:\*\*\s*$/)) return true
+  // Heading: with no extra text after (e.g. "Om stillingen:")
+  if (t.match(/^[A-ZÆØÅ][^.!?]{3,40}:\s*$/) && !t.startsWith('-')) return true
+  return false
+}
+
 function parseDescription(text: string): Section[] {
   const sections: Section[] = []
   let current: { title: string | null; lines: string[] } = { title: null, lines: [] }
 
   const flush = () => {
     if (current.lines.some((l) => l.trim())) {
-      sections.push({ title: current.title, lines: current.lines, type: getSectionType(current.title) })
+      sections.push({ title: current.title, lines: [...current.lines], type: getSectionType(current.title) })
     }
   }
 
   for (const line of text.split('\n')) {
-    if (line.match(/^#{1,3} /)) {
+    // Handle "**Heading:** content on same line" format
+    const inlineHeading = line.match(/^\*\*([^*]{3,40}):?\*\*[:\s]+(.+)/)
+    if (inlineHeading) {
       flush()
-      current = { title: line.replace(/^#+\s+/, '').trim(), lines: [] }
+      current = { title: inlineHeading[1].trim(), lines: [strip(inlineHeading[2])] }
+      continue
+    }
+
+    if (isHeadingLine(line)) {
+      flush()
+      current = { title: strip(line), lines: [] }
     } else {
-      current.lines.push(line)
+      // Strip inline markdown from content lines before storing
+      current.lines.push(strip(line))
     }
   }
   flush()
+
+  // Skip a first section that is only the job title (e.g. "Stillingsannonse: ...")
+  if (sections.length > 0 && sections[0].title === null) {
+    const firstLines = sections[0].lines.filter((l) => l.trim())
+    if (firstLines.length === 1 && firstLines[0].toLowerCase().includes('stillingsannonse')) {
+      sections.shift()
+    }
+  }
 
   // Mark last text-only section as closing paragraph
   if (sections.length > 0) {
