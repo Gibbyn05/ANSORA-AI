@@ -62,7 +62,7 @@ export default function NewJobPage() {
       setDescription(data.description)
       setStep('preview')
     } catch (err) {
-      setError('AI-generering feilet. Du kan skrive stillingsannonsen manuelt ved å klikke "Skriv manuelt" nedenfor.')
+      setError(err instanceof Error ? err.message : 'AI-generering feilet. Du kan skrive stillingsannonsen manuelt ved å klikke "Skriv manuelt" nedenfor.')
     } finally {
       setGenerating(false)
     }
