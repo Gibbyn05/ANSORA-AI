@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { generateFollowUpQuestions, scoreCandidate, analyzeCandidate, detectLanguage } from '@/lib/gemini/prompts'
 
 // POST - Send inn søknad med CV
@@ -21,15 +21,26 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Mangler stilling-ID eller CV' }, { status: 400 })
     }
 
-    // Hent kandidatprofil
-    const { data: candidate } = await supabase
+    // Hent kandidatprofil – opprett automatisk hvis den mangler
+    let { data: candidate } = await supabase
       .from('candidates')
       .select('*')
       .eq('user_id', user.id)
       .single()
 
     if (!candidate) {
-      return NextResponse.json({ error: 'Ingen kandidatprofil funnet' }, { status: 403 })
+      const admin = await createAdminClient()
+      const name = (user.user_metadata?.name as string | undefined) ?? user.email ?? 'Kandidat'
+      const { data: created } = await admin
+        .from('candidates')
+        .insert({ user_id: user.id, name, email: user.email ?? '' })
+        .select('*')
+        .single()
+
+      if (!created) {
+        return NextResponse.json({ error: 'Kunne ikke opprette kandidatprofil' }, { status: 500 })
+      }
+      candidate = created
     }
 
     // Sjekk om kandidaten allerede har søkt
