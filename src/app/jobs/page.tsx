@@ -1,8 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/ui/Navbar'
-import { Badge } from '@/components/ui/Badge'
 import { getIndustryLabel, formatDate } from '@/lib/utils'
-import { MapPin, Clock, Briefcase, Search, ArrowRight } from 'lucide-react'
+import { MapPin, Clock, Briefcase, Search, ArrowRight, Building2, Users } from 'lucide-react'
 import Link from 'next/link'
 import type { Job, Industry } from '@/types'
 
@@ -30,10 +29,7 @@ export default async function JobsPage({
 
   let query = supabase
     .from('jobs')
-    .select(`
-      *,
-      companies (id, name, logo)
-    `)
+    .select(`*, companies (id, name, logo)`)
     .eq('status', 'published')
     .order('created_at', { ascending: false })
 
@@ -52,115 +48,198 @@ export default async function JobsPage({
     )
   }) || []
 
+  const postedDays = (date: string) =>
+    Math.floor((Date.now() - new Date(date).getTime()) / (1000 * 60 * 60 * 24))
+
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
       <Navbar userRole={userRole} userName={userName} />
 
-      {/* Hero */}
-      <div className="bg-[#111111] border-b border-white/10 text-white py-16">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h1 className="text-3xl font-bold mb-3">Ledige stillinger</h1>
-          <p className="text-[#999] mb-8">Finn din neste karrieremulighet</p>
+      {/* ── HERO (Prospect left-aligned style) ───────────────────────── */}
+      <section className="pt-16 pb-12 border-b border-white/[0.06]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl">
+            <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 leading-tight tracking-tight">
+              Ledige stillinger
+            </h1>
+            <p className="text-[#666] text-lg mb-8">
+              Finn din neste karrieremulighet blant{' '}
+              <span className="text-white">{jobs?.length ?? 0} aktive stillinger</span>
+            </p>
 
-          {/* Søkefelt */}
-          <form method="GET" className="flex gap-3 max-w-lg mx-auto">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#555]" />
-              <input
-                name="search"
-                defaultValue={search}
-                placeholder="Søk stilling, sted..."
-                className="w-full pl-10 pr-4 py-3 rounded-xl text-white bg-[#1a1a1a] border border-white/10 focus:outline-none focus:ring-2 focus:ring-[#d7fe03] placeholder-[#555]"
-              />
-            </div>
-            <button
-              type="submit"
-              className="bg-[#d7fe03] hover:bg-[#c8ef00] text-black px-6 py-3 rounded-xl font-semibold transition-colors"
-            >
-              Søk
-            </button>
-          </form>
-        </div>
-      </div>
-
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar - bransjefilter */}
-          <aside className="lg:w-56 flex-shrink-0">
-            <div className="card">
-              <h3 className="font-semibold text-white mb-4 text-sm uppercase tracking-wide">Bransje</h3>
-              <div className="space-y-1">
-                {INDUSTRIES.map((ind) => (
-                  <Link
-                    key={ind.value}
-                    href={ind.value ? `/jobs?industry=${ind.value}${search ? `&search=${search}` : ''}` : `/jobs${search ? `?search=${search}` : ''}`}
-                    className={`block px-3 py-2 rounded-lg text-sm transition-colors ${
-                      (industry || '') === ind.value
-                        ? 'bg-[#d7fe03] text-black font-medium'
-                        : 'text-[#999] hover:bg-white/5 hover:text-white'
-                    }`}
-                  >
-                    {ind.label}
-                  </Link>
-                ))}
+            {/* Search bar */}
+            <form method="GET" className="flex gap-3">
+              <div className="flex-1 relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-[#444]" />
+                <input
+                  name="search"
+                  defaultValue={search}
+                  placeholder="Søk på stilling, sted eller bransje..."
+                  className="w-full pl-11 pr-4 py-3.5 rounded-xl text-white bg-[#111111] border border-white/[0.08] focus:outline-none focus:ring-2 focus:ring-[#d7fe03] focus:border-transparent placeholder-[#3a3a3a] text-[15px] transition-all"
+                />
+                {industry && (
+                  <input type="hidden" name="industry" value={industry} />
+                )}
               </div>
-            </div>
-          </aside>
-
-          {/* Stillingsliste */}
-          <div className="flex-1">
-            <div className="flex items-center justify-between mb-6">
-              <p className="text-[#999] text-sm">
-                <span className="font-semibold text-white">{filteredJobs.length}</span> stilling{filteredJobs.length !== 1 ? 'er' : ''} funnet
-              </p>
-            </div>
-
-            {filteredJobs.length === 0 ? (
-              <div className="card text-center py-16">
-                <Briefcase className="w-12 h-12 text-[#333] mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">Ingen stillinger funnet</h3>
-                <p className="text-[#999] text-sm">Prøv et annet søkeord eller fjern filteret</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {filteredJobs.map((job: Job & { companies?: { name: string } }) => (
-                  <Link key={job.id} href={`/jobs/${job.id}`}>
-                    <div className="card hover:border-white/20 transition-all duration-200 cursor-pointer group">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <Badge variant="neutral">{getIndustryLabel(job.industry as Industry)}</Badge>
-                            <Badge variant="info">{job.percentage}%</Badge>
-                          </div>
-                          <h2 className="text-lg font-semibold text-white group-hover:text-[#d7fe03] transition-colors">
-                            {job.title}
-                          </h2>
-                          <p className="text-sm text-[#999] font-medium mt-0.5">
-                            {(job as { companies?: { name: string } }).companies?.name || 'Bedrift'}
-                          </p>
-                          <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-[#999]">
-                            <span className="flex items-center gap-1.5">
-                              <MapPin className="w-4 h-4" />
-                              {job.location}
-                            </span>
-                            <span className="flex items-center gap-1.5">
-                              <Clock className="w-4 h-4" />
-                              {formatDate(job.created_at)}
-                            </span>
-                          </div>
-                          <p className="mt-3 text-sm text-[#666] line-clamp-2">
-                            {job.description.substring(0, 200)}...
-                          </p>
-                        </div>
-                        <ArrowRight className="w-5 h-5 text-[#444] group-hover:text-[#d7fe03] transition-colors flex-shrink-0 mt-2" />
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
+              <button
+                type="submit"
+                className="bg-[#d7fe03] hover:bg-[#c8ef00] text-black px-6 py-3.5 rounded-xl font-semibold transition-colors text-[15px] flex-shrink-0"
+              >
+                Søk
+              </button>
+            </form>
           </div>
         </div>
+      </section>
+
+      {/* ── INDUSTRY FILTER: Horizontal pills (Sasslo/modern pattern) ── */}
+      <section className="py-5 border-b border-white/[0.05] sticky top-16 z-40 bg-[#0a0a0a]/95 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+            {INDUSTRIES.map((ind) => (
+              <Link
+                key={ind.value}
+                href={
+                  ind.value
+                    ? `/jobs?industry=${ind.value}${search ? `&search=${search}` : ''}`
+                    : `/jobs${search ? `?search=${search}` : ''}`
+                }
+                className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all duration-150 ${
+                  (industry || '') === ind.value
+                    ? 'bg-[#d7fe03] text-black'
+                    : 'bg-white/[0.04] border border-white/[0.07] text-[#666] hover:text-white hover:border-white/[0.15]'
+                }`}
+              >
+                {ind.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── JOB LISTING ───────────────────────────────────────────────── */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+        {/* Count + active filter */}
+        <div className="flex items-center justify-between mb-7">
+          <p className="text-sm text-[#555]">
+            <span className="text-white font-semibold">{filteredJobs.length}</span>{' '}
+            stilling{filteredJobs.length !== 1 ? 'er' : ''}{' '}
+            {industry && (
+              <span>
+                i <span className="text-[#d7fe03]">{getIndustryLabel(industry as Industry)}</span>
+              </span>
+            )}
+            {search && (
+              <span>
+                {' '}for <span className="text-[#d7fe03]">&ldquo;{search}&rdquo;</span>
+              </span>
+            )}
+          </p>
+          {(industry || search) && (
+            <Link
+              href="/jobs"
+              className="text-xs text-[#555] hover:text-white transition-colors border border-white/[0.07] px-3 py-1.5 rounded-full"
+            >
+              Fjern filter ×
+            </Link>
+          )}
+        </div>
+
+        {filteredJobs.length === 0 ? (
+          /* Empty state */
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/[0.07] flex items-center justify-center mb-5">
+              <Briefcase className="w-7 h-7 text-[#333]" />
+            </div>
+            <h3 className="text-xl font-semibold text-white mb-2">Ingen stillinger funnet</h3>
+            <p className="text-[#555] text-sm mb-6 max-w-sm">
+              Prøv et annet søkeord eller fjern bransjefilter for å se alle stillinger.
+            </p>
+            <Link
+              href="/jobs"
+              className="text-sm text-[#d7fe03] border border-[#d7fe03]/20 hover:bg-[#d7fe03]/5 px-5 py-2.5 rounded-xl transition-colors"
+            >
+              Vis alle stillinger
+            </Link>
+          </div>
+        ) : (
+          /* Job cards grid (Visuo-inspired cards) */
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {filteredJobs.map((job: Job & { companies?: { name: string; logo?: string } }) => {
+              const days = postedDays(job.created_at)
+              const isNew = days <= 3
+              return (
+                <Link key={job.id} href={`/jobs/${job.id}`}>
+                  <article className="group bg-[#111111] border border-white/[0.07] rounded-2xl p-6 hover:border-white/[0.18] hover:bg-[#141414] transition-all duration-200 cursor-pointer h-full flex flex-col">
+
+                    {/* Top row: company + badges */}
+                    <div className="flex items-start justify-between gap-3 mb-4">
+                      <div className="flex items-center gap-3">
+                        {job.companies?.logo ? (
+                          <img
+                            src={job.companies.logo}
+                            alt={job.companies.name}
+                            className="w-9 h-9 rounded-lg object-contain bg-[#1a1a1a] border border-white/10 p-0.5 flex-shrink-0"
+                          />
+                        ) : (
+                          <div className="w-9 h-9 rounded-lg bg-[#1a1a1a] border border-white/10 flex items-center justify-center flex-shrink-0">
+                            <Building2 className="w-4 h-4 text-[#444]" />
+                          </div>
+                        )}
+                        <div>
+                          <p className="text-xs text-[#555] font-medium">
+                            {job.companies?.name || 'Bedrift'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {isNew && (
+                          <span className="text-[11px] font-semibold bg-[#d7fe03] text-black px-2.5 py-1 rounded-full">
+                            Ny
+                          </span>
+                        )}
+                        <span className="text-[11px] text-[#444] border border-white/[0.07] px-2.5 py-1 rounded-full">
+                          {job.percentage}%
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Title */}
+                    <h2 className="text-[17px] font-semibold text-white group-hover:text-[#d7fe03] transition-colors mb-2 leading-snug">
+                      {job.title}
+                    </h2>
+
+                    {/* Industry pill */}
+                    <span className="inline-flex items-center text-[11px] font-medium text-[#d7fe03] bg-[#d7fe03]/10 border border-[#d7fe03]/20 px-2.5 py-0.5 rounded-full mb-3 w-fit">
+                      {getIndustryLabel(job.industry as Industry)}
+                    </span>
+
+                    {/* Description preview */}
+                    <p className="text-sm text-[#555] line-clamp-2 leading-relaxed flex-1 mb-4">
+                      {job.description.replace(/[#*_]/g, '').substring(0, 180)}…
+                    </p>
+
+                    {/* Bottom meta row */}
+                    <div className="flex items-center justify-between pt-4 border-t border-white/[0.05]">
+                      <div className="flex items-center gap-4 text-xs text-[#444]">
+                        <span className="flex items-center gap-1.5">
+                          <MapPin className="w-3.5 h-3.5" />
+                          {job.location}
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <Clock className="w-3.5 h-3.5" />
+                          {days === 0 ? 'I dag' : days === 1 ? 'I går' : `${days}d siden`}
+                        </span>
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-[#333] group-hover:text-[#d7fe03] group-hover:translate-x-0.5 transition-all" />
+                    </div>
+                  </article>
+                </Link>
+              )
+            })}
+          </div>
+        )}
       </div>
     </div>
   )
