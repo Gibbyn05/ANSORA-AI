@@ -4,9 +4,8 @@ export const dynamic = 'force-dynamic'
 
 import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useSearchParams } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { loginAction } from './actions'
 import { Input } from '@/components/ui/Input'
 import { LogIn, Eye, EyeOff, Brain, CheckCircle2, Star, TrendingUp, Users } from 'lucide-react'
 
@@ -17,7 +16,6 @@ function LoginForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const router = useRouter()
   const searchParams = useSearchParams()
 
   useEffect(() => {
@@ -30,22 +28,17 @@ function LoginForm() {
     setLoading(true)
     setError('')
 
-    const supabase = createClient()
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const result = await loginAction(email, password)
 
-    if (error) {
-      if (error.message === 'Failed to fetch' || error.message.includes('fetch')) {
-        setError('Kunne ikke koble til serveren. Sjekk at Supabase-prosjektet er aktivt.')
-      } else if (error.message.toLowerCase().includes('email not confirmed')) {
-        setError('E-posten din er ikke bekreftet ennå. Sjekk innboksen din.')
-      } else {
-        setError('Feil e-post eller passord. Prøv igjen.')
-      }
+    if ('error' in result) {
+      setError(result.error)
       setLoading(false)
       return
     }
 
-    router.push('/dashboard')
+    // Session is now set server-side via the action's Set-Cookie headers.
+    // A full reload guarantees the new cookies are sent with the request.
+    window.location.href = '/dashboard'
   }
 
   return (
