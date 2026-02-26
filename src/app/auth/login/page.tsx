@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Input } from '@/components/ui/Input'
@@ -16,6 +17,7 @@ function LoginForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  const router = useRouter()
   const searchParams = useSearchParams()
 
   useEffect(() => {
@@ -43,7 +45,8 @@ function LoginForm() {
       return
     }
 
-    window.location.href = '/dashboard'
+    router.refresh()
+    router.push('/dashboard')
   }
 
   return (

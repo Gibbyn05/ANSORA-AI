@@ -31,14 +31,20 @@ export default function ApplyPage({
   const [error, setError] = useState('')
   const [isDragging, setIsDragging] = useState(false)
 
+  const MAX_FILE_SIZE = 4 * 1024 * 1024 // 4 MB
+
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     setIsDragging(false)
     const file = e.dataTransfer.files[0]
-    if (file && file.type === 'application/pdf') {
-      setCvFile(file)
-    } else {
+    if (!file) return
+    if (file.type !== 'application/pdf') {
       setError('Kun PDF-filer støttes')
+    } else if (file.size > MAX_FILE_SIZE) {
+      setError(`Filen er for stor (${(file.size / 1024 / 1024).toFixed(1)} MB). Maks 4 MB tillatt.`)
+    } else {
+      setError('')
+      setCvFile(file)
     }
   }, [])
 
@@ -220,7 +226,7 @@ export default function ApplyPage({
                         <p className="text-sm text-[#999] mt-1">eller klikk for å velge fil</p>
                       </div>
                       <p className="text-xs text-[#555] bg-white/5 px-3 py-1 rounded-full">
-                        Kun PDF, maks 10 MB
+                        Kun PDF, maks 4 MB
                       </p>
                     </div>
                   )}
@@ -232,7 +238,14 @@ export default function ApplyPage({
                   className="hidden"
                   onChange={(e) => {
                     const file = e.target.files?.[0]
-                    if (file) setCvFile(file)
+                    if (!file) return
+                    if (file.size > MAX_FILE_SIZE) {
+                      setError(`Filen er for stor (${(file.size / 1024 / 1024).toFixed(1)} MB). Maks 4 MB tillatt.`)
+                      e.target.value = ''
+                    } else {
+                      setError('')
+                      setCvFile(file)
+                    }
                   }}
                 />
               </div>

@@ -42,10 +42,20 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.next({ request })
   }
 
+  const pathname = request.nextUrl.pathname
+
+  // Allerede innloggede brukere sendes bort fra auth-sidene
+  const authPaths = ['/auth/login', '/auth/register']
+  if (user && authPaths.some((p) => pathname.startsWith(p))) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/dashboard'
+    return NextResponse.redirect(url)
+  }
+
   // Beskyttede ruter som krever innlogging
   const protectedPaths = ['/dashboard', '/jobs/new']
   const isProtectedPath = protectedPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
+    pathname.startsWith(path)
   )
 
   if (isProtectedPath && !user) {
