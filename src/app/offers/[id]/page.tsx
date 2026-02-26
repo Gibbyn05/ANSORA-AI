@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { CheckCircle2, XCircle, Award, Briefcase, Calendar, Banknote } from 'lucide-react'
-import React from 'react'
+
 
 interface OfferData {
   id: string
@@ -29,10 +29,10 @@ interface OfferData {
 export default function OfferPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }) {
-  const resolvedParams = React.use(params)
-  const offerId = resolvedParams.id
+  
+  const { id: offerId } = params
 
   const [offer, setOffer] = useState<OfferData | null>(null)
   const [loading, setLoading] = useState(true)

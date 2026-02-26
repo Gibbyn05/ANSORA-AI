@@ -11,15 +11,13 @@ import {
   Sparkles, Send, AlertCircle, Loader2
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import React from 'react'
 
 export default function ApplyPage({
   params,
 }: {
-  params: Promise<{ jobId: string }>
+  params: { jobId: string }
 }) {
-  const resolvedParams = React.use(params)
-  const jobId = resolvedParams.jobId
+  const { jobId } = params
   const router = useRouter()
 
   const [step, setStep] = useState<'upload' | 'questions' | 'submitted'>('upload')
@@ -145,7 +143,7 @@ export default function ApplyPage({
             { label: 'Spørsmål', key: 'questions' },
             { label: 'Ferdig', key: 'submitted' },
           ].map((s, i) => (
-            <React.Fragment key={s.key}>
+            <div key={s.key} className="flex items-center gap-1 sm:gap-4">
               <div className={`flex items-center gap-2 ${
                 step === s.key ? 'text-[#d7fe03]' : 'text-[#555]'
               }`}>
@@ -165,7 +163,7 @@ export default function ApplyPage({
                 <span className="hidden sm:block text-sm font-medium">{s.label}</span>
               </div>
               {i < 2 && <div className="w-8 h-0.5 bg-white/10" />}
-            </React.Fragment>
+            </div>
           ))}
         </div>
 

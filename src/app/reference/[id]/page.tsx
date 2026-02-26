@@ -5,15 +5,15 @@ import { Button } from '@/components/ui/Button'
 import { Input, Textarea, Select } from '@/components/ui/Input'
 import { Card } from '@/components/ui/Card'
 import { CheckCircle2, Star } from 'lucide-react'
-import React from 'react'
+
 
 export default function ReferencePage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }) {
-  const resolvedParams = React.use(params)
-  const referenceId = resolvedParams.id
+  
+  const { id: referenceId } = params
 
   const [referenceData, setReferenceData] = useState<{
     referee_name: string

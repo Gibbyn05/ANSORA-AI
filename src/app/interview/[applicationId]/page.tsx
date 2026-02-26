@@ -7,15 +7,15 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Send, Bot, User, CheckCircle2, ArrowLeft, Sparkles } from 'lucide-react'
 import type { InterviewMessage } from '@/types'
-import React from 'react'
+
 
 export default function InterviewPage({
   params,
 }: {
-  params: Promise<{ applicationId: string }>
+  params: { applicationId: string }
 }) {
-  const resolvedParams = React.use(params)
-  const applicationId = resolvedParams.applicationId
+  
+  const { applicationId } = params
   const router = useRouter()
 
   const [messages, setMessages] = useState<InterviewMessage[]>([])
