@@ -1,7 +1,5 @@
 import type { Job, Candidate, AIAnalysis, InterviewMessage } from '@/types'
-import { openai } from './client'
-
-const MODEL = 'gpt-4o-mini'
+import { getModel } from './client'
 
 // ===== STILLINGSANNONSE GENERATOR =====
 export async function generateJobDescription(params: {
@@ -46,12 +44,9 @@ Regler:
 - Ikke diskriminerende språk
 - 300-500 ord totalt`
 
-  const response = await openai.chat.completions.create({
-    model: MODEL,
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.7,
-  })
-  return response.choices[0].message.content || ''
+  const model = getModel()
+  const result = await model.generateContent(prompt)
+  return result.response.text()
 }
 
 // ===== OPPFØLGINGSSPØRSMÅL GENERATOR =====
@@ -73,22 +68,18 @@ ${params.cvText}
 
 Generer spørsmål som:
 - Er spesifikke for kandidatens bakgrunn vs stillingens krav
-- Adresserer eventuelle gap eller uklarheter (f.eks. om kandidaten er student og stillingen er 100%)
+- Adresserer eventuelle gap eller uklarheter
 - Er åpne og inviterende, ikke konfronterende
 - Avdekker motivasjon og egnethet
 
-Svar kun med en JSON-array av spørsmål, ingen annen tekst:
-["Spørsmål 1", "Spørsmål 2", ...]`
+Svar kun med en JSON-array av spørsmål:
+{"questions": ["Spørsmål 1", "Spørsmål 2", ...]}`
 
-  const response = await openai.chat.completions.create({
-    model: MODEL,
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.6,
-    response_format: { type: 'json_object' },
-  })
+  const model = getModel(true)
+  const result = await model.generateContent(prompt)
   try {
-    const parsed = JSON.parse(response.choices[0].message.content || '{}')
-    return Array.isArray(parsed) ? parsed : parsed.questions || []
+    const parsed = JSON.parse(result.response.text())
+    return Array.isArray(parsed) ? parsed : (parsed.questions || [])
   } catch {
     return []
   }
@@ -122,21 +113,14 @@ Scorer basert på:
 - Røde flagg (trekk poeng, -10%)
 
 Svar med JSON:
-{
-  "score": [0-100],
-  "reasoning": "Kort begrunnelse på norsk"
-}`
+{"score": 75, "reasoning": "Kort begrunnelse på norsk"}`
 
-  const response = await openai.chat.completions.create({
-    model: MODEL,
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.3,
-    response_format: { type: 'json_object' },
-  })
+  const model = getModel(true)
+  const result = await model.generateContent(prompt)
   try {
-    const parsed = JSON.parse(response.choices[0].message.content || '{}')
+    const parsed = JSON.parse(result.response.text())
     return {
-      score: Math.min(100, Math.max(0, parsed.score || 0)),
+      score: Math.min(100, Math.max(0, Number(parsed.score) || 0)),
       reasoning: parsed.reasoning || '',
     }
   } catch {
@@ -176,14 +160,10 @@ Svar med JSON:
   "summary": "En kort, balansert oppsummering på 2-3 setninger"
 }`
 
-  const response = await openai.chat.completions.create({
-    model: MODEL,
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.5,
-    response_format: { type: 'json_object' },
-  })
+  const model = getModel(true)
+  const result = await model.generateContent(prompt)
   try {
-    const parsed = JSON.parse(response.choices[0].message.content || '{}')
+    const parsed = JSON.parse(result.response.text())
     return {
       strengths: parsed.strengths || [],
       areasToExplore: parsed.areasToExplore || [],
@@ -213,7 +193,7 @@ export async function runInterviewTurn(params: {
   const lang = params.language || 'norsk'
   const isFirstMessage = params.conversationHistory.length === 0
 
-  const systemPrompt = `Du er en profesjonell og vennlig rekrutterer som gjennomfører et strukturert jobbintervju på ${lang}.
+  const systemInstruction = `Du er en profesjonell og vennlig rekrutterer som gjennomfører et strukturert jobbintervju på ${lang}.
 
 STILLING: ${params.job.title} ved ${params.job.location}
 BESKRIVELSE: ${params.job.description}
@@ -229,28 +209,25 @@ Retningslinjer:
 - Ha 6-8 spørsmål totalt
 - Avslutt med å informere at intervjuet er fullført og takk for deltagelse`
 
-  const messages: { role: 'system' | 'user' | 'assistant'; content: string }[] = [
-    { role: 'system', content: systemPrompt },
-    ...params.conversationHistory.map((m) => ({
-      role: m.role === 'assistant' ? ('assistant' as const) : ('user' as const),
-      content: m.content,
-    })),
-  ]
+  const model = getModel()
 
-  if (isFirstMessage) {
-    messages.push({
-      role: 'user',
-      content: 'Start med å ønske kandidaten velkommen og still det første spørsmålet.',
-    })
-  }
+  // Build chat history from prior turns (exclude first synthetic user message)
+  const history = params.conversationHistory.map((m) => ({
+    role: m.role === 'assistant' ? ('model' as const) : ('user' as const),
+    parts: [{ text: m.content }],
+  }))
 
-  const response = await openai.chat.completions.create({
-    model: MODEL,
-    messages,
-    temperature: 0.7,
-    max_tokens: 300,
+  const chat = model.startChat({
+    systemInstruction,
+    history: history.length > 0 ? history : undefined,
   })
-  return response.choices[0].message.content || ''
+
+  const userMessage = isFirstMessage
+    ? 'Start med å ønske kandidaten velkommen og still det første spørsmålet.'
+    : params.conversationHistory[params.conversationHistory.length - 1]?.content || ''
+
+  const result = await chat.sendMessage(userMessage)
+  return result.response.text()
 }
 
 // ===== INTERVJUOPPSUMMERING =====
@@ -276,12 +253,9 @@ Oppsummeringen skal inkludere:
 
 Hold oppsummeringen på 150-250 ord.`
 
-  const response = await openai.chat.completions.create({
-    model: MODEL,
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.5,
-  })
-  return response.choices[0].message.content || ''
+  const model = getModel()
+  const result = await model.generateContent(prompt)
+  return result.response.text()
 }
 
 // ===== AVVISNINGSE-POST =====
@@ -309,12 +283,9 @@ E-posten skal:
 
 Skriv kun e-postteksten, ingen emne-linje.`
 
-  const response = await openai.chat.completions.create({
-    model: MODEL,
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.8,
-  })
-  return response.choices[0].message.content || ''
+  const model = getModel()
+  const result = await model.generateContent(prompt)
+  return result.response.text()
 }
 
 // ===== ONBOARDING-EPOST =====
@@ -340,25 +311,18 @@ E-posten skal:
 - Være entusiastisk men profesjonell
 - Være 150-200 ord`
 
-  const response = await openai.chat.completions.create({
-    model: MODEL,
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.7,
-  })
-  return response.choices[0].message.content || ''
+  const model = getModel()
+  const result = await model.generateContent(prompt)
+  return result.response.text()
 }
 
 // ===== SPRÅKDETEKSJON =====
 export async function detectLanguage(text: string): Promise<string> {
-  const prompt = `Detect the language of this text and return only the language name in English (e.g., "Norwegian", "English", "Swedish", "Polish", etc.):
+  const prompt = `Detect the language of this text and return only the language name in English (e.g., "Norwegian", "English", "Swedish", "Polish", etc.). Reply with just the language name, nothing else.
 
 "${text.substring(0, 200)}"`
 
-  const response = await openai.chat.completions.create({
-    model: MODEL,
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0,
-    max_tokens: 10,
-  })
-  return response.choices[0].message.content?.trim() || 'Norwegian'
+  const model = getModel()
+  const result = await model.generateContent(prompt)
+  return result.response.text().trim() || 'Norwegian'
 }
