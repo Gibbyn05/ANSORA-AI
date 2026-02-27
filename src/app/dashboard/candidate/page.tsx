@@ -60,7 +60,7 @@ export default async function CandidateDashboard() {
       candidate = created
     } else {
       // Fall back to admin client
-      const admin = await createAdminClient()
+      const admin = createAdminClient()
       const { data: adminCreated, error: e2 } = await admin
         .from('candidates')
         .insert(newCandidate)

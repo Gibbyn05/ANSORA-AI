@@ -1,4 +1,5 @@
 import { createServerClient } from '@supabase/ssr'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 
 // Chainable query stub — returned when Supabase env vars are not configured.
@@ -74,7 +75,8 @@ export async function createClient() {
 }
 
 // Admin-klient for server-side operasjoner som krever elevated privileges
-export async function createAdminClient() {
+// Bruker supabase-js direkte (ikke SSR) for å garantere at service role bypasser RLS
+export function createAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY
 
@@ -82,25 +84,7 @@ export async function createAdminClient() {
     return createStubClient()
   }
 
-  try {
-    const cookieStore = await cookies()
-    return createServerClient(url, key, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll()
-      },
-      setAll(cookiesToSet) {
-        try {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
-          )
-        } catch {
-          // ignorerer
-        }
-      },
-    },
+  return createSupabaseClient(url, key, {
+    auth: { persistSession: false },
   })
-  } catch {
-    return createStubClient()
-  }
 }

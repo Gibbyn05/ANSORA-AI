@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (!candidate) {
-      const admin = await createAdminClient()
+      const admin = createAdminClient()
       const name = (user.user_metadata?.name as string | undefined) ?? user.email ?? 'Kandidat'
       const { data: created } = await admin
         .from('candidates')
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
     const cvBuffer = await cvFile.arrayBuffer()
     const cvPath = `${candidate.id}/${jobId}/cv.pdf`
 
-    const admin = await createAdminClient()
+    const admin = createAdminClient()
     const { error: uploadError } = await admin.storage
       .from('cvs')
       .upload(cvPath, cvBuffer, {

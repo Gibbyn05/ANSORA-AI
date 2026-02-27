@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
     const email = user.email ?? ''
 
     // Use admin client to bypass RLS when creating the profile
-    const admin = await createAdminClient()
+    const admin = createAdminClient()
 
     if (role === 'company') {
       const { data: existing } = await admin

@@ -47,7 +47,7 @@ export default async function CompanyDashboard() {
       company = created
     } else {
       // Fall back to the admin client (service role key bypasses RLS)
-      const admin = await createAdminClient()
+      const admin = createAdminClient()
       const { data: adminCreated } = await admin
         .from('companies')
         .insert({ user_id: user.id, name, email: user.email ?? '' })
