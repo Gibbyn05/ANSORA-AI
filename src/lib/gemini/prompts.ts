@@ -211,8 +211,14 @@ Retningslinjer:
 
   const model = getModel()
 
-  // Build chat history from prior turns (exclude first synthetic user message)
-  const history = params.conversationHistory.map((m) => ({
+  // The last entry in conversationHistory is always the user's latest message.
+  // Gemini's startChat() history must end with a 'model' turn, so we slice off
+  // the last message and send it separately via sendMessage().
+  const historyEntries = isFirstMessage
+    ? []
+    : params.conversationHistory.slice(0, -1)
+
+  const history = historyEntries.map((m) => ({
     role: m.role === 'assistant' ? ('model' as const) : ('user' as const),
     parts: [{ text: m.content }],
   }))

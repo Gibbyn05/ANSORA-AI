@@ -111,6 +111,7 @@ export async function POST(req: NextRequest) {
 
   } catch (error) {
     console.error('Feil i intervjurute:', error)
-    return NextResponse.json({ error: 'Feil ved intervjugjennomføring' }, { status: 500 })
+    const message = error instanceof Error ? error.message : String(error)
+    return NextResponse.json({ error: `Feil ved intervjugjennomføring: ${message}` }, { status: 500 })
   }
 }
