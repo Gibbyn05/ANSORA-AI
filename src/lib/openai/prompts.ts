@@ -1,5 +1,5 @@
 import type { Job, Candidate, AIAnalysis, InterviewMessage } from '@/types'
-import { openai } from './client'
+import { getOpenAIClient } from './client'
 
 // ===== STILLINGSANNONSE GENERATOR =====
 export async function generateJobDescription(params: {
@@ -44,7 +44,7 @@ Regler:
 - Ikke diskriminerende språk
 - 300-500 ord totalt`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAIClient().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.7,
@@ -79,7 +79,7 @@ Generer spørsmål som:
 Svar kun med en JSON-array av spørsmål, ingen annen tekst:
 ["Spørsmål 1", "Spørsmål 2", ...]`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAIClient().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.6,
@@ -128,7 +128,7 @@ Svar med JSON:
   "reasoning": "Kort begrunnelse på norsk"
 }`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAIClient().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.3,
@@ -178,7 +178,7 @@ Svar med JSON:
   "summary": "En kort, balansert oppsummering på 2-3 setninger"
 }`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAIClient().chat.completions.create({
     model: 'gpt-4o',
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.5,
@@ -242,7 +242,7 @@ ${isFirstMessage ? 'Start med å ønske kandidaten velkommen og still det først
     })),
   ]
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAIClient().chat.completions.create({
     model: 'gpt-4o',
     messages,
     temperature: 0.7,
@@ -275,7 +275,7 @@ Oppsummeringen skal inkludere:
 
 Hold oppsummeringen på 150-250 ord.`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAIClient().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.5,
@@ -309,7 +309,7 @@ E-posten skal:
 
 Skriv kun e-postteksten, ingen emne-linje.`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAIClient().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.8,
@@ -341,7 +341,7 @@ E-posten skal:
 - Være entusiastisk men profesjonell
 - Være 150-200 ord`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAIClient().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.7,
@@ -356,7 +356,7 @@ export async function detectLanguage(text: string): Promise<string> {
 
 "${text.substring(0, 200)}"`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAIClient().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [{ role: 'user', content: prompt }],
     temperature: 0,
