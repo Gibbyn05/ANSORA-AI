@@ -5,7 +5,6 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 import { Input } from '@/components/ui/Input'
 import { LogIn, Eye, EyeOff, Brain, Star, TrendingUp, Users } from 'lucide-react'
 
@@ -28,24 +27,26 @@ function LoginForm() {
     setLoading(true)
     setError('')
 
-    const supabase = createClient()
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    // POST to the server-side login Route Handler.
+    // It calls signInWithPassword() on the server and returns the session
+    // cookies via Set-Cookie headers — guaranteed to arrive before the
+    // browser processes the response, so no async timing issues.
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
 
-    if (error) {
-      if (error.message === 'Failed to fetch' || error.message.includes('fetch')) {
-        setError('Kunne ikke koble til serveren. Sjekk at Supabase-prosjektet er aktivt.')
-      } else if (error.message.toLowerCase().includes('email not confirmed')) {
-        setError('E-posten din er ikke bekreftet ennå. Sjekk innboksen din.')
-      } else {
-        setError('Feil e-post eller passord. Prøv igjen.')
-      }
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      setError((data as { error?: string }).error ?? 'Feil e-post eller passord. Prøv igjen.')
       setLoading(false)
       return
     }
 
-    // Browser client set session cookies synchronously via document.cookie.
-    // Full page reload sends all cookies to the server so middleware can
-    // verify the session and route to the correct dashboard.
+    // Cookies are now set in the browser by the Set-Cookie headers.
+    // Full page reload sends them to the server so middleware can read
+    // the session and route to the correct dashboard.
     window.location.href = '/dashboard'
   }
 
