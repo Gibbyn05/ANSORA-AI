@@ -89,8 +89,13 @@ export async function POST(req: NextRequest) {
       cvText = 'CV-tekst kunne ikke ekstraheres'
     }
 
-    // Detekter språk
-    const language = await detectLanguage(cvText || coverLetter || '')
+    // Detekter språk (ikke-fatal hvis Gemini feiler)
+    let language = 'no'
+    try {
+      language = await detectLanguage(cvText || coverLetter || '')
+    } catch (e) {
+      console.warn('Språkdeteksjon feilet, bruker standard "no":', e)
+    }
 
     // Oppdater kandidatprofil med CV (admin for å bypass RLS)
     await admin
@@ -109,12 +114,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Stilling ikke funnet' }, { status: 404 })
     }
 
-    // Generer oppfølgingsspørsmål basert på CV og stilling
-    const followUpQuestions = await generateFollowUpQuestions({
-      job,
-      cvText,
-      language,
-    })
+    // Generer oppfølgingsspørsmål (ikke-fatal hvis Gemini er rate-limited)
+    let followUpQuestions: string[] = []
+    try {
+      followUpQuestions = await generateFollowUpQuestions({ job, cvText, language })
+    } catch (e) {
+      console.warn('Generering av oppfølgingsspørsmål feilet:', e)
+    }
 
     // Opprett søknad (admin for å bypass RLS)
     const { data: application, error: appError } = await admin
