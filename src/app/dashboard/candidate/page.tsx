@@ -73,18 +73,21 @@ export default async function CandidateDashboard() {
         // IMPORTANT: do NOT redirect('/auth/login') here — the middleware will
         // redirect the logged-in user straight back to /dashboard, creating an
         // infinite redirect loop (ERR_TOO_MANY_REDIRECTS).
-        const adminKeySet = !!process.env.SUPABASE_SERVICE_ROLE_KEY
+        //
+        // Root causes identified from debug output:
+        // 1. RLS policy on candidates has infinite recursion (code 42P17)
+        //    → fix by dropping & recreating policies in Supabase SQL Editor
+        // 2. SUPABASE_SERVICE_ROLE_KEY not set on Vercel → add it
+        const isRlsRecursion = (e1 as { code?: string } | null)?.code === '42P17'
         return (
           <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-6 text-center">
-            <div className="max-w-md">
-              <p className="text-white font-semibold mb-4">Kunne ikke opprette kandidatprofil</p>
-              <div className="text-left bg-[#111] border border-white/10 rounded-xl p-4 mb-6 space-y-2 text-xs font-mono">
-                <p className="text-[#888]">Bruker-insert feil:</p>
-                <p className="text-red-400 break-all">{e1 ? JSON.stringify(e1) : '(ingen data)'}</p>
-                <p className="text-[#888] mt-2">Admin-insert feil:</p>
-                <p className="text-red-400 break-all">{e2 ? JSON.stringify(e2) : '(ingen data)'}</p>
-                <p className="text-[#888] mt-2">SUPABASE_SERVICE_ROLE_KEY satt: <span className={adminKeySet ? 'text-green-400' : 'text-red-400'}>{adminKeySet ? 'ja' : 'nei'}</span></p>
-              </div>
+            <div className="max-w-sm">
+              <p className="text-white font-semibold mb-2">Databaseoppsett mangler</p>
+              <p className="text-[#888] text-sm mb-6">
+                {isRlsRecursion
+                  ? 'RLS-policyen på «candidates»-tabellen er rekursiv. Fiks policyen i Supabase SQL Editor og legg til SUPABASE_SERVICE_ROLE_KEY på Vercel.'
+                  : 'Kandidatprofilen kunne ikke opprettes. Legg til SUPABASE_SERVICE_ROLE_KEY på Vercel og sjekk RLS-policies i Supabase.'}
+              </p>
               <a
                 href="/api/auth/signout"
                 className="inline-block text-sm font-semibold text-[#d7fe03] border border-[#d7fe03]/30 px-5 py-2.5 rounded-xl hover:bg-[#d7fe03]/10 transition-colors"
