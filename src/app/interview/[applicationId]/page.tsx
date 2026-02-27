@@ -1,112 +1,268 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
-import { Card } from '@/components/ui/Card'
-import { Send, Bot, User, CheckCircle2, ArrowLeft, Sparkles } from 'lucide-react'
+import { ArrowLeft, Mic, MicOff, CheckCircle2, Bot, Sparkles } from 'lucide-react'
 import type { InterviewMessage } from '@/types'
 
+type Phase =
+  | 'idle'
+  | 'ai-speaking'
+  | 'user-turn'
+  | 'recording'
+  | 'processing'
+  | 'completed'
+
+const STATUS_LABELS: Record<Phase, string> = {
+  idle: '',
+  'ai-speaking': 'AI snakker...',
+  'user-turn': 'Trykk for å svare',
+  recording: 'Tar opp – trykk for å stoppe',
+  processing: 'Behandler...',
+  completed: 'Intervjuet er fullført',
+}
 
 export default function InterviewPage({
   params,
 }: {
   params: { applicationId: string }
 }) {
-  
   const { applicationId } = params
-  const router = useRouter()
 
+  const [phase, setPhase] = useState<Phase>('idle')
   const [messages, setMessages] = useState<InterviewMessage[]>([])
-  const [input, setInput] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [isCompleted, setIsCompleted] = useState(false)
-  const [started, setStarted] = useState(false)
+  const [caption, setCaption] = useState('')
   const [error, setError] = useState('')
-  const messagesEndRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLTextAreaElement>(null)
+  const [micBars, setMicBars] = useState<number[]>(Array(20).fill(4))
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+  const audioCtxRef = useRef<AudioContext | null>(null)
+  const animFrameRef = useRef<number | null>(null)
+  const recorderRef = useRef<MediaRecorder | null>(null)
+  const chunksRef = useRef<Blob[]>([])
+  const streamRef = useRef<MediaStream | null>(null)
 
   useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+    return () => {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
+      streamRef.current?.getTracks().forEach((t) => t.stop())
+      audioCtxRef.current?.close()
+    }
+  }, [])
 
-  const startInterview = async () => {
-    setLoading(true)
-    setStarted(true)
-    setError('')
+  // --- Mic waveform ---
+  const startMicViz = (stream: MediaStream) => {
+    const ctx = new AudioContext()
+    audioCtxRef.current = ctx
+    const analyser = ctx.createAnalyser()
+    analyser.fftSize = 64
+    ctx.createMediaStreamSource(stream).connect(analyser)
 
-    try {
+    const tick = () => {
+      const data = new Uint8Array(analyser.frequencyBinCount)
+      analyser.getByteFrequencyData(data)
+      setMicBars(
+        Array.from({ length: 20 }, (_, i) => {
+          const idx = Math.floor((i / 20) * data.length)
+          return Math.max(4, (data[idx] / 255) * 60)
+        })
+      )
+      animFrameRef.current = requestAnimationFrame(tick)
+    }
+    tick()
+  }
+
+  const stopMicViz = () => {
+    if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
+    setMicBars(Array(20).fill(4))
+    audioCtxRef.current?.close()
+    audioCtxRef.current = null
+  }
+
+  // --- TTS playback ---
+  const playTTS = useCallback(async (text: string): Promise<void> => {
+    const res = await fetch('/api/interviews/tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    })
+    if (!res.ok) throw new Error('TTS feilet')
+
+    const blob = await res.blob()
+    const url = URL.createObjectURL(blob)
+    const audio = new Audio(url)
+
+    return new Promise((resolve, reject) => {
+      audio.onended = () => { URL.revokeObjectURL(url); resolve() }
+      audio.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Avspilling feilet')) }
+      audio.play().catch(reject)
+    })
+  }, [])
+
+  // --- Interview API ---
+  const sendMessage = useCallback(
+    async (userText: string | null) => {
+      setPhase('processing')
+      setError('')
+
       const res = await fetch('/api/interviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ applicationId, message: null }),
+        body: JSON.stringify({ applicationId, message: userText }),
       })
-
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
 
       setMessages(data.transcript)
-      setIsCompleted(data.isCompleted)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Feil ved start av intervju')
-      setStarted(false)
-    } finally {
-      setLoading(false)
-    }
-  }
 
-  const sendMessage = async () => {
-    if (!input.trim() || loading || isCompleted) return
+      const lastAI = [...(data.transcript as InterviewMessage[])]
+        .reverse()
+        .find((m) => m.role === 'assistant')
 
-    const userMessage = input.trim()
-    setInput('')
-    setLoading(true)
+      if (lastAI) {
+        setPhase('ai-speaking')
+        setCaption(lastAI.content)
+        await playTTS(lastAI.content)
+      }
+
+      if (data.isCompleted) {
+        setPhase('completed')
+      } else {
+        setPhase('user-turn')
+      }
+    },
+    [applicationId, playTTS]
+  )
+
+  // --- Recording ---
+  const startRecording = async () => {
     setError('')
-
-    // Legg til brukermelding umiddelbart
-    const userMsg: InterviewMessage = {
-      role: 'user',
-      content: userMessage,
-      timestamp: new Date().toISOString(),
-    }
-    setMessages(prev => [...prev, userMsg])
-
     try {
-      const res = await fetch('/api/interviews', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ applicationId, message: userMessage }),
-      })
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      streamRef.current = stream
+      chunksRef.current = []
 
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm')
+        ? 'audio/webm'
+        : 'audio/mp4'
+      const recorder = new MediaRecorder(stream, { mimeType })
+      recorderRef.current = recorder
 
-      setMessages(data.transcript)
-      setIsCompleted(data.isCompleted)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Feil ved sending av melding')
-    } finally {
-      setLoading(false)
-      inputRef.current?.focus()
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data)
+      }
+
+      recorder.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop())
+        stopMicViz()
+
+        const blob = new Blob(chunksRef.current, { type: mimeType })
+        const ext = mimeType === 'audio/mp4' ? 'mp4' : 'webm'
+
+        try {
+          setPhase('processing')
+          const fd = new FormData()
+          fd.append('audio', blob, `recording.${ext}`)
+
+          const tr = await fetch('/api/interviews/transcribe', {
+            method: 'POST',
+            body: fd,
+          })
+          const td = await tr.json()
+          if (!tr.ok) throw new Error(td.error)
+
+          const text: string = td.text?.trim() ?? ''
+          if (!text) {
+            setError('Ingen tale registrert – prøv igjen.')
+            setPhase('user-turn')
+            return
+          }
+
+          setCaption(text)
+          await sendMessage(text)
+        } catch (err) {
+          setError(err instanceof Error ? err.message : 'Feil ved behandling')
+          setPhase('user-turn')
+        }
+      }
+
+      startMicViz(stream)
+      recorder.start()
+      setPhase('recording')
+    } catch {
+      setError('Kunne ikke få tilgang til mikrofon. Sjekk tillatelser i nettleseren.')
     }
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      sendMessage()
-    }
+  const stopRecording = () => recorderRef.current?.stop()
+
+  // --- Start screen ---
+  if (phase === 'idle') {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex flex-col">
+        <header className="bg-[#111111] border-b border-white/10 px-4 py-3 flex items-center gap-4">
+          <Link href="/dashboard/candidate" className="text-[#666] hover:text-white transition-colors">
+            <ArrowLeft className="w-5 h-5" />
+          </Link>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-[#d7fe03] rounded-lg flex items-center justify-center">
+              <Bot className="w-4 h-4 text-black" />
+            </div>
+            <div>
+              <h1 className="font-semibold text-white text-sm">AI-Intervju</h1>
+              <p className="text-xs text-[#666]">Powered by Ansora</p>
+            </div>
+          </div>
+        </header>
+
+        <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
+          <div className="w-24 h-24 bg-[#d7fe03]/10 rounded-full flex items-center justify-center mb-6 border border-[#d7fe03]/20">
+            <Mic className="w-12 h-12 text-[#d7fe03]" />
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-3">Klar for AI-intervju?</h2>
+          <p className="text-[#999] mb-6 max-w-md leading-relaxed">
+            Du vil gjennomføre et stemmebasert intervju med vår AI. Intervjuet tar ca. 10–15 minutter og lagres for rekrutterer.
+          </p>
+
+          <div className="bg-blue-900/20 border border-blue-500/20 rounded-xl p-5 mb-8 text-left max-w-md w-full">
+            <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-[#d7fe03]" />
+              Tips for intervjuet
+            </h3>
+            <ul className="space-y-2 text-sm text-[#999]">
+              <li>• Svar ærlig og utfyllende</li>
+              <li>• Snakk tydelig inn i mikrofonen</li>
+              <li>• Gi konkrete eksempler når mulig</li>
+              <li>• Sørg for at du er i et stille rom</li>
+            </ul>
+          </div>
+
+          {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
+
+          <Button
+            onClick={async () => {
+              setPhase('processing')
+              try {
+                await sendMessage(null)
+              } catch (err) {
+                setError(err instanceof Error ? err.message : 'Feil ved start')
+                setPhase('idle')
+              }
+            }}
+            size="lg"
+          >
+            <Mic className="w-5 h-5" />
+            Start stemmeintervjuet
+          </Button>
+        </div>
+      </div>
+    )
   }
 
+  // --- Voice interface ---
   return (
     <div className="min-h-screen bg-[#0a0a0a] flex flex-col">
-      {/* Topplinje */}
-      <div className="bg-[#111111] border-b border-white/10 px-4 py-3 flex items-center gap-4">
+      <header className="bg-[#111111] border-b border-white/10 px-4 py-3 flex items-center gap-4">
         <Link href="/dashboard/candidate" className="text-[#666] hover:text-white transition-colors">
           <ArrowLeft className="w-5 h-5" />
         </Link>
@@ -119,152 +275,142 @@ export default function InterviewPage({
             <p className="text-xs text-[#666]">Powered by Ansora</p>
           </div>
         </div>
-        {isCompleted && (
+        {phase === 'completed' && (
           <div className="ml-auto flex items-center gap-1.5 bg-green-900/30 text-green-400 text-xs font-semibold px-3 py-1.5 rounded-full">
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            Fullført
+            <CheckCircle2 className="w-3.5 h-3.5" /> Fullført
           </div>
         )}
-      </div>
-
-      {/* Chat-område */}
-      <div className="flex-1 overflow-y-auto p-4 max-w-3xl w-full mx-auto">
-        {!started ? (
-          <div className="flex flex-col items-center justify-center h-full min-h-[60vh] text-center">
-            <div className="w-24 h-24 bg-[#d7fe03]/10 rounded-full flex items-center justify-center mb-6 border border-[#d7fe03]/20">
-              <Bot className="w-12 h-12 text-[#d7fe03]" />
-            </div>
-            <h2 className="text-2xl font-bold text-white mb-3">Klar for AI-intervju?</h2>
-            <p className="text-[#999] mb-6 max-w-md leading-relaxed">
-              Du vil nå gjennomføre et tekstbasert intervju med vår AI. Intervjuet tar ca. 10-15 minutter og vil bli lagret og vist til rekrutterer.
-            </p>
-
-            <div className="bg-blue-900/20 border border-blue-500/20 rounded-xl p-5 mb-8 text-left max-w-md w-full">
-              <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-[#d7fe03]" />
-                Tips for intervjuet
-              </h3>
-              <ul className="space-y-2 text-sm text-[#999]">
-                <li>• Svar ærlig og utfyllende</li>
-                <li>• Gi konkrete eksempler når mulig</li>
-                <li>• Du kan ta pauser mellom svarene</li>
-                <li>• Skriv på det språket du er mest komfortabel med</li>
-              </ul>
-            </div>
-
-            <Button onClick={startInterview} loading={loading} size="lg">
-              <Bot className="w-5 h-5" />
-              Start intervjuet
-            </Button>
-          </div>
-        ) : (
-          <div className="space-y-4 py-4">
-            {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={`flex gap-3 animate-fade-in ${
-                  msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'
-                }`}
-              >
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${
-                  msg.role === 'assistant'
-                    ? 'bg-[#d7fe03]'
-                    : 'bg-white/10'
-                }`}>
-                  {msg.role === 'assistant'
-                    ? <Bot className="w-4 h-4 text-black" />
-                    : <User className="w-4 h-4 text-[#999]" />
-                  }
-                </div>
-                <div className={`max-w-[75%] rounded-2xl px-4 py-3 ${
-                  msg.role === 'assistant'
-                    ? 'bg-[#1a1a1a] border border-white/10 rounded-tl-sm text-[#ccc]'
-                    : 'bg-[#d7fe03] text-black rounded-tr-sm'
-                }`}>
-                  <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
-                  <p className={`text-xs mt-1.5 ${
-                    msg.role === 'user' ? 'text-black/50' : 'text-[#555]'
-                  }`}>
-                    {new Date(msg.timestamp).toLocaleTimeString('nb-NO', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </p>
-                </div>
-              </div>
-            ))}
-
-            {loading && (
-              <div className="flex gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#d7fe03] flex items-center justify-center flex-shrink-0">
-                  <Bot className="w-4 h-4 text-black" />
-                </div>
-                <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl rounded-tl-sm px-4 py-3">
-                  <div className="flex gap-1 items-center">
-                    {[0, 1, 2].map((i) => (
-                      <div
-                        key={i}
-                        className="w-2 h-2 bg-[#444] rounded-full animate-bounce"
-                        style={{ animationDelay: `${i * 0.15}s` }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {isCompleted && (
-              <div className="text-center py-8">
-                <div className="w-16 h-16 bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle2 className="w-8 h-8 text-green-400" />
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2">Intervjuet er fullført!</h3>
-                <p className="text-[#999] text-sm mb-6">
-                  Flott gjennomføring! Rekrutterer vil nå motta transskriptet og AI-analysen.
-                </p>
-                <Link href="/dashboard/candidate">
-                  <Button size="lg">
-                    Tilbake til dashboard
-                  </Button>
-                </Link>
-              </div>
-            )}
-
-            <div ref={messagesEndRef} />
-          </div>
+        {/* Question progress */}
+        {phase !== 'completed' && messages.length > 0 && (
+          <p className="ml-auto text-xs text-[#555]">
+            {messages.filter((m) => m.role === 'user').length} / 7 svar
+          </p>
         )}
-      </div>
+      </header>
 
-      {/* Inputfelt */}
-      {started && !isCompleted && (
-        <div className="bg-[#111111] border-t border-white/10 p-4">
-          <div className="max-w-3xl mx-auto">
-            {error && (
-              <p className="text-red-400 text-sm mb-2">{error}</p>
+      {/* Voice interface */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 gap-10">
+
+        {/* Avatar with glow rings */}
+        <div className="relative flex items-center justify-center">
+          {phase === 'ai-speaking' && (
+            <>
+              <div className="absolute w-60 h-60 rounded-full bg-[#d7fe03]/5 animate-ping"
+                style={{ animationDuration: '2s' }} />
+              <div className="absolute w-48 h-48 rounded-full bg-[#d7fe03]/10 animate-ping"
+                style={{ animationDuration: '2s', animationDelay: '0.5s' }} />
+            </>
+          )}
+          {phase === 'recording' && (
+            <>
+              <div className="absolute w-60 h-60 rounded-full bg-red-500/5 animate-ping"
+                style={{ animationDuration: '1.4s' }} />
+              <div className="absolute w-48 h-48 rounded-full bg-red-500/10 animate-ping"
+                style={{ animationDuration: '1.4s', animationDelay: '0.3s' }} />
+            </>
+          )}
+
+          <div className={`relative w-40 h-40 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${
+            phase === 'ai-speaking'
+              ? 'bg-[#d7fe03]/15 border-[#d7fe03] shadow-[0_0_60px_#d7fe0330]'
+              : phase === 'recording'
+              ? 'bg-red-500/15 border-red-500 shadow-[0_0_60px_#ef444430]'
+              : phase === 'completed'
+              ? 'bg-green-900/30 border-green-500'
+              : 'bg-[#1a1a1a] border-white/10'
+          }`}>
+            {phase === 'completed' ? (
+              <CheckCircle2 className="w-16 h-16 text-green-400" />
+            ) : phase === 'recording' ? (
+              <Mic className="w-16 h-16 text-red-400" />
+            ) : (
+              <Bot className={`w-16 h-16 ${phase === 'ai-speaking' ? 'text-[#d7fe03]' : 'text-[#444]'}`} />
             )}
-            <div className="flex gap-3 items-end">
-              <textarea
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                disabled={loading}
-                placeholder="Skriv ditt svar... (Enter for å sende, Shift+Enter for ny linje)"
-                className="flex-1 input resize-none text-sm max-h-40"
-                rows={2}
-              />
-              <Button
-                onClick={sendMessage}
-                disabled={!input.trim() || loading}
-                size="md"
-                className="flex-shrink-0 h-[46px] w-[46px] !px-0"
-              >
-                <Send className="w-4 h-4" />
-              </Button>
-            </div>
           </div>
         </div>
-      )}
+
+        {/* Status label */}
+        <p className="text-[#555] text-xs font-semibold tracking-widest uppercase">
+          {STATUS_LABELS[phase]}
+        </p>
+
+        {/* Waveform */}
+        <div className="flex items-center justify-center gap-[3px] h-16 w-52">
+          {phase === 'ai-speaking'
+            ? Array.from({ length: 20 }, (_, i) => (
+                <div
+                  key={i}
+                  className="w-1.5 rounded-full bg-[#d7fe03]"
+                  style={{
+                    height: '4px',
+                    animation: 'voice-bar 0.7s ease-in-out infinite alternate',
+                    animationDelay: `${i * 0.04}s`,
+                  }}
+                />
+              ))
+            : micBars.map((h, i) => (
+                <div
+                  key={i}
+                  className={`w-1.5 rounded-full transition-all duration-75 ${
+                    phase === 'recording' ? 'bg-red-400' : 'bg-[#2a2a2a]'
+                  }`}
+                  style={{ height: `${h}px` }}
+                />
+              ))}
+        </div>
+
+        {/* Caption */}
+        {caption && (
+          <p className="max-w-sm text-center text-white/60 text-sm leading-relaxed italic px-4">
+            &ldquo;{caption}&rdquo;
+          </p>
+        )}
+
+        {error && (
+          <p className="text-red-400 text-sm text-center max-w-xs">{error}</p>
+        )}
+      </div>
+
+      {/* Mic / control button */}
+      <div className="p-10 flex justify-center">
+        {phase === 'completed' ? (
+          <Link href="/dashboard/candidate">
+            <Button size="lg">
+              <CheckCircle2 className="w-5 h-5" />
+              Tilbake til dashboard
+            </Button>
+          </Link>
+        ) : phase === 'user-turn' ? (
+          <button
+            onClick={startRecording}
+            className="w-20 h-20 rounded-full bg-[#d7fe03] hover:bg-[#c5eb00] active:scale-95 transition-all duration-150 flex items-center justify-center shadow-[0_0_40px_#d7fe0340] hover:shadow-[0_0_60px_#d7fe0360]"
+            aria-label="Start opptak"
+          >
+            <Mic className="w-8 h-8 text-black" />
+          </button>
+        ) : phase === 'recording' ? (
+          <button
+            onClick={stopRecording}
+            className="w-20 h-20 rounded-full bg-red-500 hover:bg-red-600 active:scale-95 transition-all duration-150 flex items-center justify-center shadow-[0_0_40px_#ef444440] animate-pulse"
+            aria-label="Stopp opptak"
+          >
+            <MicOff className="w-8 h-8 text-white" />
+          </button>
+        ) : (
+          /* processing / ai-speaking – inactive placeholder */
+          <div className="w-20 h-20 rounded-full bg-[#111] border border-white/10 flex items-center justify-center">
+            <div className="flex gap-1">
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="w-1.5 h-1.5 rounded-full bg-[#444] animate-bounce"
+                  style={{ animationDelay: `${i * 0.15}s` }}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
