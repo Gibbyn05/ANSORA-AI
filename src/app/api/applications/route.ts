@@ -55,11 +55,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Du har allerede søkt på denne stillingen' }, { status: 409 })
     }
 
-    // Last opp CV til Supabase Storage
+    // Last opp CV til Supabase Storage (admin-klient for å bypass RLS)
     const cvBuffer = await cvFile.arrayBuffer()
     const cvPath = `${candidate.id}/${jobId}/cv.pdf`
 
-    const { error: uploadError } = await supabase.storage
+    const admin = await createAdminClient()
+    const { error: uploadError } = await admin.storage
       .from('cvs')
       .upload(cvPath, cvBuffer, {
         contentType: 'application/pdf',
@@ -68,7 +69,10 @@ export async function POST(req: NextRequest) {
 
     if (uploadError) {
       console.error('CV-opplastingsfeil:', uploadError)
-      return NextResponse.json({ error: 'Feil ved opplasting av CV' }, { status: 500 })
+      return NextResponse.json(
+        { error: `Feil ved opplasting av CV: ${uploadError.message}` },
+        { status: 500 }
+      )
     }
 
     const { data: { publicUrl: cvUrl } } = supabase.storage.from('cvs').getPublicUrl(cvPath)
