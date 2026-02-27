@@ -92,8 +92,8 @@ export async function POST(req: NextRequest) {
     // Detekter språk
     const language = await detectLanguage(cvText || coverLetter || '')
 
-    // Oppdater kandidatprofil med CV
-    await supabase
+    // Oppdater kandidatprofil med CV (admin for å bypass RLS)
+    await admin
       .from('candidates')
       .update({ cv_url: cvUrl, cv_text: cvText, language })
       .eq('id', candidate.id)
@@ -116,8 +116,8 @@ export async function POST(req: NextRequest) {
       language,
     })
 
-    // Opprett søknad
-    const { data: application, error: appError } = await supabase
+    // Opprett søknad (admin for å bypass RLS)
+    const { data: application, error: appError } = await admin
       .from('applications')
       .insert({
         job_id: jobId,
@@ -137,8 +137,9 @@ export async function POST(req: NextRequest) {
     }, { status: 201 })
 
   } catch (error) {
-    console.error('Feil ved innsending av søknad:', error)
-    return NextResponse.json({ error: 'Feil ved innsending av søknad' }, { status: 500 })
+    const message = error instanceof Error ? error.message : String(error)
+    console.error('Feil ved innsending av søknad:', message)
+    return NextResponse.json({ error: `Feil ved innsending av søknad: ${message}` }, { status: 500 })
   }
 }
 
