@@ -31,7 +31,8 @@ export default async function ApplicationDetailPage({
   const isAnonymous = anon === 'true'
 
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { session } } = await supabase.auth.getSession()
+  const user = session?.user ?? null
 
   if (!user || user.user_metadata?.role !== 'company') {
     redirect('/auth/login')

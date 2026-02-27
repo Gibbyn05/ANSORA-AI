@@ -4,7 +4,8 @@ import { redirect } from 'next/navigation'
 // Ruter brukeren til riktig dashboard basert på profil i databasen
 export default async function DashboardRouter() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { session } } = await supabase.auth.getSession()
+  const user = session?.user ?? null
 
   if (!user) redirect('/auth/login')
 
