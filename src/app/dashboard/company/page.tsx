@@ -1,15 +1,14 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Navbar } from '@/components/ui/Navbar'
-import { Card, CardHeader } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { getIndustryLabel, translateStatus } from '@/lib/utils'
 import {
-  Briefcase, Users, Plus, BarChart3, Eye, ArrowRight,
-  TrendingUp, Clock, CheckCircle2
+  Briefcase, Users, Plus, BarChart3, ArrowRight,
+  CheckCircle2, Brain, TrendingUp, Clock,
 } from 'lucide-react'
 import Link from 'next/link'
-import type { Industry, ApplicationStatus } from '@/types'
+import type { Industry, ApplicationStatus, Job, Application } from '@/types'
 
 const STATUS_VARIANT: Record<ApplicationStatus, 'default' | 'success' | 'warning' | 'danger' | 'info' | 'neutral'> = {
   pending: 'neutral',
@@ -23,245 +22,298 @@ const STATUS_VARIANT: Record<ApplicationStatus, 'default' | 'success' | 'warning
 
 export default async function CompanyDashboard() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { session } } = await supabase.auth.getSession()
+  const user = session?.user ?? null
 
-  if (!user || user.user_metadata?.role !== 'company') {
-    redirect('/auth/login')
-  }
+  if (!user) redirect('/auth/login')
 
-  // Hent bedriftsinfo
-  const { data: company } = await supabase
+  let { data: company } = await supabase
     .from('companies')
     .select('*')
     .eq('user_id', user.id)
     .single()
 
-  if (!company) redirect('/auth/register')
+  if (!company) {
+    const name = (user.user_metadata?.name as string | undefined) ?? user.email ?? 'Bedrift'
 
-  // Hent stillinger
+    // Try with the user's own session first (works when RLS allows INSERT for own user_id)
+    const { data: created } = await supabase
+      .from('companies')
+      .insert({ user_id: user.id, name, email: user.email ?? '' })
+      .select('*')
+      .single()
+
+    if (created) {
+      company = created
+    } else {
+      // Fall back to the admin client (service role key bypasses RLS)
+      const admin = await createAdminClient()
+      const { data: adminCreated } = await admin
+        .from('companies')
+        .insert({ user_id: user.id, name, email: user.email ?? '' })
+        .select('*')
+        .single()
+
+      if (adminCreated) {
+        company = adminCreated
+      } else {
+        // IMPORTANT: do NOT redirect('/auth/login') here — the middleware will
+        // redirect the logged-in user straight back to /dashboard, creating an
+        // infinite redirect loop (ERR_TOO_MANY_REDIRECTS).
+        // Show an error page instead.
+        return (
+          <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-6 text-center">
+            <div>
+              <p className="text-white font-semibold mb-2">Kunne ikke opprette bedriftsprofil</p>
+              <p className="text-[#888] text-sm mb-6">
+                Det kan skyldes en databasefeil eller manglende tilgang. Logg ut og inn igjen.
+              </p>
+              <a
+                href="/api/auth/signout"
+                className="inline-block text-sm font-semibold text-[#d7fe03] border border-[#d7fe03]/30 px-5 py-2.5 rounded-xl hover:bg-[#d7fe03]/10 transition-colors"
+              >
+                Logg ut
+              </a>
+            </div>
+          </div>
+        )
+      }
+    }
+  }
+
   const { data: jobs } = await supabase
     .from('jobs')
     .select('*')
     .eq('company_id', company.id)
     .order('created_at', { ascending: false })
 
-  const jobIds = jobs?.map((j) => j.id) || []
+  const jobIds = jobs?.map((j: Job) => j.id) || []
 
-  // Hent søknader
   const { data: applications } = jobIds.length > 0
     ? await supabase
         .from('applications')
-        .select(`
-          *,
-          candidates (id, name, email),
-          jobs (id, title)
-        `)
+        .select(`*, candidates (id, name, email), jobs (id, title)`)
         .in('job_id', jobIds)
         .order('score', { ascending: false, nullsFirst: false })
     : { data: [] }
 
   const totalJobs = jobs?.length || 0
-  const publishedJobs = jobs?.filter((j) => j.status === 'published').length || 0
+  const publishedJobs = jobs?.filter((j: Job) => j.status === 'published').length || 0
   const totalApplications = applications?.length || 0
-  const pendingApplications = applications?.filter((a) => a.status === 'pending').length || 0
+  const pendingApplications = applications?.filter((a: Application) => a.status === 'pending').length || 0
+  const reviewingApplications = applications?.filter((a: Application) => a.status === 'reviewing').length || 0
+  const hiredApplications = applications?.filter((a: Application) => a.status === 'hired').length || 0
 
   return (
-    <div className="min-h-screen bg-bg-light">
-      <Navbar
-        userRole="company"
-        userName={company.name}
-      />
+    <div className="min-h-screen bg-[#0a0a0a]">
+      <Navbar userRole="company" userName={company.name} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+
+        {/* ── Header ────────────────────────────────────────────────── */}
+        <div className="flex items-center justify-between mb-10">
           <div>
-            <h1 className="text-2xl font-bold text-navy">Rekrutteringsdashboard</h1>
-            <p className="text-gray-500 mt-1">Velkommen tilbake, {company.name}</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#444] mb-1">Rekrutteringsdashboard</p>
+            <h1 className="text-2xl font-bold text-white">Hei, {company.name} 👋</h1>
           </div>
           <Link href="/jobs/new">
-            <button className="btn-primary flex items-center gap-2">
+            <button className="inline-flex items-center gap-2 bg-[#d7fe03] hover:bg-[#c8ef00] text-black font-semibold px-5 py-2.5 rounded-xl transition-all text-sm">
               <Plus className="w-4 h-4" />
               <span className="hidden sm:inline">Ny stilling</span>
             </button>
           </Link>
         </div>
 
-        {/* Statistikk */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {/* ── Stats row (Visuo 4-stat pattern) ──────────────────────── */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
           {[
             {
               icon: Briefcase,
               label: 'Aktive stillinger',
               value: publishedJobs,
-              total: totalJobs,
-              color: 'text-primary bg-primary/10',
-              change: `${totalJobs} totalt`,
+              sub: `${totalJobs} totalt`,
+              iconClass: 'text-[#d7fe03] bg-[#d7fe03]/10 border-[#d7fe03]/20',
             },
             {
               icon: Users,
               label: 'Totale søkere',
               value: totalApplications,
-              color: 'text-purple-600 bg-purple-50',
-              change: `${pendingApplications} venter`,
+              sub: `${pendingApplications} venter svar`,
+              iconClass: 'text-purple-400 bg-purple-900/20 border-purple-500/20',
             },
             {
               icon: BarChart3,
               label: 'Under vurdering',
-              value: applications?.filter((a) => a.status === 'reviewing').length || 0,
-              color: 'text-blue-600 bg-blue-50',
+              value: reviewingApplications,
+              sub: 'AI-analysert',
+              iconClass: 'text-blue-400 bg-blue-900/20 border-blue-500/20',
             },
             {
               icon: CheckCircle2,
               label: 'Ansatt',
-              value: applications?.filter((a) => a.status === 'hired').length || 0,
-              color: 'text-green-600 bg-green-50',
+              value: hiredApplications,
+              sub: 'via Ansora',
+              iconClass: 'text-green-400 bg-green-900/20 border-green-500/20',
             },
           ].map((stat) => (
-            <Card key={stat.label} padding="md">
-              <div className="flex items-center justify-between mb-3">
-                <div className={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center`}>
-                  <stat.icon className="w-5 h-5" />
-                </div>
+            <div key={stat.label} className="bg-[#111111] border border-white/[0.07] rounded-2xl p-5">
+              <div className={`w-10 h-10 rounded-xl border flex items-center justify-center mb-4 ${stat.iconClass}`}>
+                <stat.icon className="w-4.5 h-4.5" />
               </div>
-              <div className="text-2xl font-bold text-navy">{stat.value}</div>
-              <div className="text-sm text-gray-500 mt-0.5">{stat.label}</div>
-              {stat.change && (
-                <div className="text-xs text-gray-400 mt-1">{stat.change}</div>
-              )}
-            </Card>
+              <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
+              <div className="text-sm text-[#888]">{stat.label}</div>
+              <div className="text-xs text-[#444] mt-0.5">{stat.sub}</div>
+            </div>
           ))}
         </div>
 
+        {/* ── Main content grid ─────────────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Stillingsliste */}
-          <div className="lg:col-span-1">
-            <Card>
-              <CardHeader
-                title="Mine stillinger"
-                action={
-                  <Link href="/jobs/new">
-                    <button className="text-primary text-sm font-semibold hover:underline flex items-center gap-1">
-                      <Plus className="w-3.5 h-3.5" /> Ny
-                    </button>
-                  </Link>
-                }
-              />
 
-              {!jobs || jobs.length === 0 ? (
-                <div className="text-center py-8">
-                  <Briefcase className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500 text-sm">Ingen stillinger ennå</p>
-                  <Link href="/jobs/new">
-                    <button className="btn-primary mt-4 text-sm py-2 px-4">
-                      Opprett første stilling
-                    </button>
-                  </Link>
+          {/* Job list (1/3) */}
+          <div className="bg-[#111111] border border-white/[0.07] rounded-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.06]">
+              <div>
+                <p className="font-semibold text-white text-sm">Mine stillinger</p>
+                <p className="text-[11px] text-[#444] mt-0.5">{totalJobs} stilling{totalJobs !== 1 ? 'er' : ''}</p>
+              </div>
+              <Link href="/jobs/new">
+                <button className="text-xs text-[#d7fe03] border border-[#d7fe03]/20 hover:bg-[#d7fe03]/5 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+                  <Plus className="w-3 h-3" /> Ny
+                </button>
+              </Link>
+            </div>
+
+            {!jobs || jobs.length === 0 ? (
+              <div className="text-center py-12 px-4">
+                <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/[0.07] flex items-center justify-center mx-auto mb-4">
+                  <Briefcase className="w-5 h-5 text-[#333]" />
                 </div>
-              ) : (
-                <div className="space-y-2">
-                  {jobs.map((job) => {
-                    const jobApplications = applications?.filter((a) => a.job_id === job.id) || []
-                    return (
-                      <Link key={job.id} href={`/dashboard/company/jobs/${job.id}`}>
-                        <div className="p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer group">
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="flex-1 min-w-0">
-                              <p className="font-medium text-navy text-sm truncate group-hover:text-primary transition-colors">
-                                {job.title}
-                              </p>
-                              <p className="text-xs text-gray-400 mt-0.5">
-                                {getIndustryLabel(job.industry as Industry)} · {job.percentage}%
-                              </p>
-                            </div>
-                            <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-primary transition-colors flex-shrink-0 mt-0.5" />
-                          </div>
-                          <div className="flex items-center gap-2 mt-2">
-                            <Badge
-                              variant={job.status === 'published' ? 'success' : job.status === 'draft' ? 'neutral' : 'danger'}
-                            >
+                <p className="text-[#666] text-sm mb-4">Ingen stillinger ennå</p>
+                <Link href="/jobs/new">
+                  <button className="text-sm text-[#d7fe03] border border-[#d7fe03]/20 hover:bg-[#d7fe03]/5 px-4 py-2 rounded-xl transition-colors">
+                    Opprett første stilling
+                  </button>
+                </Link>
+              </div>
+            ) : (
+              <div className="divide-y divide-white/[0.05]">
+                {jobs.map((job: Job) => {
+                  const jobApplications = applications?.filter((a: Application) => a.job_id === job.id) || []
+                  return (
+                    <Link key={job.id} href={`/dashboard/company/jobs/${job.id}`}>
+                      <div className="flex items-center gap-3 px-5 py-3.5 hover:bg-white/[0.03] transition-colors cursor-pointer group">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-white text-sm truncate group-hover:text-[#d7fe03] transition-colors">
+                            {job.title}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                              job.status === 'published' ? 'bg-green-900/30 text-green-400' :
+                              job.status === 'draft' ? 'bg-white/5 text-[#555]' :
+                              'bg-red-900/30 text-red-400'
+                            }`}>
                               {translateStatus(job.status)}
-                            </Badge>
-                            <span className="text-xs text-gray-400">
-                              {jobApplications.length} søker{jobApplications.length !== 1 ? 'e' : ''}
+                            </span>
+                            <span className="text-[11px] text-[#444]">
+                              {jobApplications.length} søk{jobApplications.length !== 1 ? 'ere' : 'er'}
                             </span>
                           </div>
                         </div>
-                      </Link>
-                    )
-                  })}
-                </div>
-              )}
-            </Card>
+                        <ArrowRight className="w-4 h-4 text-[#333] group-hover:text-[#d7fe03] transition-all flex-shrink-0" />
+                      </div>
+                    </Link>
+                  )
+                })}
+              </div>
+            )}
           </div>
 
-          {/* Siste søknader */}
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader
-                title="Nylige søknader"
-                subtitle="Rangert etter AI-score"
-              />
-
-              {!applications || applications.length === 0 ? (
-                <div className="text-center py-12">
-                  <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500 font-medium">Ingen søknader ennå</p>
-                  <p className="text-sm text-gray-400 mt-1">
-                    Publiser en stilling for å begynne å motta søknader
-                  </p>
+          {/* Applications table (2/3, Visuo numbered list) */}
+          <div className="lg:col-span-2 bg-[#111111] border border-white/[0.07] rounded-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
+              <div>
+                <p className="font-semibold text-white text-sm">Søkere rangert etter AI-score</p>
+                <p className="text-[11px] text-[#444] mt-0.5">{totalApplications} totalt</p>
+              </div>
+              {totalApplications > 0 && (
+                <div className="flex items-center gap-1.5 text-xs text-[#555]">
+                  <Brain className="w-3.5 h-3.5 text-[#d7fe03]" />
+                  AI-sortert
                 </div>
-              ) : (
-                <div className="space-y-3">
-                  {applications.slice(0, 8).map((app) => (
-                    <Link key={app.id} href={`/dashboard/company/applications/${app.id}`}>
-                      <div className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer group">
-                        {/* Avatar */}
-                        <div className="w-10 h-10 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                          <span className="text-primary font-bold text-sm">
+              )}
+            </div>
+
+            {!applications || applications.length === 0 ? (
+              <div className="text-center py-16 px-4">
+                <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/[0.07] flex items-center justify-center mx-auto mb-4">
+                  <Users className="w-5 h-5 text-[#333]" />
+                </div>
+                <p className="text-[#666] font-medium mb-1">Ingen søknader ennå</p>
+                <p className="text-sm text-[#444]">
+                  Publiser en stilling for å begynne å motta søknader
+                </p>
+              </div>
+            ) : (
+              <div className="divide-y divide-white/[0.04]">
+                {/* Table header */}
+                <div className="grid grid-cols-[28px_1fr_120px_80px_80px] gap-3 px-6 py-2.5">
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-[#333]">#</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-[#333]">Kandidat</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-[#333]">Stilling</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-[#333] text-center">Score</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-[#333] text-right">Status</span>
+                </div>
+
+                {applications.slice(0, 10).map((app: Application, idx: number) => (
+                  <Link key={app.id} href={`/dashboard/company/applications/${app.id}`}>
+                    <div className="grid grid-cols-[28px_1fr_120px_80px_80px] gap-3 items-center px-6 py-3.5 hover:bg-white/[0.03] transition-colors cursor-pointer group">
+                      <span className="text-xs font-bold text-[#333]">{idx + 1}</span>
+
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-7 h-7 rounded-full bg-[#1a1a1a] border border-white/10 flex items-center justify-center flex-shrink-0">
+                          <span className="text-[10px] font-bold text-[#d7fe03]">
                             {app.candidates?.name?.charAt(0).toUpperCase()}
                           </span>
                         </div>
-
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-navy text-sm group-hover:text-primary transition-colors">
-                            {app.candidates?.name}
-                          </p>
-                          <p className="text-xs text-gray-500 truncate">
-                            {app.jobs?.title}
-                          </p>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                          {app.score !== null && (
-                            <div className={`text-sm font-bold px-2.5 py-1 rounded-lg ${
-                              app.score >= 80 ? 'bg-green-50 text-green-700' :
-                              app.score >= 60 ? 'bg-yellow-50 text-yellow-700' :
-                              app.score >= 40 ? 'bg-orange-50 text-orange-700' :
-                              'bg-red-50 text-red-700'
-                            }`}>
-                              {app.score}
-                            </div>
-                          )}
-                          <Badge variant={STATUS_VARIANT[app.status as ApplicationStatus] || 'neutral'}>
-                            {translateStatus(app.status)}
-                          </Badge>
-                          <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-primary transition-colors" />
-                        </div>
+                        <span className="text-sm font-medium text-white group-hover:text-[#d7fe03] transition-colors truncate">
+                          {app.candidates?.name}
+                        </span>
                       </div>
-                    </Link>
-                  ))}
 
-                  {applications.length > 8 && (
-                    <div className="text-center pt-2">
-                      <p className="text-sm text-gray-400">
-                        +{applications.length - 8} flere søknader
-                      </p>
+                      <span className="text-xs text-[#555] truncate">{app.jobs?.title}</span>
+
+                      <div className="text-center">
+                        {app.score != null ? (
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                            app.score >= 80 ? 'bg-green-900/40 text-green-400' :
+                            app.score >= 60 ? 'bg-[#d7fe03]/10 text-[#d7fe03]' :
+                            app.score >= 40 ? 'bg-orange-900/30 text-orange-400' :
+                            'bg-red-900/30 text-red-400'
+                          }`}>
+                            {app.score}
+                          </span>
+                        ) : (
+                          <span className="text-[11px] text-[#333]">—</span>
+                        )}
+                      </div>
+
+                      <div className="text-right">
+                        <Badge variant={STATUS_VARIANT[app.status as ApplicationStatus] || 'neutral'}>
+                          {translateStatus(app.status)}
+                        </Badge>
+                      </div>
                     </div>
-                  )}
-                </div>
-              )}
-            </Card>
+                  </Link>
+                ))}
+
+                {applications.length > 10 && (
+                  <div className="px-6 py-3.5 text-center">
+                    <p className="text-xs text-[#444]">+{applications.length - 10} flere søknader</p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

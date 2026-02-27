@@ -131,7 +131,7 @@ export function ApplicationActions({
       <Card>
         <div className="text-center py-4">
           <XCircle className="w-8 h-8 text-red-400 mx-auto mb-2" />
-          <p className="text-sm text-gray-500">Kandidaten er avslått</p>
+          <p className="text-sm text-[#999]">Kandidaten er avslått</p>
         </div>
       </Card>
     )
@@ -141,8 +141,8 @@ export function ApplicationActions({
     return (
       <Card>
         <div className="text-center py-4">
-          <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto mb-2" />
-          <p className="font-semibold text-navy text-sm">Kandidat er ansatt!</p>
+          <CheckCircle2 className="w-8 h-8 text-green-400 mx-auto mb-2" />
+          <p className="font-semibold text-white text-sm">Kandidat er ansatt!</p>
         </div>
       </Card>
     )
@@ -150,10 +150,10 @@ export function ApplicationActions({
 
   return (
     <Card>
-      <h3 className="font-semibold text-navy mb-4 text-sm">Handlinger</h3>
+      <h3 className="font-semibold text-white mb-4 text-sm">Handlinger</h3>
 
       {error && (
-        <div className="bg-red-50 text-red-700 text-xs px-3 py-2 rounded-lg mb-3">
+        <div className="bg-red-900/20 text-red-400 text-xs px-3 py-2 rounded-lg mb-3">
           {error}
         </div>
       )}
@@ -201,7 +201,7 @@ export function ApplicationActions({
             </Button>
 
             {showReferenceForm && (
-              <div className="mt-3 space-y-3 p-3 bg-gray-50 rounded-xl">
+              <div className="mt-3 space-y-3 p-3 bg-white/5 rounded-xl">
                 <Input
                   label="Referansens navn"
                   value={refName}
@@ -244,7 +244,7 @@ export function ApplicationActions({
             </Button>
 
             {showOfferForm && (
-              <div className="mt-3 space-y-3 p-3 bg-gray-50 rounded-xl">
+              <div className="mt-3 space-y-3 p-3 bg-white/5 rounded-xl">
                 <Input
                   label="Startdato *"
                   type="date"

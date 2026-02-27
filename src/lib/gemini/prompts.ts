@@ -1,5 +1,5 @@
 import type { Job, Candidate, AIAnalysis, InterviewMessage } from '@/types'
-import { genAI } from './client'
+import { getModel } from './client'
 
 // ===== STILLINGSANNONSE GENERATOR =====
 export async function generateJobDescription(params: {
@@ -21,21 +21,30 @@ Krav og kvalifikasjoner: ${params.requirements}
 ${params.keywords ? `Stikkord: ${params.keywords}` : ''}
 ${params.companyName ? `Bedrift: ${params.companyName}` : ''}
 
-Annonsen skal:
-- Starte med en kort, fengende ingress (2-3 setninger)
-- Ha en seksjon "Om stillingen" med konkrete arbeidsoppgaver
-- Ha en seksjon "Vi søker deg som" med klare krav og ønskede egenskaper
-- Ha en seksjon "Vi tilbyr" med attraktive fordeler
-- Avslutte med en oppfordring til å søke
-- Være profesjonell, inkluderende og tillitsvekkende
-- Ikke inneholde diskriminerende språk
-- Være mellom 300-500 ord`
+Annonsen skal ha nøyaktig denne strukturen med markdown-overskrifter:
 
-  const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
-    generationConfig: { temperature: 0.7 },
-  })
+[Kort fengende ingress på 2-3 setninger uten overskrift]
 
+## Om stillingen
+[Konkrete arbeidsoppgaver som punktliste med - ]
+
+## Vi søker deg som
+[Klare krav og ønskede egenskaper som punktliste med - ]
+
+## Vi tilbyr
+[Attraktive fordeler som punktliste med - ]
+
+[Avsluttende oppfordring til å søke, 1-2 setninger uten overskrift]
+
+Regler:
+- Bruk alltid ## for seksjonsoverskrifter, aldri **bold** som overskrift
+- Bruk - for alle punktlister
+- Ingen **bold** eller *kursiv* i teksten
+- Profesjonell, inkluderende og tillitsvekkende tone
+- Ikke diskriminerende språk
+- 300-500 ord totalt`
+
+  const model = getModel()
   const result = await model.generateContent(prompt)
   return result.response.text()
 }
@@ -59,26 +68,18 @@ ${params.cvText}
 
 Generer spørsmål som:
 - Er spesifikke for kandidatens bakgrunn vs stillingens krav
-- Adresserer eventuelle gap eller uklarheter (f.eks. om kandidaten er student og stillingen er 100%)
+- Adresserer eventuelle gap eller uklarheter
 - Er åpne og inviterende, ikke konfronterende
 - Avdekker motivasjon og egnethet
 
-Svar kun med en JSON-array av spørsmål, ingen annen tekst:
-["Spørsmål 1", "Spørsmål 2", ...]`
+Svar kun med en JSON-array av spørsmål:
+{"questions": ["Spørsmål 1", "Spørsmål 2", ...]}`
 
-  const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
-    generationConfig: {
-      temperature: 0.6,
-      responseMimeType: 'application/json',
-    },
-  })
-
+  const model = getModel(true)
   const result = await model.generateContent(prompt)
   try {
-    const content = result.response.text()
-    const parsed = JSON.parse(content)
-    return Array.isArray(parsed) ? parsed : parsed.questions || []
+    const parsed = JSON.parse(result.response.text())
+    return Array.isArray(parsed) ? parsed : (parsed.questions || [])
   } catch {
     return []
   }
@@ -112,24 +113,14 @@ Scorer basert på:
 - Røde flagg (trekk poeng, -10%)
 
 Svar med JSON:
-{
-  "score": [0-100],
-  "reasoning": "Kort begrunnelse på norsk"
-}`
+{"score": 75, "reasoning": "Kort begrunnelse på norsk"}`
 
-  const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
-    generationConfig: {
-      temperature: 0.3,
-      responseMimeType: 'application/json',
-    },
-  })
-
+  const model = getModel(true)
   const result = await model.generateContent(prompt)
   try {
     const parsed = JSON.parse(result.response.text())
     return {
-      score: Math.min(100, Math.max(0, parsed.score || 0)),
+      score: Math.min(100, Math.max(0, Number(parsed.score) || 0)),
       reasoning: parsed.reasoning || '',
     }
   } catch {
@@ -169,14 +160,7 @@ Svar med JSON:
   "summary": "En kort, balansert oppsummering på 2-3 setninger"
 }`
 
-  const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-pro',
-    generationConfig: {
-      temperature: 0.5,
-      responseMimeType: 'application/json',
-    },
-  })
-
+  const model = getModel(true)
   const result = await model.generateContent(prompt)
   try {
     const parsed = JSON.parse(result.response.text())
@@ -225,31 +209,24 @@ Retningslinjer:
 - Ha 6-8 spørsmål totalt
 - Avslutt med å informere at intervjuet er fullført og takk for deltagelse`
 
-  const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-pro',
-    systemInstruction,
-    generationConfig: {
-      temperature: 0.7,
-      maxOutputTokens: 300,
-    },
-  })
+  const model = getModel()
 
-  if (isFirstMessage) {
-    const result = await model.generateContent(
-      'Start med å ønske kandidaten velkommen og still det første spørsmålet.'
-    )
-    return result.response.text()
-  }
-
-  // Bygg chat-historikk – alle meldinger unntatt den siste
-  const history = params.conversationHistory.slice(0, -1).map((m) => ({
+  // Build chat history from prior turns (exclude first synthetic user message)
+  const history = params.conversationHistory.map((m) => ({
     role: m.role === 'assistant' ? ('model' as const) : ('user' as const),
     parts: [{ text: m.content }],
   }))
 
-  const chat = model.startChat({ history })
-  const lastMessage = params.conversationHistory[params.conversationHistory.length - 1]
-  const result = await chat.sendMessage(lastMessage.content)
+  const chat = model.startChat({
+    systemInstruction,
+    history: history.length > 0 ? history : undefined,
+  })
+
+  const userMessage = isFirstMessage
+    ? 'Start med å ønske kandidaten velkommen og still det første spørsmålet.'
+    : params.conversationHistory[params.conversationHistory.length - 1]?.content || ''
+
+  const result = await chat.sendMessage(userMessage)
   return result.response.text()
 }
 
@@ -276,11 +253,7 @@ Oppsummeringen skal inkludere:
 
 Hold oppsummeringen på 150-250 ord.`
 
-  const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
-    generationConfig: { temperature: 0.5 },
-  })
-
+  const model = getModel()
   const result = await model.generateContent(prompt)
   return result.response.text()
 }
@@ -310,11 +283,7 @@ E-posten skal:
 
 Skriv kun e-postteksten, ingen emne-linje.`
 
-  const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
-    generationConfig: { temperature: 0.8 },
-  })
-
+  const model = getModel()
   const result = await model.generateContent(prompt)
   return result.response.text()
 }
@@ -342,29 +311,18 @@ E-posten skal:
 - Være entusiastisk men profesjonell
 - Være 150-200 ord`
 
-  const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
-    generationConfig: { temperature: 0.7 },
-  })
-
+  const model = getModel()
   const result = await model.generateContent(prompt)
   return result.response.text()
 }
 
 // ===== SPRÅKDETEKSJON =====
 export async function detectLanguage(text: string): Promise<string> {
-  const prompt = `Detect the language of this text and return only the language name in English (e.g., "Norwegian", "English", "Swedish", "Polish", etc.):
+  const prompt = `Detect the language of this text and return only the language name in English (e.g., "Norwegian", "English", "Swedish", "Polish", etc.). Reply with just the language name, nothing else.
 
 "${text.substring(0, 200)}"`
 
-  const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
-    generationConfig: {
-      temperature: 0,
-      maxOutputTokens: 10,
-    },
-  })
-
+  const model = getModel()
   const result = await model.generateContent(prompt)
   return result.response.text().trim() || 'Norwegian'
 }

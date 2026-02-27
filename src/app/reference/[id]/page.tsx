@@ -5,15 +5,15 @@ import { Button } from '@/components/ui/Button'
 import { Input, Textarea, Select } from '@/components/ui/Input'
 import { Card } from '@/components/ui/Card'
 import { CheckCircle2, Star } from 'lucide-react'
-import React from 'react'
+
 
 export default function ReferencePage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }) {
-  const resolvedParams = React.use(params)
-  const referenceId = resolvedParams.id
+  
+  const { id: referenceId } = params
 
   const [referenceData, setReferenceData] = useState<{
     referee_name: string
@@ -91,52 +91,52 @@ export default function ReferencePage({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-bg-light flex items-center justify-center">
-        <div className="animate-pulse text-gray-500">Laster skjema...</div>
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <div className="animate-pulse text-[#666]">Laster skjema...</div>
       </div>
     )
   }
 
   if (error && !referenceData) {
     return (
-      <div className="min-h-screen bg-bg-light flex items-center justify-center">
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600">{error}</p>
+          <p className="text-red-400">{error}</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-bg-light py-12 px-4">
+    <div className="min-h-screen bg-[#0a0a0a] py-12 px-4">
       <div className="max-w-lg mx-auto">
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">A</span>
+            <div className="w-8 h-8 bg-[#d7fe03] rounded-lg flex items-center justify-center">
+              <span className="text-black font-bold text-sm">A</span>
             </div>
-            <span className="text-navy font-bold text-xl">Ansora</span>
+            <span className="text-white font-bold text-xl">Ansora</span>
           </div>
-          <h1 className="text-2xl font-bold text-navy">Referanseforespørsel</h1>
+          <h1 className="text-2xl font-bold text-white">Referanseforespørsel</h1>
           {referenceData && (
-            <p className="text-gray-500 mt-2 text-sm">
+            <p className="text-[#999] mt-2 text-sm">
               Du er oppgitt som referanse for{' '}
-              <strong>{referenceData.applications?.candidates?.name}</strong>{' '}
+              <strong className="text-white">{referenceData.applications?.candidates?.name}</strong>{' '}
               til stillingen{' '}
-              <strong>{referenceData.applications?.jobs?.title}</strong>{' '}
-              hos <strong>{referenceData.applications?.jobs?.companies?.name}</strong>
+              <strong className="text-white">{referenceData.applications?.jobs?.title}</strong>{' '}
+              hos <strong className="text-white">{referenceData.applications?.jobs?.companies?.name}</strong>
             </p>
           )}
         </div>
 
         {submitted ? (
           <Card className="text-center py-12">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle2 className="w-8 h-8 text-green-500" />
+            <div className="w-16 h-16 bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 className="w-8 h-8 text-green-400" />
             </div>
-            <h2 className="text-xl font-bold text-navy mb-2">Tusen takk!</h2>
-            <p className="text-gray-500 text-sm">
+            <h2 className="text-xl font-bold text-white mb-2">Tusen takk!</h2>
+            <p className="text-[#999] text-sm">
               Din tilbakemelding er registrert og vil hjelpe oss å gjøre en rettferdig vurdering.
             </p>
           </Card>
@@ -144,7 +144,7 @@ export default function ReferencePage({
           <Card>
             <form onSubmit={handleSubmit} className="space-y-5">
               {error && (
-                <div className="bg-red-50 text-red-700 text-sm px-4 py-3 rounded-lg">
+                <div className="bg-red-900/20 text-red-400 text-sm px-4 py-3 rounded-lg">
                   {error}
                 </div>
               )}
@@ -212,13 +212,13 @@ export default function ReferencePage({
                     >
                       <Star
                         className={`w-8 h-8 ${
-                          star <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
+                          star <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-[#444]'
                         }`}
                       />
                     </button>
                   ))}
                 </div>
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-[#666] mt-1">
                   {['', 'Under forventning', 'Noe under forventning', 'Møter forventning', 'Over forventning', 'Eksepsjonell'][rating]}
                 </p>
               </div>
@@ -240,7 +240,7 @@ export default function ReferencePage({
                 Send referansesvar
               </Button>
 
-              <p className="text-xs text-gray-400 text-center">
+              <p className="text-xs text-[#555] text-center">
                 Dine svar behandles konfidensielt og deles kun med rekrutteringsansvarlig.
               </p>
             </form>

@@ -1,18 +1,10 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/ui/Navbar'
-import { Button } from '@/components/ui/Button'
 import {
-  Briefcase,
-  Users,
-  Brain,
-  MessageSquare,
-  Star,
-  Shield,
-  ArrowRight,
-  CheckCircle2,
-  Globe,
-  FileText
+  Briefcase, Users, Brain, MessageSquare, Star, ArrowRight,
+  CheckCircle2, Globe, FileText, Zap, TrendingUp, Shield,
+  ChevronRight, Quote,
 } from 'lucide-react'
 
 export default async function HomePage() {
@@ -28,254 +20,611 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg-light">
+    <div className="min-h-screen bg-[#0a0a0a]">
       <Navbar userRole={userRole} userName={userName} />
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-navy to-navy/90 text-white">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-36">
-          <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium mb-8 border border-white/20">
-              <Brain className="w-4 h-4 text-blue-300" />
-              AI-drevet rekruttering for fremtiden
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-              Finn de riktige kandidatene
-              <span className="text-blue-300 block mt-2">med kunstig intelligens</span>
-            </h1>
-
-            <p className="text-xl text-white/70 mb-10 max-w-2xl mx-auto leading-relaxed">
-              Ansora effektiviserer hele rekrutteringsprosessen – fra stillingsannonse til ansettelse –
-              med avansert AI som scorer, analyserer og intervjuer kandidater for deg.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/auth/register">
-                <button className="inline-flex items-center gap-2 bg-primary hover:bg-blue-600 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-200 text-base shadow-lg shadow-primary/30">
-                  Start rekruttering gratis
-                  <ArrowRight className="w-5 h-5" />
-                </button>
-              </Link>
-              <Link href="/jobs">
-                <button className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-semibold px-8 py-4 rounded-xl transition-all duration-200 text-base border border-white/20">
-                  Se ledige stillinger
-                </button>
-              </Link>
-            </div>
-
-            {/* Stats */}
-            <div className="mt-16 grid grid-cols-3 gap-8 max-w-lg mx-auto">
-              {[
-                { value: '10x', label: 'Raskere screening' },
-                { value: '94%', label: 'Nøyaktighet i scoring' },
-                { value: '6+', label: 'Bransjer støttet' },
-              ].map((stat) => (
-                <div key={stat.label} className="text-center">
-                  <div className="text-3xl font-bold text-blue-300">{stat.value}</div>
-                  <div className="text-sm text-white/60 mt-1">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Wave divider */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 60L1440 60L1440 0C1200 40 960 60 720 60C480 60 240 40 0 0L0 60Z" fill="#F8FBFF"/>
-          </svg>
-        </div>
-      </section>
-
-      {/* Features Grid */}
-      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-14">
-          <h2 className="text-3xl font-bold text-navy mb-4">Alt du trenger for smart rekruttering</h2>
-          <p className="text-gray-500 max-w-2xl mx-auto">
-            En fullstendig plattform som håndterer hele prosessen fra annonse til ansettelse
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[
-            {
-              icon: Briefcase,
-              title: 'AI Stillingsbuilder',
-              description: 'Skriv inn stikkord og la AI generere en profesjonell, engasjerende stillingsannonse på sekunder.',
-              color: 'bg-blue-50 text-primary',
-            },
-            {
-              icon: FileText,
-              title: 'CV-analyse og scoring',
-              description: 'Automatisk parsing av CV og scoring fra 0-100 basert på match mot stillingens krav.',
-              color: 'bg-purple-50 text-purple-600',
-            },
-            {
-              icon: Brain,
-              title: 'Dyp AI-analyse',
-              description: 'Strukturert analyse med styrker, utviklingsområder og skreddersydde intervjuspørsmål.',
-              color: 'bg-indigo-50 text-indigo-600',
-            },
-            {
-              icon: MessageSquare,
-              title: 'AI-intervju',
-              description: 'Tekst-basert AI-intervju som kvalifiserer kandidater automatisk, tilgjengelig 24/7.',
-              color: 'bg-green-50 text-green-600',
-            },
-            {
-              icon: Globe,
-              title: 'Flerspråklig',
-              description: 'Automatisk språkdeteksjon – kandidaten kommuniserer på sitt morsmål, du mottar norsk analyse.',
-              color: 'bg-teal-50 text-teal-600',
-            },
-            {
-              icon: Shield,
-              title: 'Anonymisert vurdering',
-              description: 'Skjul personidentifiserende informasjon og ta objektive, upartiske rekrutteringsbeslutninger.',
-              color: 'bg-orange-50 text-orange-600',
-            },
-          ].map((feature) => (
-            <div key={feature.title} className="card hover:shadow-md transition-shadow duration-200">
-              <div className={`w-12 h-12 rounded-xl ${feature.color} flex items-center justify-center mb-4`}>
-                <feature.icon className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-semibold text-navy mb-2">{feature.title}</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">{feature.description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section className="py-20 bg-white">
+      {/* ── HERO: Left-aligned (Prospect) + Dashboard mockup ─────────── */}
+      <section className="relative overflow-hidden pt-20 pb-16 lg:pt-28 lg:pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl font-bold text-navy mb-4">Slik fungerer det</h2>
-            <p className="text-gray-500">Fra annonse til ansettelse i enkle steg</p>
-          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_460px] gap-12 lg:gap-16 items-center">
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            {/* Left: Text block */}
             <div>
-              <h3 className="text-xl font-bold text-navy mb-8 flex items-center gap-2">
-                <Briefcase className="w-5 h-5 text-primary" />
-                For bedrifter
-              </h3>
-              <div className="space-y-6">
-                {[
-                  { step: '01', title: 'Opprett stilling', desc: 'Beskriv stillingen med noen stikkord, AI skriver annonsen' },
-                  { step: '02', title: 'Motta søknader', desc: 'Kandidater søker og gjennomfører AI-screening automatisk' },
-                  { step: '03', title: 'Se rangert liste', desc: 'Kandidater scores og rangeres – du ser de beste øverst' },
-                  { step: '04', title: 'Ta beslutning', desc: 'Inviter til intervju, send tilbud, eller avslutt prosessen' },
-                ].map((item) => (
-                  <div key={item.step} className="flex gap-4">
-                    <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                      <span className="text-primary font-bold text-sm">{item.step}</span>
+              <div className="inline-flex items-center gap-2 bg-[#d7fe03]/10 border border-[#d7fe03]/20 px-4 py-1.5 rounded-full text-sm font-medium mb-7 text-[#d7fe03]">
+                <Brain className="w-3.5 h-3.5" />
+                AI-drevet rekruttering
+              </div>
+
+              <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-bold leading-[1.1] tracking-tight text-white mb-6">
+                Finn de riktige<br />
+                kandidatene med<br />
+                <span className="text-[#d7fe03]">kunstig intelligens</span>
+              </h1>
+
+              <p className="text-[#999] text-lg leading-relaxed mb-8 max-w-lg">
+                Ansora effektiviserer hele rekrutteringsprosessen – fra stillingsannonse til
+                ansettelse – med AI som scorer, analyserer og intervjuer kandidater automatisk.
+              </p>
+
+              {/* Dual CTA (Sasslo/Prospect pattern) */}
+              <div className="flex flex-col sm:flex-row gap-3 mb-10">
+                <Link href="/auth/register">
+                  <button className="inline-flex items-center gap-2 bg-[#d7fe03] hover:bg-[#c8ef00] text-black font-semibold px-7 py-3.5 rounded-xl transition-all duration-200 text-[15px]">
+                    Start gratis i dag
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </Link>
+                <Link href="/jobs">
+                  <button className="inline-flex items-center gap-2 border border-white/15 hover:border-white/30 hover:bg-white/5 text-white font-semibold px-7 py-3.5 rounded-xl transition-all duration-200 text-[15px]">
+                    Se ledige stillinger
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </Link>
+              </div>
+
+              {/* Social proof (Prospect inline pattern) */}
+              <div className="flex items-center gap-4">
+                <div className="flex -space-x-2">
+                  {['B', 'T', 'K', 'M'].map((initial, i) => (
+                    <div key={i} className="w-8 h-8 rounded-full bg-[#1a1a1a] border-2 border-[#0a0a0a] flex items-center justify-center">
+                      <span className="text-[10px] font-bold text-[#d7fe03]">{initial}</span>
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-navy">{item.title}</h4>
-                      <p className="text-gray-500 text-sm mt-0.5">{item.desc}</p>
-                    </div>
+                  ))}
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-3.5 h-3.5 text-[#d7fe03] fill-[#d7fe03]" />
+                    ))}
                   </div>
-                ))}
+                  <span className="text-sm text-[#999]">
+                    4.9/5 fra <span className="text-white">200+ bedrifter</span>
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div>
-              <h3 className="text-xl font-bold text-navy mb-8 flex items-center gap-2">
-                <Users className="w-5 h-5 text-primary" />
-                For kandidater
-              </h3>
-              <div className="space-y-6">
+            {/* Right: Dashboard mockup (Visuo-inspired) */}
+            <div className="relative">
+              <div className="bg-[#111111] border border-white/[0.08] rounded-2xl p-5 shadow-2xl">
+                {/* Mock top bar */}
+                <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/[0.06]">
+                  <span className="text-sm font-semibold text-white">Søkere — Frontend Utvikler</span>
+                  <span className="text-xs bg-[#d7fe03]/10 text-[#d7fe03] px-2.5 py-1 rounded-full border border-[#d7fe03]/20">
+                    12 nye
+                  </span>
+                </div>
+
+                {/* Mock candidate rows */}
                 {[
-                  { step: '01', title: 'Finn stilling', desc: 'Bla gjennom aktuelle stillinger og finn din match' },
-                  { step: '02', title: 'Last opp CV', desc: 'CV-en parsers automatisk, ingen manuell utfylling nødvendig' },
-                  { step: '03', title: 'Svar på spørsmål', desc: 'AI stiller relevante spørsmål basert på din bakgrunn' },
-                  { step: '04', title: 'Gjennomfør intervju', desc: 'Tekstbasert AI-intervju – ta det i ditt eget tempo' },
-                ].map((item) => (
-                  <div key={item.step} className="flex gap-4">
-                    <div className="flex-shrink-0 w-10 h-10 bg-green-50 rounded-full flex items-center justify-center">
-                      <span className="text-green-600 font-bold text-sm">{item.step}</span>
+                  { name: 'Marte S.', score: 94, status: 'Intervju', color: 'bg-green-900/40 text-green-400' },
+                  { name: 'Jonas H.', score: 87, status: 'Ny', color: 'bg-[#d7fe03]/10 text-[#d7fe03]' },
+                  { name: 'Lena K.', score: 81, status: 'Ny', color: 'bg-[#d7fe03]/10 text-[#d7fe03]' },
+                  { name: 'Erik B.', score: 68, status: 'Vurderer', color: 'bg-orange-900/30 text-orange-400' },
+                ].map((c) => (
+                  <div key={c.name} className="flex items-center gap-3 py-2.5 border-b border-white/[0.04] last:border-0">
+                    <div className="w-8 h-8 rounded-full bg-[#1a1a1a] border border-white/10 flex items-center justify-center flex-shrink-0">
+                      <span className="text-[10px] font-bold text-[#d7fe03]">{c.name[0]}</span>
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-navy">{item.title}</h4>
-                      <p className="text-gray-500 text-sm mt-0.5">{item.desc}</p>
-                    </div>
+                    <span className="text-sm text-white flex-1">{c.name}</span>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${c.color}`}>{c.score}</span>
+                    <span className="text-[11px] text-[#444] w-14 text-right">{c.status}</span>
                   </div>
                 ))}
+
+                {/* AI insight preview */}
+                <div className="mt-4 p-3 bg-[#1a1a1a] rounded-xl border border-white/[0.06]">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <Brain className="w-3.5 h-3.5 text-[#d7fe03]" />
+                    <span className="text-[11px] font-semibold text-[#d7fe03]">AI-analyse · Marte S.</span>
+                  </div>
+                  <p className="text-[11px] text-[#666] leading-relaxed">
+                    Sterk teknisk bakgrunn i React/TS. Kommuniserer tydelig. Anbefales for intervju.
+                  </p>
+                </div>
+              </div>
+
+              {/* Floating stat badge */}
+              <div className="absolute -top-4 -right-4 bg-[#111111] border border-white/[0.08] rounded-xl px-4 py-3 shadow-xl">
+                <div className="text-2xl font-bold text-[#d7fe03]">10x</div>
+                <div className="text-xs text-[#555]">Raskere screening</div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Industry support */}
-      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-navy mb-4">Bransjetilpasset</h2>
-          <p className="text-gray-500">Forhåndsdefinerte maler og kriterier for din bransje</p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          {[
-            { icon: '🏥', label: 'Helse og omsorg' },
-            { icon: '🏗️', label: 'Bygg og anlegg' },
-            { icon: '🛒', label: 'Butikk og dagligvare' },
-            { icon: '🍽️', label: 'Restaurant og servering' },
-            { icon: '📦', label: 'Lager og logistikk' },
-            { icon: '💻', label: 'IT og teknologi' },
-          ].map((industry) => (
-            <div key={industry.label} className="card text-center hover:shadow-md transition-shadow cursor-pointer">
-              <div className="text-3xl mb-3">{industry.icon}</div>
-              <p className="text-sm font-medium text-navy leading-tight">{industry.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-20 bg-navy text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Star className="w-12 h-12 text-blue-300 mx-auto mb-6" />
-          <h2 className="text-3xl font-bold mb-4">Klar til å effektivisere rekrutteringen?</h2>
-          <p className="text-white/70 mb-8 text-lg">
-            Kom i gang gratis i dag og opplev kraften av AI-drevet rekruttering
+      {/* ── TRUST STRIP (Sasslo/Prospect) ────────────────────────────── */}
+      <section className="py-10 border-y border-white/[0.06]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-center text-[11px] font-semibold uppercase tracking-widest text-[#3a3a3a] mb-6">
+            Brukt av bedrifter i hele Norge
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/auth/register">
-              <button className="inline-flex items-center gap-2 bg-primary hover:bg-blue-600 text-white font-semibold px-8 py-4 rounded-xl transition-all">
-                Registrer bedrift
-                <ArrowRight className="w-5 h-5" />
-              </button>
-            </Link>
-            <Link href="/jobs">
-              <button className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-4 rounded-xl transition-all border border-white/20">
-                Søk som kandidat
-              </button>
-            </Link>
-          </div>
-          <div className="mt-8 flex items-center justify-center gap-6 text-sm text-white/50">
-            {['Gratis å komme i gang', 'Ingen kredittkort', 'Kom i gang på minutter'].map((item) => (
-              <div key={item} className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-green-400" />
-                {item}
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {['Helse og omsorg', 'Bygg og anlegg', 'IT og teknologi', 'Handel og dagligvare', 'Lager og logistikk', 'Restaurant og servering'].map((name) => (
+              <div key={name} className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.07] text-sm text-[#444] font-medium">
+                {name}
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-navy/95 text-white/60 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
-              <span className="text-white font-bold text-xs">A</span>
+      {/* ── 3-ICON QUICK FEATURES (Sasslo horizontal) ────────────────── */}
+      <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-bold text-white mb-4">Alt du trenger for smart rekruttering</h2>
+          <p className="text-[#666] max-w-xl mx-auto leading-relaxed">
+            En fullstendig plattform som håndterer hele prosessen fra annonse til ansettelse
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            {
+              icon: Brain,
+              title: 'AI-screening',
+              desc: 'CV-analyse og automatisk scoring fra 0–100 basert på match mot stillingens krav. Du ser bare de beste.',
+            },
+            {
+              icon: MessageSquare,
+              title: 'AI-intervju 24/7',
+              desc: 'Tekstbasert AI-intervju som stiller skreddersydde spørsmål og kvalifiserer kandidater automatisk.',
+            },
+            {
+              icon: TrendingUp,
+              title: 'Rangert oversikt',
+              desc: 'Kandidater sorteres etter AI-score slik at du alltid tar beslutning på informert grunnlag.',
+            },
+          ].map((f) => (
+            <div key={f.title} className="p-8 rounded-2xl border border-white/[0.07] bg-[#111111] hover:border-white/[0.15] transition-colors duration-200">
+              <div className="w-12 h-12 rounded-xl bg-[#d7fe03]/10 border border-[#d7fe03]/20 flex items-center justify-center mb-5">
+                <f.icon className="w-5 h-5 text-[#d7fe03]" />
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-3">{f.title}</h3>
+              <p className="text-[#666] text-sm leading-relaxed">{f.desc}</p>
             </div>
-            <span className="font-bold text-white">Ansora</span>
+          ))}
+        </div>
+      </section>
+
+      {/* ── ALTERNATING FEATURE ROWS (Visuo numbered + Sasslo checkmarks) ── */}
+      <section className="pb-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-28">
+
+        {/* Row 1: Stillingsbuilder */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="order-2 lg:order-1 bg-[#111111] border border-white/[0.07] rounded-2xl p-7">
+            <div className="flex items-center gap-2 mb-5">
+              <Briefcase className="w-4 h-4 text-[#d7fe03]" />
+              <span className="text-sm font-semibold text-white">AI Stillingsbuilder</span>
+            </div>
+            <div className="space-y-2 mb-5">
+              <div className="h-2.5 bg-white/[0.06] rounded-full w-full" />
+              <div className="h-2.5 bg-white/[0.06] rounded-full w-4/5" />
+              <div className="h-2.5 bg-white/[0.06] rounded-full w-3/4" />
+              <div className="h-2.5 bg-white/[0.06] rounded-full w-5/6" />
+            </div>
+            <div className="flex items-start gap-2.5 p-3.5 bg-[#1a1a1a] rounded-xl border border-white/[0.06]">
+              <Brain className="w-3.5 h-3.5 text-[#d7fe03] mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-[11px] font-semibold text-[#d7fe03] mb-1">AI genererer stillingsannonse</p>
+                <p className="text-[11px] text-[#555]">Frontend-utvikler med React/TS, remote-vennlig, Oslo…</p>
+              </div>
+            </div>
           </div>
-          <p className="text-sm">© 2025 Ansora. AI-drevet rekrutteringsplattform.</p>
+          <div className="order-1 lg:order-2">
+            <span className="text-[#d7fe03] font-bold text-xs uppercase tracking-widest">Steg 01</span>
+            <h2 className="text-3xl font-bold text-white mt-3 mb-5 leading-snug">
+              Opprett stillingen på sekunder
+            </h2>
+            <p className="text-[#777] mb-7 leading-relaxed">
+              Skriv inn noen stikkord om stillingen, og la AI generere en profesjonell, engasjerende
+              stillingsannonse tilpasset din bransje.
+            </p>
+            <ul className="space-y-3.5">
+              {[
+                'AI skriver hele annonsen basert på stikkord',
+                'Forhåndsdefinerte maler per bransje',
+                'Publiser med ett klikk',
+              ].map((item) => (
+                <li key={item} className="flex items-center gap-3 text-sm text-[#bbb]">
+                  <CheckCircle2 className="w-4 h-4 text-[#d7fe03] flex-shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Row 2: CV-screening */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div>
+            <span className="text-[#d7fe03] font-bold text-xs uppercase tracking-widest">Steg 02</span>
+            <h2 className="text-3xl font-bold text-white mt-3 mb-5 leading-snug">
+              Automatisk screening av alle søkere
+            </h2>
+            <p className="text-[#777] mb-7 leading-relaxed">
+              Når kandidater søker, analyserer AI automatisk CV og besvarer screeningspørsmål –
+              uten at du løfter en finger.
+            </p>
+            <ul className="space-y-3.5">
+              {[
+                'CV-parsing og strukturert analyse',
+                'Score 0–100 per kandidat basert på stillingens krav',
+                'Flerspråklig – AI svarer alltid på norsk',
+              ].map((item) => (
+                <li key={item} className="flex items-center gap-3 text-sm text-[#bbb]">
+                  <CheckCircle2 className="w-4 h-4 text-[#d7fe03] flex-shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="bg-[#111111] border border-white/[0.07] rounded-2xl p-7">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <FileText className="w-4 h-4 text-[#d7fe03]" />
+                <span className="text-sm font-semibold text-white">CV-analyse</span>
+              </div>
+              <div className="text-3xl font-bold text-[#d7fe03]">94</div>
+            </div>
+            <div className="space-y-3.5">
+              {[
+                { label: 'Teknisk match', pct: 94 },
+                { label: 'Erfaring', pct: 87 },
+                { label: 'Kommunikasjon', pct: 78 },
+                { label: 'Kulturell match', pct: 71 },
+              ].map((bar) => (
+                <div key={bar.label}>
+                  <div className="flex justify-between text-xs mb-1.5">
+                    <span className="text-[#555]">{bar.label}</span>
+                    <span className="text-[#888]">{bar.pct}%</span>
+                  </div>
+                  <div className="h-1.5 bg-white/[0.05] rounded-full">
+                    <div
+                      className="h-1.5 bg-[#d7fe03] rounded-full"
+                      style={{ width: `${bar.pct}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Row 3: AI-intervju */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="order-2 lg:order-1 bg-[#111111] border border-white/[0.07] rounded-2xl p-7">
+            <div className="flex items-center gap-2 mb-5">
+              <MessageSquare className="w-4 h-4 text-[#d7fe03]" />
+              <span className="text-sm font-semibold text-white">AI-intervju</span>
+              <span className="ml-auto text-xs text-green-400 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" />
+                Pågår
+              </span>
+            </div>
+            <div className="space-y-3">
+              <div className="flex justify-end">
+                <div className="bg-[#d7fe03]/10 border border-[#d7fe03]/20 rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[85%]">
+                  <p className="text-xs text-[#ccc]">Beskriv din erfaring med React og TypeScript i et produksjonsmiljø.</p>
+                </div>
+              </div>
+              <div className="flex justify-start">
+                <div className="bg-white/[0.04] border border-white/[0.06] rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[85%]">
+                  <p className="text-xs text-[#888]">Jeg har 4 år med React og har jobbet med store enterprise-prosjekter, inkludert…</p>
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <div className="bg-[#d7fe03]/10 border border-[#d7fe03]/20 rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[85%]">
+                  <p className="text-xs text-[#ccc]">Hvordan håndterer du state management i store React-applikasjoner?</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="order-1 lg:order-2">
+            <span className="text-[#d7fe03] font-bold text-xs uppercase tracking-widest">Steg 03</span>
+            <h2 className="text-3xl font-bold text-white mt-3 mb-5 leading-snug">
+              AI gjennomfører intervjuet for deg
+            </h2>
+            <p className="text-[#777] mb-7 leading-relaxed">
+              Kandidaten møter en intelligent AI som stiller skreddersydde spørsmål basert på
+              stillingen og CV. Tilgjengelig 24/7, i kandidatens eget tempo.
+            </p>
+            <ul className="space-y-3.5">
+              {[
+                'Tekstbasert – komfortabelt for alle kandidater',
+                'Skreddersydde spørsmål per stilling',
+                'Anonymisert vurdering mulig',
+              ].map((item) => (
+                <li key={item} className="flex items-center gap-3 text-sm text-[#bbb]">
+                  <CheckCircle2 className="w-4 h-4 text-[#d7fe03] flex-shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Row 4: Beslutning */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div>
+            <span className="text-[#d7fe03] font-bold text-xs uppercase tracking-widest">Steg 04</span>
+            <h2 className="text-3xl font-bold text-white mt-3 mb-5 leading-snug">
+              Ta beslutning på informert grunnlag
+            </h2>
+            <p className="text-[#777] mb-7 leading-relaxed">
+              Sammenlign kandidater side om side, se dybdeanalyse fra AI og ta den riktige avgjørelsen
+              raskere enn noensinne.
+            </p>
+            <ul className="space-y-3.5">
+              {[
+                'Rangert kandidatliste med AI-score',
+                'Send jobbtilbud direkte fra plattformen',
+                'Innhent referanser automatisk',
+              ].map((item) => (
+                <li key={item} className="flex items-center gap-3 text-sm text-[#bbb]">
+                  <CheckCircle2 className="w-4 h-4 text-[#d7fe03] flex-shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="bg-[#111111] border border-white/[0.07] rounded-2xl p-7">
+            <div className="flex items-center justify-between mb-5">
+              <span className="text-sm font-semibold text-white">Rangert liste</span>
+              <span className="text-xs text-[#555]">4 søkere</span>
+            </div>
+            {[
+              { name: 'Marte S.', score: 94, rank: '#1', color: 'bg-green-900/40 text-green-400' },
+              { name: 'Jonas H.', score: 87, rank: '#2', color: 'bg-[#d7fe03]/10 text-[#d7fe03]' },
+              { name: 'Lena K.', score: 81, rank: '#3', color: 'bg-[#d7fe03]/10 text-[#d7fe03]' },
+            ].map((c, i) => (
+              <div key={c.name} className={`flex items-center gap-3 py-3 ${i < 2 ? 'border-b border-white/[0.05]' : ''}`}>
+                <span className="text-xs text-[#333] w-6 font-bold">{c.rank}</span>
+                <div className="w-8 h-8 rounded-full bg-[#1a1a1a] border border-white/10 flex items-center justify-center flex-shrink-0">
+                  <span className="text-[10px] font-bold text-[#d7fe03]">{c.name[0]}</span>
+                </div>
+                <span className="text-sm text-white flex-1">{c.name}</span>
+                <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${c.color}`}>{c.score}</span>
+              </div>
+            ))}
+            <button className="mt-5 w-full text-xs text-[#d7fe03] border border-[#d7fe03]/20 hover:bg-[#d7fe03]/5 rounded-xl py-3 transition-colors">
+              Send tilbud til Marte S. →
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ── STATS ROW (Visuo 4-stat horizontal) ──────────────────────── */}
+      <section className="py-24 bg-[#111111] border-y border-white/[0.08] mt-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-white mb-3">Resultater som teller</h2>
+            <p className="text-[#666]">Slik hjelper Ansora bedrifter over hele landet</p>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-4">
+            {[
+              { value: '10x', label: 'Raskere screening', sub: 'vs. manuell prosess' },
+              { value: '94%', label: 'Nøyaktighet i scoring', sub: 'AI-vurdering' },
+              { value: '6+', label: 'Bransjer støttet', sub: 'forhåndstilpasset' },
+              { value: '200+', label: 'Bedrifter', sub: 'bruker Ansora' },
+            ].map((stat) => (
+              <div key={stat.label} className="text-center px-4">
+                <div className="text-5xl font-bold text-[#d7fe03] mb-2">{stat.value}</div>
+                <div className="text-white font-semibold mb-1.5">{stat.label}</div>
+                <div className="text-xs text-[#444]">{stat.sub}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FEATURE HIGHLIGHTS: Bransjer + Extras ────────────────────── */}
+      <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          {/* Bransjer */}
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-2">Bransjetilpasset</h2>
+            <p className="text-[#666] mb-8 text-sm leading-relaxed">
+              Forhåndsdefinerte maler og kriterier for din bransje – AI vet hva som gjelder.
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { icon: '🏥', label: 'Helse og omsorg' },
+                { icon: '🏗️', label: 'Bygg og anlegg' },
+                { icon: '🛒', label: 'Handel og dagligvare' },
+                { icon: '🍽️', label: 'Restaurant og servering' },
+                { icon: '📦', label: 'Lager og logistikk' },
+                { icon: '💻', label: 'IT og teknologi' },
+              ].map((industry) => (
+                <div key={industry.label} className="flex items-center gap-3 p-4 rounded-xl border border-white/[0.07] bg-[#111111] hover:border-white/[0.15] transition-colors cursor-pointer">
+                  <span className="text-xl">{industry.icon}</span>
+                  <p className="text-sm font-medium text-[#ccc]">{industry.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Extra features */}
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-white mb-2">Kraftige tilleggsfunksjoner</h2>
+            <p className="text-[#666] mb-8 text-sm leading-relaxed">
+              Alt du trenger for en komplett rekrutteringsprosess – samlet på ett sted.
+            </p>
+            {[
+              { icon: Globe, title: 'Flerspråklig', desc: 'Kandidaten kommuniserer på sitt morsmål. Du mottar alltid norsk analyse.' },
+              { icon: Shield, title: 'Anonymisert vurdering', desc: 'Skjul personidentifiserende info og ta objektive beslutninger.' },
+              { icon: Users, title: 'Referansesjekk', desc: 'Send referanseforespørsler automatisk og motta strukturerte svar.' },
+              { icon: Zap, title: 'Jobbtilbud digitalt', desc: 'Send, signer og administrer jobbtilbud direkte i plattformen.' },
+            ].map((feat) => (
+              <div key={feat.title} className="flex gap-4 p-4 rounded-xl border border-white/[0.07] bg-[#111111] hover:border-white/[0.15] transition-colors">
+                <div className="w-10 h-10 rounded-lg bg-[#d7fe03]/10 border border-[#d7fe03]/20 flex items-center justify-center flex-shrink-0">
+                  <feat.icon className="w-4 h-4 text-[#d7fe03]" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-semibold text-white mb-1">{feat.title}</h4>
+                  <p className="text-xs text-[#666] leading-relaxed">{feat.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── TESTIMONIALS (Visuo 3-card style) ───────────────────────── */}
+      <section className="py-24 bg-[#111111] border-y border-white/[0.08]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-white mb-4">Hva bedriftene sier</h2>
+            <p className="text-[#666]">Ekte tilbakemeldinger fra norske rekrutterere</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                quote: 'Ansora spart oss for enorme mengder tid. Vi brukte uker på screening – nå er det gjort på timer. Uvurderlig verktøy.',
+                name: 'Kristine M.',
+                title: 'HR-leder, Helsegruppen AS',
+                initials: 'KM',
+              },
+              {
+                quote: 'Kvaliteten på kandidatene vi inviterer til intervju har økt dramatisk. AI-analysen er forbløffende presis og objektiv.',
+                name: 'Thomas B.',
+                title: 'Daglig leder, TechNord',
+                initials: 'TB',
+              },
+              {
+                quote: 'Vi rekrutterte 8 ansatte på tre uker. Uten Ansora hadde det tatt måneder. Anbefales på det sterkeste!',
+                name: 'Lene H.',
+                title: 'Rekrutteringssjef, Bygg & Co',
+                initials: 'LH',
+              },
+            ].map((t) => (
+              <div key={t.name} className="bg-[#0a0a0a] border border-white/[0.07] rounded-2xl p-7 flex flex-col hover:border-white/[0.14] transition-colors">
+                <Quote className="w-7 h-7 text-[#d7fe03]/30 mb-5 flex-shrink-0" />
+                <p className="text-[#999] text-sm leading-relaxed flex-1 mb-7 italic">
+                  &ldquo;{t.quote}&rdquo;
+                </p>
+                <div className="flex items-center gap-3 pt-5 border-t border-white/[0.06]">
+                  <div className="w-10 h-10 rounded-full bg-[#1a1a1a] border border-white/10 flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs font-bold text-[#d7fe03]">{t.initials}</span>
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-white">{t.name}</div>
+                    <div className="text-xs text-[#444]">{t.title}</div>
+                  </div>
+                  <div className="ml-auto flex">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-3 h-3 text-[#d7fe03] fill-[#d7fe03]" />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA SECTION ───────────────────────────────────────────────── */}
+      <section className="py-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="w-14 h-14 rounded-2xl bg-[#d7fe03]/10 border border-[#d7fe03]/20 flex items-center justify-center mx-auto mb-7">
+          <Zap className="w-7 h-7 text-[#d7fe03]" />
+        </div>
+        <h2 className="text-3xl sm:text-4xl font-bold text-white mb-5 leading-snug">
+          Klar til å effektivisere rekrutteringen?
+        </h2>
+        <p className="text-[#777] mb-10 text-lg max-w-xl mx-auto leading-relaxed">
+          Kom i gang gratis i dag og opplev kraften av AI-drevet rekruttering – ingen kredittkort nødvendig.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
+          <Link href="/auth/register">
+            <button className="inline-flex items-center gap-2 bg-[#d7fe03] hover:bg-[#c8ef00] text-black font-semibold px-8 py-4 rounded-xl transition-all text-[15px]">
+              Registrer bedrift gratis
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </Link>
+          <Link href="/jobs">
+            <button className="inline-flex items-center gap-2 border border-white/15 hover:border-white/30 hover:bg-white/5 text-white font-semibold px-8 py-4 rounded-xl transition-all text-[15px]">
+              Søk som kandidat
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </Link>
+        </div>
+        <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-[#555]">
+          {['Gratis å komme i gang', 'Ingen kredittkort', 'Kom i gang på minutter'].map((item) => (
+            <div key={item} className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-[#d7fe03]" />
+              {item}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── FOOTER (Prospect multi-column) ───────────────────────────── */}
+      <footer className="bg-[#111111] border-t border-white/[0.07] pt-14 pb-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+
+            {/* Brand */}
+            <div className="lg:col-span-2">
+              <Link href="/" className="flex items-center gap-2 mb-5">
+                <div className="w-8 h-8 bg-[#d7fe03] rounded-lg flex items-center justify-center">
+                  <span className="text-black font-bold text-sm">A</span>
+                </div>
+                <span className="text-white font-bold text-xl tracking-tight">Ansora</span>
+              </Link>
+              <p className="text-sm text-[#444] max-w-xs leading-relaxed mb-6">
+                AI-drevet rekrutteringsplattform som hjelper norske bedrifter å finne de riktige
+                kandidatene – raskere og mer objektivt.
+              </p>
+              <div className="flex items-center gap-1.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-3.5 h-3.5 text-[#d7fe03] fill-[#d7fe03]" />
+                ))}
+                <span className="text-xs text-[#444] ml-1.5">4.9/5 fra 200+ bedrifter</span>
+              </div>
+            </div>
+
+            {/* Platform */}
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-[#333] mb-5">Plattform</p>
+              <ul className="space-y-3">
+                {[
+                  { label: 'Ledige stillinger', href: '/jobs' },
+                  { label: 'Registrer bedrift', href: '/auth/register' },
+                  { label: 'Logg inn', href: '/auth/login' },
+                ].map((link) => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="text-sm text-[#444] hover:text-white transition-colors">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Dashboard */}
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-[#333] mb-5">Dashboard</p>
+              <ul className="space-y-3">
+                {[
+                  { label: 'Bedriftsoversikt', href: '/dashboard/company' },
+                  { label: 'Mine søknader', href: '/dashboard/candidate' },
+                  { label: 'Opprett stilling', href: '/jobs/new' },
+                ].map((link) => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="text-sm text-[#444] hover:text-white transition-colors">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t border-white/[0.05] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-xs text-[#333]">© 2025 Ansora. Alle rettigheter forbeholdt.</p>
+            <p className="text-xs text-[#2a2a2a]">AI-drevet rekrutteringsplattform · Norge</p>
+          </div>
         </div>
       </footer>
     </div>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { generateFollowUpQuestions, scoreCandidate, analyzeCandidate, detectLanguage } from '@/lib/gemini/prompts'
 
 // POST - Send inn søknad med CV
@@ -21,15 +21,26 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Mangler stilling-ID eller CV' }, { status: 400 })
     }
 
-    // Hent kandidatprofil
-    const { data: candidate } = await supabase
+    // Hent kandidatprofil – opprett automatisk hvis den mangler
+    let { data: candidate } = await supabase
       .from('candidates')
       .select('*')
       .eq('user_id', user.id)
       .single()
 
     if (!candidate) {
-      return NextResponse.json({ error: 'Ingen kandidatprofil funnet' }, { status: 403 })
+      const admin = await createAdminClient()
+      const name = (user.user_metadata?.name as string | undefined) ?? user.email ?? 'Kandidat'
+      const { data: created } = await admin
+        .from('candidates')
+        .insert({ user_id: user.id, name, email: user.email ?? '' })
+        .select('*')
+        .single()
+
+      if (!created) {
+        return NextResponse.json({ error: 'Kunne ikke opprette kandidatprofil' }, { status: 500 })
+      }
+      candidate = created
     }
 
     // Sjekk om kandidaten allerede har søkt
@@ -44,11 +55,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Du har allerede søkt på denne stillingen' }, { status: 409 })
     }
 
-    // Last opp CV til Supabase Storage
+    // Last opp CV til Supabase Storage (admin-klient for å bypass RLS)
     const cvBuffer = await cvFile.arrayBuffer()
     const cvPath = `${candidate.id}/${jobId}/cv.pdf`
 
-    const { error: uploadError } = await supabase.storage
+    const admin = await createAdminClient()
+    const { error: uploadError } = await admin.storage
       .from('cvs')
       .upload(cvPath, cvBuffer, {
         contentType: 'application/pdf',
@@ -57,7 +69,10 @@ export async function POST(req: NextRequest) {
 
     if (uploadError) {
       console.error('CV-opplastingsfeil:', uploadError)
-      return NextResponse.json({ error: 'Feil ved opplasting av CV' }, { status: 500 })
+      return NextResponse.json(
+        { error: `Feil ved opplasting av CV: ${uploadError.message}` },
+        { status: 500 }
+      )
     }
 
     const { data: { publicUrl: cvUrl } } = supabase.storage.from('cvs').getPublicUrl(cvPath)
@@ -65,9 +80,8 @@ export async function POST(req: NextRequest) {
     // Parse CV-tekst med pdf-parse (server-side)
     let cvText = ''
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const pdfParseModule = await import('pdf-parse') as any
-      const pdfParse = pdfParseModule.default ?? pdfParseModule
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const pdfParse = require('pdf-parse')
       const pdfData = await pdfParse(Buffer.from(cvBuffer))
       cvText = pdfData.text
     } catch (pdfError) {
@@ -188,7 +202,7 @@ export async function GET(req: NextRequest) {
           .select('id')
           .eq('company_id', company?.id)
 
-        const jobIds = jobs?.map((j) => j.id) || []
+        const jobIds = jobs?.map((j: { id: string }) => j.id) || []
         if (jobIds.length > 0) {
           query = query.in('job_id', jobIds)
         }
