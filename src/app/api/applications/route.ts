@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createAdminClient } from '@/lib/supabase/server'
-import { generateFollowUpQuestions, scoreCandidate, analyzeCandidate, detectLanguage } from '@/lib/gemini/prompts'
+import { generateFollowUpQuestions, scoreCandidate, analyzeCandidate, detectLanguage } from '@/lib/openai/prompts'
 
 // POST - Send inn søknad med CV
 export async function POST(req: NextRequest) {

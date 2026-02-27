@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { generateJobDescription } from '@/lib/gemini/prompts'
+import { generateJobDescription } from '@/lib/openai/prompts'
 import { getIndustryLabel } from '@/lib/utils'
 import type { Industry } from '@/types'
 

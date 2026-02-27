@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { generateOnboardingEmail } from '@/lib/gemini/prompts'
+import { generateOnboardingEmail } from '@/lib/openai/prompts'
 import { sendEmail, createOnboardingEmailHtml } from '@/lib/email/send'
 
 // POST - Aksepter jobbtilbud
