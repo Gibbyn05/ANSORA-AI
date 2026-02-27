@@ -44,15 +44,50 @@ export default async function CandidateDashboard() {
     .single()
 
   if (!candidate) {
-    const admin = await createAdminClient()
     const name = (user.user_metadata?.name as string | undefined) ?? user.email ?? 'Kandidat'
-    const { data: created } = await admin
+
+    // Try with the user's own session first
+    const { data: created } = await supabase
       .from('candidates')
       .insert({ user_id: user.id, name, email: user.email ?? '' })
       .select('*')
       .single()
-    if (!created) redirect('/auth/login')
-    candidate = created
+
+    if (created) {
+      candidate = created
+    } else {
+      // Fall back to admin client
+      const admin = await createAdminClient()
+      const { data: adminCreated } = await admin
+        .from('candidates')
+        .insert({ user_id: user.id, name, email: user.email ?? '' })
+        .select('*')
+        .single()
+
+      if (adminCreated) {
+        candidate = adminCreated
+      } else {
+        // IMPORTANT: do NOT redirect('/auth/login') here — the middleware will
+        // redirect the logged-in user straight back to /dashboard, creating an
+        // infinite redirect loop (ERR_TOO_MANY_REDIRECTS).
+        return (
+          <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-6 text-center">
+            <div>
+              <p className="text-white font-semibold mb-2">Kunne ikke opprette kandidatprofil</p>
+              <p className="text-[#888] text-sm mb-6">
+                Det kan skyldes en databasefeil eller manglende tilgang. Logg ut og inn igjen.
+              </p>
+              <a
+                href="/api/auth/signout"
+                className="inline-block text-sm font-semibold text-[#d7fe03] border border-[#d7fe03]/30 px-5 py-2.5 rounded-xl hover:bg-[#d7fe03]/10 transition-colors"
+              >
+                Logg ut
+              </a>
+            </div>
+          </div>
+        )
+      }
+    }
   }
 
   const { data: applications } = await supabase
