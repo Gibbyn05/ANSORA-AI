@@ -26,6 +26,7 @@ function createStubClient() {
   return {
     auth: {
       getUser: async () => ({ data: { user: null }, error: null }),
+      getSession: async () => ({ data: { session: null }, error: null }),
     },
     from: () => createQueryStub(),
     storage: {
