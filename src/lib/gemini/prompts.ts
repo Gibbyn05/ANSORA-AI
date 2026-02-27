@@ -224,7 +224,7 @@ Retningslinjer:
   }))
 
   const chat = model.startChat({
-    systemInstruction,
+    systemInstruction: { role: 'user', parts: [{ text: systemInstruction }] },
     history: history.length > 0 ? history : undefined,
   })
 
