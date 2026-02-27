@@ -46,10 +46,13 @@ export default async function CandidateDashboard() {
   if (!candidate) {
     const name = (user.user_metadata?.name as string | undefined) ?? user.email ?? 'Kandidat'
 
+    // 'language' is NOT NULL in the schema — must be provided or insert fails
+    const newCandidate = { user_id: user.id, name, email: user.email ?? '', language: 'no' }
+
     // Try with the user's own session first
     const { data: created } = await supabase
       .from('candidates')
-      .insert({ user_id: user.id, name, email: user.email ?? '' })
+      .insert(newCandidate)
       .select('*')
       .single()
 
@@ -60,7 +63,7 @@ export default async function CandidateDashboard() {
       const admin = await createAdminClient()
       const { data: adminCreated } = await admin
         .from('candidates')
-        .insert({ user_id: user.id, name, email: user.email ?? '' })
+        .insert(newCandidate)
         .select('*')
         .single()
 
