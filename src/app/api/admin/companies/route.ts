@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createAdminClient } from '@/lib/supabase/server'
+import { sendEmail, createCompanyApprovedEmailHtml } from '@/lib/email/send'
 
 function isAdmin(email: string | undefined): boolean {
   const adminEmail = process.env.ADMIN_EMAIL
@@ -59,5 +60,17 @@ export async function PATCH(req: NextRequest) {
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  // Send godkjennings-e-post til bedriften
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  sendEmail({
+    to: data.email,
+    subject: 'Bedriftskontoen din er godkjent – Ansora',
+    html: createCompanyApprovedEmailHtml({
+      companyName: data.name,
+      loginUrl: `${appUrl}/auth/login`,
+    }),
+  }).catch(() => {})
+
   return NextResponse.json({ success: true, action: 'approved', company: data })
 }
