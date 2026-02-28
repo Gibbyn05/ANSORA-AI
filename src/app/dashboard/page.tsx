@@ -9,6 +9,12 @@ export default async function DashboardRouter() {
 
   if (!user) redirect('/auth/login')
 
+  // Admin-bruker sendes direkte til admin-siden
+  const adminEmail = process.env.ADMIN_EMAIL
+  if (adminEmail && user.email?.toLowerCase() === adminEmail.toLowerCase()) {
+    redirect('/admin')
+  }
+
   const role = user.user_metadata?.role as string | undefined
 
   if (role === 'company') {

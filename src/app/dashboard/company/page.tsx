@@ -81,6 +81,14 @@ export default async function CompanyDashboard() {
     }
   }
 
+  const isAdmin = process.env.ADMIN_EMAIL &&
+    user.email?.toLowerCase() === process.env.ADMIN_EMAIL.toLowerCase()
+
+  // Admin-bruker sendes til admin-siden (ikke ventemelding)
+  if (!company.approved && isAdmin) {
+    redirect('/admin')
+  }
+
   // Bedriften venter på godkjenning
   if (!company.approved) {
     return (
@@ -151,12 +159,22 @@ export default async function CompanyDashboard() {
             <p className="text-xs font-semibold uppercase tracking-widest text-[#444] mb-1">Rekrutteringsdashboard</p>
             <h1 className="text-2xl font-bold text-white">Hei, {company.name} 👋</h1>
           </div>
-          <Link href="/jobs/new">
-            <button className="inline-flex items-center gap-2 bg-[#d7fe03] hover:bg-[#c8ef00] text-black font-semibold px-5 py-2.5 rounded-xl transition-all text-sm">
-              <Plus className="w-4 h-4" />
-              <span className="hidden sm:inline">Ny stilling</span>
-            </button>
-          </Link>
+          <div className="flex items-center gap-3">
+            {isAdmin && (
+              <Link href="/admin">
+                <button className="inline-flex items-center gap-2 border border-[#d7fe03]/30 text-[#d7fe03] hover:bg-[#d7fe03]/10 font-semibold px-4 py-2.5 rounded-xl transition-all text-sm">
+                  <ShieldCheck className="w-4 h-4" />
+                  <span className="hidden sm:inline">Admin</span>
+                </button>
+              </Link>
+            )}
+            <Link href="/jobs/new">
+              <button className="inline-flex items-center gap-2 bg-[#d7fe03] hover:bg-[#c8ef00] text-black font-semibold px-5 py-2.5 rounded-xl transition-all text-sm">
+                <Plus className="w-4 h-4" />
+                <span className="hidden sm:inline">Ny stilling</span>
+              </button>
+            </Link>
+          </div>
         </div>
 
         {/* ── Stats row (Visuo 4-stat pattern) ──────────────────────── */}
