@@ -43,13 +43,13 @@ export function AnimateIn({
     return () => observer.disconnect()
   }, [threshold])
 
-  return (
-    <Tag
-      ref={ref as React.Ref<HTMLElement & HTMLDivElement>}
-      className={`${visible ? ANIM_CLASS[animation] : 'opacity-0'} ${className}`}
-      style={{ animationDelay: `${delay}ms`, animationFillMode: 'both' }}
-    >
-      {children}
-    </Tag>
+  return React.createElement(
+    Tag,
+    {
+      ref,
+      className: `${visible ? ANIM_CLASS[animation] : 'opacity-0'} ${className}`,
+      style: { animationDelay: `${delay}ms`, animationFillMode: 'both' },
+    },
+    children
   )
 }
