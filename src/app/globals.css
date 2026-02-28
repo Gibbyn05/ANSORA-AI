@@ -5,11 +5,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --primary: #ffffff;
-  --navy: #ffffff;
-  --text-gray: #999999;
-  --bg-light: #0a0a0a;
-  --dark-card: #111111;
+  --primary: #C5AFA0;
+  --navy: #29524A;
+  --text-gray: #94A187;
+  --bg-light: #06070E;
+  --dark-card: #0e1c17;
 }
 
 * {
@@ -29,33 +29,33 @@ body {
 }
 
 select option {
-  background-color: #1a1a1a;
+  background-color: #1a2c24;
   color: #ffffff;
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-primary text-black font-semibold px-6 py-3 rounded-lg hover:bg-[#e0e0e0] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-[#0a0a0a] disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply bg-primary text-black font-semibold px-6 py-3 rounded-lg hover:bg-[#b09e91] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-[#06070E] disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-secondary {
-    @apply bg-[#1a1a1a] text-white font-semibold px-6 py-3 rounded-lg border border-white/10 hover:bg-[#222] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-2 focus:ring-offset-[#0a0a0a];
+    @apply bg-[#1a2c24] text-white font-semibold px-6 py-3 rounded-lg border border-[#94A187]/25 hover:bg-[#29524A]/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#94A187]/40 focus:ring-offset-2 focus:ring-offset-[#06070E];
   }
 
   .btn-danger {
-    @apply bg-red-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-red-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-[#0a0a0a];
+    @apply bg-red-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-red-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-[#06070E];
   }
 
   .card {
-    @apply bg-[#111111] rounded-xl border border-white/10 p-6;
+    @apply bg-[#0e1c17] rounded-xl border border-[#94A187]/25 p-6;
   }
 
   .input {
-    @apply w-full px-4 py-3 rounded-lg border border-white/10 text-white bg-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 placeholder-[#555];
+    @apply w-full px-4 py-3 rounded-lg border border-[#94A187]/25 text-white bg-[#1a2c24] focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 placeholder-[#4a6358];
   }
 
   .label {
-    @apply block text-sm font-medium text-[#ccc] mb-1.5;
+    @apply block text-sm font-medium text-[#C5AFA0] mb-1.5;
   }
 
   .badge {
@@ -71,7 +71,7 @@ select option {
   }
 
   .page-subtitle {
-    @apply text-[#999] mt-1;
+    @apply text-[#94A187] mt-1;
   }
 }
 
@@ -144,14 +144,14 @@ select option {
 }
 
 ::-webkit-scrollbar-track {
-  background: #111111;
+  background: #0e1c17;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333;
+  background: #29524A;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #444;
+  background: #3d6454;
 }

@@ -19,10 +19,10 @@ export function Button({
   ...props
 }: ButtonProps) {
   const variants = {
-    primary: 'bg-white text-black hover:bg-[#e0e0e0] focus:ring-white',
-    secondary: 'bg-[#1a1a1a] text-white border border-white/10 hover:bg-[#222] focus:ring-white/20',
+    primary: 'bg-[#C5AFA0] text-black hover:bg-[#b09e91] focus:ring-[#94A187]',
+    secondary: 'bg-[#1a2c24] text-white border border-[#94A187]/25 hover:bg-[#29524A]/40 focus:ring-[#94A187]/40',
     danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
-    ghost: 'bg-transparent text-[#999] hover:bg-white/5 hover:text-white focus:ring-white/20',
+    ghost: 'bg-transparent text-[#94A187] hover:bg-[#29524A]/15 hover:text-white focus:ring-[#94A187]/40',
   }
 
   const sizes = {
@@ -35,7 +35,7 @@ export function Button({
     <button
       className={cn(
         'inline-flex items-center justify-center gap-2 font-semibold transition-all duration-200',
-        'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0a0a0a]',
+        'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#06070E]',
         'disabled:opacity-50 disabled:cursor-not-allowed',
         variants[variant],
         sizes[size],

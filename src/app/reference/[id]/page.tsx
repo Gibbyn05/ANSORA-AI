@@ -91,15 +91,15 @@ export default function ReferencePage({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-        <div className="animate-pulse text-[#666]">Laster skjema...</div>
+      <div className="min-h-screen bg-[#06070E] flex items-center justify-center">
+        <div className="animate-pulse text-[#7a8a7d]">Laster skjema...</div>
       </div>
     )
   }
 
   if (error && !referenceData) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+      <div className="min-h-screen bg-[#06070E] flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-400">{error}</p>
         </div>
@@ -108,19 +108,19 @@ export default function ReferencePage({
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] py-12 px-4">
+    <div className="min-h-screen bg-[#06070E] py-12 px-4">
       <div className="max-w-lg mx-auto">
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-              <span className="text-black font-bold text-sm">A</span>
+            <div className="w-8 h-8 bg-[#29524A] rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">A</span>
             </div>
             <span className="text-white font-bold text-xl">Ansora</span>
           </div>
           <h1 className="text-2xl font-bold text-white">Referanseforespørsel</h1>
           {referenceData && (
-            <p className="text-[#999] mt-2 text-sm">
+            <p className="text-[#94A187] mt-2 text-sm">
               Du er oppgitt som referanse for{' '}
               <strong className="text-white">{referenceData.applications?.candidates?.name}</strong>{' '}
               til stillingen{' '}
@@ -136,7 +136,7 @@ export default function ReferencePage({
               <CheckCircle2 className="w-8 h-8 text-green-400" />
             </div>
             <h2 className="text-xl font-bold text-white mb-2">Tusen takk!</h2>
-            <p className="text-[#999] text-sm">
+            <p className="text-[#94A187] text-sm">
               Din tilbakemelding er registrert og vil hjelpe oss å gjøre en rettferdig vurdering.
             </p>
           </Card>
@@ -212,13 +212,13 @@ export default function ReferencePage({
                     >
                       <Star
                         className={`w-8 h-8 ${
-                          star <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-[#444]'
+                          star <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-[#3a5248]'
                         }`}
                       />
                     </button>
                   ))}
                 </div>
-                <p className="text-xs text-[#666] mt-1">
+                <p className="text-xs text-[#7a8a7d] mt-1">
                   {['', 'Under forventning', 'Noe under forventning', 'Møter forventning', 'Over forventning', 'Eksepsjonell'][rating]}
                 </p>
               </div>
@@ -240,7 +240,7 @@ export default function ReferencePage({
                 Send referansesvar
               </Button>
 
-              <p className="text-xs text-[#555] text-center">
+              <p className="text-xs text-[#4a6358] text-center">
                 Dine svar behandles konfidensielt og deles kun med rekrutteringsansvarlig.
               </p>
             </form>

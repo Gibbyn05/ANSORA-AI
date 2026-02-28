@@ -142,25 +142,25 @@ export default function CandidateProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+      <div className="min-h-screen bg-[#06070E] flex items-center justify-center">
         <Loader2 className="w-6 h-6 text-white animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-[#06070E]">
       <Navbar userRole="candidate" userName={profile?.name} profilePictureUrl={profile?.profile_picture_url} />
 
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/dashboard/candidate" className="inline-flex items-center gap-2 text-sm text-[#666] hover:text-white mb-4 transition-colors">
+          <Link href="/dashboard/candidate" className="inline-flex items-center gap-2 text-sm text-[#7a8a7d] hover:text-white mb-4 transition-colors">
             <ArrowLeft className="w-4 h-4" />
             Tilbake til dashboard
           </Link>
           <h1 className="text-2xl font-bold text-white">Min profil</h1>
-          <p className="text-[#999] mt-1 text-sm">Informasjonen din er synlig for bedrifter som vurderer søknaden din</p>
+          <p className="text-[#94A187] mt-1 text-sm">Informasjonen din er synlig for bedrifter som vurderer søknaden din</p>
         </div>
 
         {/* Feedback */}
@@ -177,7 +177,7 @@ export default function CandidateProfilePage() {
         )}
 
         {/* Profile picture */}
-        <div className="bg-[#111111] border border-white/[0.07] rounded-2xl p-6 mb-6">
+        <div className="bg-[#0e1c17] border border-[#29524A]/25 rounded-2xl p-6 mb-6">
           <h2 className="font-semibold text-white mb-4 flex items-center gap-2">
             <Camera className="w-4 h-4 text-white" />
             Profilbilde
@@ -188,11 +188,11 @@ export default function CandidateProfilePage() {
                 <img
                   src={profile.profile_picture_url}
                   alt="Profilbilde"
-                  className="w-20 h-20 rounded-full object-cover border-2 border-white/10"
+                  className="w-20 h-20 rounded-full object-cover border-2 border-[#94A187]/25"
                 />
               ) : (
-                <div className="w-20 h-20 rounded-full bg-[#1a1a1a] border-2 border-white/10 flex items-center justify-center">
-                  <User className="w-8 h-8 text-[#444]" />
+                <div className="w-20 h-20 rounded-full bg-[#1a2c24] border-2 border-[#94A187]/25 flex items-center justify-center">
+                  <User className="w-8 h-8 text-[#3a5248]" />
                 </div>
               )}
               {uploadingPhoto && (
@@ -202,7 +202,7 @@ export default function CandidateProfilePage() {
               )}
             </div>
             <div className="flex-1">
-              <p className="text-sm text-[#888] mb-3">JPG, PNG eller WebP – maks 5 MB</p>
+              <p className="text-sm text-[#94A187] mb-3">JPG, PNG eller WebP – maks 5 MB</p>
               <input
                 ref={photoInputRef}
                 type="file"
@@ -223,7 +223,7 @@ export default function CandidateProfilePage() {
         </div>
 
         {/* CV */}
-        <div className="bg-[#111111] border border-white/[0.07] rounded-2xl p-6 mb-6">
+        <div className="bg-[#0e1c17] border border-[#29524A]/25 rounded-2xl p-6 mb-6">
           <h2 className="font-semibold text-white mb-4 flex items-center gap-2">
             <FileText className="w-4 h-4 text-white" />
             CV
@@ -248,9 +248,9 @@ export default function CandidateProfilePage() {
                   </div>
                 </div>
               ) : (
-                <p className="text-sm text-[#888] mb-2">Ingen CV lastet opp ennå</p>
+                <p className="text-sm text-[#94A187] mb-2">Ingen CV lastet opp ennå</p>
               )}
-              <p className="text-xs text-[#555]">PDF – maks 10 MB</p>
+              <p className="text-xs text-[#4a6358]">PDF – maks 10 MB</p>
             </div>
             <div>
               <input
@@ -277,7 +277,7 @@ export default function CandidateProfilePage() {
         </div>
 
         {/* Text fields */}
-        <div className="bg-[#111111] border border-white/[0.07] rounded-2xl p-6">
+        <div className="bg-[#0e1c17] border border-[#29524A]/25 rounded-2xl p-6">
           <h2 className="font-semibold text-white mb-5 flex items-center gap-2">
             <Pencil className="w-4 h-4 text-white" />
             Personlig informasjon

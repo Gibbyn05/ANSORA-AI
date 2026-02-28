@@ -19,7 +19,7 @@ export function ApplyButton({ jobId, userRole, hasApplied, isLoggedIn }: ApplyBu
           <CheckCircle2 className="w-5 h-5" />
           Du har søkt
         </div>
-        <p className="text-xs text-[#666]">Vi har mottatt din søknad</p>
+        <p className="text-xs text-[#7a8a7d]">Vi har mottatt din søknad</p>
         <Link href="/dashboard/candidate" className="text-primary text-sm hover:underline mt-2 block">
           Se mine søknader →
         </Link>
@@ -30,7 +30,7 @@ export function ApplyButton({ jobId, userRole, hasApplied, isLoggedIn }: ApplyBu
   if (!isLoggedIn) {
     return (
       <div className="text-center">
-        <p className="text-sm text-[#999] mb-4">Logg inn for å søke på denne stillingen</p>
+        <p className="text-sm text-[#94A187] mb-4">Logg inn for å søke på denne stillingen</p>
         <Link href={`/auth/login`}>
           <Button className="w-full" size="lg">
             <LogIn className="w-4 h-4" />
@@ -46,7 +46,7 @@ export function ApplyButton({ jobId, userRole, hasApplied, isLoggedIn }: ApplyBu
 
   if (userRole === 'company') {
     return (
-      <div className="text-center text-sm text-[#666]">
+      <div className="text-center text-sm text-[#7a8a7d]">
         <p>Bedriftskontoer kan ikke søke på stillinger</p>
       </div>
     )
@@ -60,7 +60,7 @@ export function ApplyButton({ jobId, userRole, hasApplied, isLoggedIn }: ApplyBu
           Søk på stillingen
         </Button>
       </Link>
-      <p className="text-xs text-[#666] text-center mt-2">
+      <p className="text-xs text-[#7a8a7d] text-center mt-2">
         Du vil laste opp CV og svare på noen spørsmål
       </p>
     </div>

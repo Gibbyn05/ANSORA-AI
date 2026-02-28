@@ -91,30 +91,30 @@ export default function OfferPage({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-        <div className="animate-pulse text-[#666]">Laster tilbud...</div>
+      <div className="min-h-screen bg-[#06070E] flex items-center justify-center">
+        <div className="animate-pulse text-[#7a8a7d]">Laster tilbud...</div>
       </div>
     )
   }
 
   if (!offer) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+      <div className="min-h-screen bg-[#06070E] flex items-center justify-center">
         <div className="text-center">
-          <p className="text-[#999]">Tilbud ikke funnet</p>
+          <p className="text-[#94A187]">Tilbud ikke funnet</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] py-12 px-4">
+    <div className="min-h-screen bg-[#06070E] py-12 px-4">
       <div className="max-w-lg mx-auto">
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-              <span className="text-black font-bold text-sm">A</span>
+            <div className="w-8 h-8 bg-[#29524A] rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">A</span>
             </div>
             <span className="text-white font-bold text-xl">Ansora</span>
           </div>
@@ -126,36 +126,36 @@ export default function OfferPage({
               <CheckCircle2 className="w-10 h-10 text-green-400" />
             </div>
             <h2 className="text-2xl font-bold text-white mb-2">Tilbud akseptert!</h2>
-            <p className="text-[#999] mb-2">
+            <p className="text-[#94A187] mb-2">
               Gratulerer, {offer.applications?.candidates?.name}!
             </p>
-            <p className="text-[#999] text-sm">
+            <p className="text-[#94A187] text-sm">
               Du har akseptert stillingen som{' '}
               <strong className="text-white">{offer.applications?.jobs?.title}</strong>{' '}
               hos <strong className="text-white">{offer.applications?.jobs?.companies?.name}</strong>.
             </p>
-            <p className="text-sm text-[#555] mt-4">
+            <p className="text-sm text-[#4a6358] mt-4">
               En velkomst-e-post er sendt til {offer.applications?.candidates?.email}
             </p>
           </Card>
         ) : offer.status === 'declined' ? (
           <Card className="text-center py-12">
-            <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
-              <XCircle className="w-10 h-10 text-[#555]" />
+            <div className="w-20 h-20 bg-[#29524A]/15 rounded-full flex items-center justify-center mx-auto mb-4">
+              <XCircle className="w-10 h-10 text-[#4a6358]" />
             </div>
             <h2 className="text-2xl font-bold text-white mb-2">Tilbud avslått</h2>
-            <p className="text-[#999] text-sm">
+            <p className="text-[#94A187] text-sm">
               Du har takket nei til dette tilbudet.
             </p>
           </Card>
         ) : (
           <Card>
             <div className="text-center mb-6">
-              <div className="w-20 h-20 bg-white/10 border border-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-20 h-20 bg-[#29524A]/20 border border-[#94A187]/35 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Award className="w-10 h-10 text-white" />
               </div>
               <h1 className="text-2xl font-bold text-white mb-1">Gratulerer!</h1>
-              <p className="text-[#999] text-sm">
+              <p className="text-[#94A187] text-sm">
                 Du har mottatt et jobbtilbud
               </p>
             </div>
@@ -165,11 +165,11 @@ export default function OfferPage({
               <div className="flex items-center gap-3">
                 <Briefcase className="w-5 h-5 text-white flex-shrink-0" />
                 <div>
-                  <p className="text-xs text-[#555]">Stilling</p>
+                  <p className="text-xs text-[#4a6358]">Stilling</p>
                   <p className="font-semibold text-white">
                     {offer.applications?.jobs?.title}
                   </p>
-                  <p className="text-sm text-[#999]">
+                  <p className="text-sm text-[#94A187]">
                     {offer.applications?.jobs?.companies?.name} ·{' '}
                     {offer.applications?.jobs?.location} ·{' '}
                     {offer.applications?.jobs?.percentage}%
@@ -180,7 +180,7 @@ export default function OfferPage({
               <div className="flex items-center gap-3">
                 <Calendar className="w-5 h-5 text-white flex-shrink-0" />
                 <div>
-                  <p className="text-xs text-[#555]">Startdato</p>
+                  <p className="text-xs text-[#4a6358]">Startdato</p>
                   <p className="font-semibold text-white">
                     {new Date(offer.start_date).toLocaleDateString('nb-NO', {
                       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
@@ -193,7 +193,7 @@ export default function OfferPage({
                 <div className="flex items-center gap-3">
                   <Banknote className="w-5 h-5 text-white flex-shrink-0" />
                   <div>
-                    <p className="text-xs text-[#555]">Lønn</p>
+                    <p className="text-xs text-[#4a6358]">Lønn</p>
                     <p className="font-semibold text-white">{offer.salary}</p>
                   </div>
                 </div>
@@ -201,16 +201,16 @@ export default function OfferPage({
 
               {offer.benefits && (
                 <div>
-                  <p className="text-xs text-[#555] mb-1">Fordeler</p>
-                  <p className="text-sm text-[#ccc]">{offer.benefits}</p>
+                  <p className="text-xs text-[#4a6358] mb-1">Fordeler</p>
+                  <p className="text-sm text-[#C5AFA0]">{offer.benefits}</p>
                 </div>
               )}
             </div>
 
             {offer.message && (
-              <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6">
-                <p className="text-xs text-[#555] mb-1">Melding fra arbeidsgiver</p>
-                <p className="text-sm text-[#ccc] leading-relaxed italic">"{offer.message}"</p>
+              <div className="bg-[#29524A]/15 border border-[#94A187]/25 rounded-xl p-4 mb-6">
+                <p className="text-xs text-[#4a6358] mb-1">Melding fra arbeidsgiver</p>
+                <p className="text-sm text-[#C5AFA0] leading-relaxed italic">"{offer.message}"</p>
               </div>
             )}
 
@@ -243,7 +243,7 @@ export default function OfferPage({
               </Button>
             </div>
 
-            <p className="text-xs text-[#555] text-center mt-4">
+            <p className="text-xs text-[#4a6358] text-center mt-4">
               Ved å akseptere bekrefter du at du ønsker å starte i stillingen på angitt dato.
             </p>
           </Card>

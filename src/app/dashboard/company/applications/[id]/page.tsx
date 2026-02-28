@@ -71,12 +71,12 @@ export default async function ApplicationDetailPage({
   const followUpAnswers = application.follow_up_answers as Record<string, string> | null
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-[#06070E]">
       <Navbar userRole="company" />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between mb-6">
-          <Link href={`/dashboard/company/jobs/${application.jobs?.id}`} className="inline-flex items-center gap-2 text-sm text-[#666] hover:text-white transition-colors">
+          <Link href={`/dashboard/company/jobs/${application.jobs?.id}`} className="inline-flex items-center gap-2 text-sm text-[#7a8a7d] hover:text-white transition-colors">
             <ArrowLeft className="w-4 h-4" />
             Tilbake til stilling
           </Link>
@@ -87,7 +87,7 @@ export default async function ApplicationDetailPage({
             className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors ${
               isAnonymous
                 ? 'bg-orange-900/30 text-orange-400'
-                : 'bg-white/5 text-[#999] hover:bg-white/10'
+                : 'bg-[#29524A]/15 text-[#94A187] hover:bg-[#29524A]/20'
             }`}
           >
             {isAnonymous ? '🔒 Anonymisert visning' : '👤 Bytt til anonym'}
@@ -100,7 +100,7 @@ export default async function ApplicationDetailPage({
             {/* Kandidatprofil */}
             <Card>
               <div className="text-center mb-4">
-                <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                <div className="w-16 h-16 bg-[#29524A]/20 rounded-full flex items-center justify-center mx-auto mb-3">
                   <span className="text-white font-bold text-xl">
                     {isAnonymous ? '?' : application.candidates?.name?.charAt(0).toUpperCase()}
                   </span>
@@ -108,14 +108,14 @@ export default async function ApplicationDetailPage({
                 {isAnonymous ? (
                   <div>
                     <p className="font-semibold text-white">Anonymisert kandidat</p>
-                    <p className="text-xs text-[#666] mt-1">Personinfo skjult</p>
+                    <p className="text-xs text-[#7a8a7d] mt-1">Personinfo skjult</p>
                   </div>
                 ) : (
                   <div>
                     <p className="font-semibold text-white">{application.candidates?.name}</p>
-                    <p className="text-sm text-[#999]">{application.candidates?.email}</p>
+                    <p className="text-sm text-[#94A187]">{application.candidates?.email}</p>
                     {application.candidates?.phone && (
-                      <p className="text-sm text-[#999]">{application.candidates?.phone}</p>
+                      <p className="text-sm text-[#94A187]">{application.candidates?.phone}</p>
                     )}
                   </div>
                 )}
@@ -123,21 +123,21 @@ export default async function ApplicationDetailPage({
 
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-[#666]">Stilling</span>
+                  <span className="text-[#7a8a7d]">Stilling</span>
                   <span className="font-medium text-white text-right">{application.jobs?.title}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#666]">Status</span>
+                  <span className="text-[#7a8a7d]">Status</span>
                   <Badge variant={STATUS_VARIANT[application.status as ApplicationStatus] || 'neutral'}>
                     {translateStatus(application.status)}
                   </Badge>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#666]">Søknadsdato</span>
+                  <span className="text-[#7a8a7d]">Søknadsdato</span>
                   <span className="font-medium text-white">{formatDate(application.created_at)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#666]">Språk</span>
+                  <span className="text-[#7a8a7d]">Språk</span>
                   <span className="font-medium text-white">{application.candidates?.language || 'Norsk'}</span>
                 </div>
               </div>
@@ -159,7 +159,7 @@ export default async function ApplicationDetailPage({
                     {application.score}
                     <span className="text-lg font-normal">/100</span>
                   </div>
-                  <p className="text-xs text-[#666] mt-1">AI-score</p>
+                  <p className="text-xs text-[#7a8a7d] mt-1">AI-score</p>
                 </div>
               )}
 
@@ -200,8 +200,8 @@ export default async function ApplicationDetailPage({
                 <div className="space-y-5">
                   {/* Oppsummering */}
                   <div>
-                    <p className="text-xs font-semibold text-[#555] uppercase tracking-wide mb-2">Oppsummering</p>
-                    <p className="text-sm text-[#ccc] leading-relaxed bg-white/5 rounded-xl p-4">
+                    <p className="text-xs font-semibold text-[#4a6358] uppercase tracking-wide mb-2">Oppsummering</p>
+                    <p className="text-sm text-[#C5AFA0] leading-relaxed bg-[#29524A]/15 rounded-xl p-4">
                       {analysis.summary}
                     </p>
                   </div>
@@ -209,12 +209,12 @@ export default async function ApplicationDetailPage({
                   {/* Styrker */}
                   {analysis.strengths && analysis.strengths.length > 0 && (
                     <div>
-                      <p className="text-xs font-semibold text-[#555] uppercase tracking-wide mb-2">Styrker</p>
+                      <p className="text-xs font-semibold text-[#4a6358] uppercase tracking-wide mb-2">Styrker</p>
                       <ul className="space-y-2">
                         {analysis.strengths.map((s, i) => (
                           <li key={i} className="flex items-start gap-2 text-sm">
                             <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
-                            <span className="text-[#ccc]">{s}</span>
+                            <span className="text-[#C5AFA0]">{s}</span>
                           </li>
                         ))}
                       </ul>
@@ -224,12 +224,12 @@ export default async function ApplicationDetailPage({
                   {/* Områder å utforske */}
                   {analysis.areasToExplore && analysis.areasToExplore.length > 0 && (
                     <div>
-                      <p className="text-xs font-semibold text-[#555] uppercase tracking-wide mb-2">Bør utforskes videre</p>
+                      <p className="text-xs font-semibold text-[#4a6358] uppercase tracking-wide mb-2">Bør utforskes videre</p>
                       <ul className="space-y-2">
                         {analysis.areasToExplore.map((a, i) => (
                           <li key={i} className="flex items-start gap-2 text-sm">
                             <MessageSquare className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
-                            <span className="text-[#ccc]">{a}</span>
+                            <span className="text-[#C5AFA0]">{a}</span>
                           </li>
                         ))}
                       </ul>
@@ -239,7 +239,7 @@ export default async function ApplicationDetailPage({
                   {/* Foreslåtte spørsmål */}
                   {analysis.suggestedQuestions && analysis.suggestedQuestions.length > 0 && (
                     <div>
-                      <p className="text-xs font-semibold text-[#555] uppercase tracking-wide mb-2">Foreslåtte intervjuspørsmål</p>
+                      <p className="text-xs font-semibold text-[#4a6358] uppercase tracking-wide mb-2">Foreslåtte intervjuspørsmål</p>
                       <ul className="space-y-2">
                         {analysis.suggestedQuestions.map((q, i) => (
                           <li key={i} className="bg-blue-900/20 border border-blue-500/20 rounded-xl px-4 py-3 text-sm text-white">
@@ -253,12 +253,12 @@ export default async function ApplicationDetailPage({
                   {/* Røde flagg */}
                   {analysis.redFlags && analysis.redFlags.length > 0 && (
                     <div>
-                      <p className="text-xs font-semibold text-[#555] uppercase tracking-wide mb-2">Røde flagg</p>
+                      <p className="text-xs font-semibold text-[#4a6358] uppercase tracking-wide mb-2">Røde flagg</p>
                       <ul className="space-y-2">
                         {analysis.redFlags.map((f, i) => (
                           <li key={i} className="flex items-start gap-2 text-sm">
                             <XCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-                            <span className="text-[#ccc]">{f}</span>
+                            <span className="text-[#C5AFA0]">{f}</span>
                           </li>
                         ))}
                       </ul>
@@ -276,8 +276,8 @@ export default async function ApplicationDetailPage({
                   {Object.entries(followUpAnswers).map(([question, answer], i) => (
                     <div key={i}>
                       <p className="text-sm font-semibold text-white mb-1">{question}</p>
-                      <p className="text-sm text-[#999] bg-white/5 rounded-xl px-4 py-3">
-                        {answer || <span className="text-[#555] italic">Ikke besvart</span>}
+                      <p className="text-sm text-[#94A187] bg-[#29524A]/15 rounded-xl px-4 py-3">
+                        {answer || <span className="text-[#4a6358] italic">Ikke besvart</span>}
                       </p>
                     </div>
                   ))}
@@ -294,11 +294,11 @@ export default async function ApplicationDetailPage({
                 />
 
                 {application.interview_summary && (
-                  <div className="bg-white/5 border border-white/20 rounded-xl p-4 mb-5">
+                  <div className="bg-[#29524A]/15 border border-[#94A187]/35 rounded-xl p-4 mb-5">
                     <p className="text-xs font-semibold text-white uppercase tracking-wide mb-2 flex items-center gap-1">
                       <Bot className="w-3.5 h-3.5" /> AI-oppsummering
                     </p>
-                    <p className="text-sm text-[#ccc] leading-relaxed">
+                    <p className="text-sm text-[#C5AFA0] leading-relaxed">
                       {application.interview_summary}
                     </p>
                   </div>
@@ -308,14 +308,14 @@ export default async function ApplicationDetailPage({
                   {transcript.map((msg, i) => (
                     <div key={i} className={`flex gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs ${
-                        msg.role === 'assistant' ? 'bg-white text-black' : 'bg-white/10 text-[#999]'
+                        msg.role === 'assistant' ? 'bg-[#C5AFA0] text-black' : 'bg-[#29524A]/20 text-[#94A187]'
                       }`}>
                         {msg.role === 'assistant' ? 'AI' : 'K'}
                       </div>
                       <div className={`max-w-[80%] rounded-xl px-3 py-2 text-sm ${
                         msg.role === 'assistant'
-                          ? 'bg-[#1a1a1a] border border-white/10 text-[#ccc]'
-                          : 'bg-white/10 text-white'
+                          ? 'bg-[#1a2c24] border border-[#94A187]/25 text-[#C5AFA0]'
+                          : 'bg-[#29524A]/20 text-white'
                       }`}>
                         {msg.content}
                       </div>
@@ -331,11 +331,11 @@ export default async function ApplicationDetailPage({
                 <CardHeader title="Referanser" />
                 <div className="space-y-4">
                   {references.map((ref: Reference) => (
-                    <div key={ref.id} className="border border-white/10 rounded-xl p-4">
+                    <div key={ref.id} className="border border-[#94A187]/25 rounded-xl p-4">
                       <div className="flex items-start justify-between mb-2">
                         <div>
                           <p className="font-medium text-white text-sm">{ref.referee_name}</p>
-                          <p className="text-xs text-[#999]">{ref.referee_email}</p>
+                          <p className="text-xs text-[#94A187]">{ref.referee_email}</p>
                         </div>
                         <Badge variant={ref.response ? 'success' : 'neutral'}>
                           {ref.response ? 'Besvart' : 'Venter'}
@@ -346,8 +346,8 @@ export default async function ApplicationDetailPage({
                         <div className="mt-3 space-y-2 text-sm">
                           {Object.entries(ref.response).map(([key, value]) => (
                             <div key={key} className="flex gap-2">
-                              <span className="text-[#666] capitalize">{key}:</span>
-                              <span className="text-[#ccc]">{String(value)}</span>
+                              <span className="text-[#7a8a7d] capitalize">{key}:</span>
+                              <span className="text-[#C5AFA0]">{String(value)}</span>
                             </div>
                           ))}
                         </div>
@@ -364,17 +364,17 @@ export default async function ApplicationDetailPage({
                 <CardHeader title="Sendt jobbtilbud" />
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-[#666]">Startdato</span>
+                    <span className="text-[#7a8a7d]">Startdato</span>
                     <span className="font-medium text-white">{new Date(offer.start_date).toLocaleDateString('nb-NO')}</span>
                   </div>
                   {offer.salary && (
                     <div className="flex justify-between">
-                      <span className="text-[#666]">Lønn</span>
+                      <span className="text-[#7a8a7d]">Lønn</span>
                       <span className="font-medium text-white">{offer.salary}</span>
                     </div>
                   )}
                   <div className="flex justify-between">
-                    <span className="text-[#666]">Tilbudsstatus</span>
+                    <span className="text-[#7a8a7d]">Tilbudsstatus</span>
                     <Badge variant={offer.status === 'accepted' ? 'success' : offer.status === 'declined' ? 'danger' : 'neutral'}>
                       {offer.status === 'accepted' ? 'Akseptert' : offer.status === 'declined' ? 'Avslått' : 'Venter svar'}
                     </Badge>

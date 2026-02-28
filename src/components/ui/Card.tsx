@@ -15,7 +15,7 @@ export function Card({ children, className, padding = 'md' }: CardProps) {
   }
 
   return (
-    <div className={cn('bg-[#111111] rounded-xl border border-white/10', paddings[padding], className)}>
+    <div className={cn('bg-[#0e1c17] rounded-xl border border-[#94A187]/25', paddings[padding], className)}>
       {children}
     </div>
   )
@@ -33,7 +33,7 @@ export function CardHeader({ title, subtitle, action, className }: CardHeaderPro
     <div className={cn('flex items-start justify-between mb-6', className)}>
       <div>
         <h2 className="text-lg font-semibold text-white">{title}</h2>
-        {subtitle && <p className="text-sm text-[#999] mt-0.5">{subtitle}</p>}
+        {subtitle && <p className="text-sm text-[#94A187] mt-0.5">{subtitle}</p>}
       </div>
       {action && <div className="ml-4">{action}</div>}
     </div>

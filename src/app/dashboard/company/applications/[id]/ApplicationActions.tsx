@@ -131,7 +131,7 @@ export function ApplicationActions({
       <Card>
         <div className="text-center py-4">
           <XCircle className="w-8 h-8 text-red-400 mx-auto mb-2" />
-          <p className="text-sm text-[#999]">Kandidaten er avslått</p>
+          <p className="text-sm text-[#94A187]">Kandidaten er avslått</p>
         </div>
       </Card>
     )
@@ -201,7 +201,7 @@ export function ApplicationActions({
             </Button>
 
             {showReferenceForm && (
-              <div className="mt-3 space-y-3 p-3 bg-white/5 rounded-xl">
+              <div className="mt-3 space-y-3 p-3 bg-[#29524A]/15 rounded-xl">
                 <Input
                   label="Referansens navn"
                   value={refName}
@@ -244,7 +244,7 @@ export function ApplicationActions({
             </Button>
 
             {showOfferForm && (
-              <div className="mt-3 space-y-3 p-3 bg-white/5 rounded-xl">
+              <div className="mt-3 space-y-3 p-3 bg-[#29524A]/15 rounded-xl">
                 <Input
                   label="Startdato *"
                   type="date"

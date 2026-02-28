@@ -22,7 +22,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-[#0a0a0a] min-h-screen">
+      <body className="bg-[#06070E] min-h-screen">
         {children}
       </body>
     </html>

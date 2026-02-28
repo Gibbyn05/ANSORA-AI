@@ -62,15 +62,15 @@ export default async function CompanyDashboard() {
         // infinite redirect loop (ERR_TOO_MANY_REDIRECTS).
         // Show an error page instead.
         return (
-          <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-6 text-center">
+          <div className="min-h-screen bg-[#06070E] flex items-center justify-center p-6 text-center">
             <div>
               <p className="text-white font-semibold mb-2">Kunne ikke opprette bedriftsprofil</p>
-              <p className="text-[#888] text-sm mb-6">
+              <p className="text-[#94A187] text-sm mb-6">
                 Det kan skyldes en databasefeil eller manglende tilgang. Logg ut og inn igjen.
               </p>
               <a
                 href="/api/auth/signout"
-                className="inline-block text-sm font-semibold text-white border border-white/30 px-5 py-2.5 rounded-xl hover:bg-white/10 transition-colors"
+                className="inline-block text-sm font-semibold text-white border border-[#94A187]/45 px-5 py-2.5 rounded-xl hover:bg-[#29524A]/20 transition-colors"
               >
                 Logg ut
               </a>
@@ -92,21 +92,21 @@ export default async function CompanyDashboard() {
   // Bedriften venter på godkjenning
   if (!company.approved) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a]">
+      <div className="min-h-screen bg-[#06070E]">
         <Navbar userRole="company" userName={company.name} />
         <div className="min-h-[calc(100vh-64px)] flex items-center justify-center p-6">
           <div className="max-w-md text-center">
-            <div className="w-20 h-20 bg-white/10 border border-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-20 h-20 bg-[#29524A]/20 border border-[#94A187]/35 rounded-full flex items-center justify-center mx-auto mb-6">
               <ShieldCheck className="w-10 h-10 text-white" />
             </div>
             <h1 className="text-2xl font-bold text-white mb-3">Kontoen din er til godkjenning</h1>
-            <p className="text-[#888] text-sm leading-relaxed mb-8">
+            <p className="text-[#94A187] text-sm leading-relaxed mb-8">
               Vi bekrefter at <span className="text-white font-medium">{company.name}</span> er en reell virksomhet før kontoen aktiveres.
               Du vil få e-post til <span className="text-white font-medium">{company.email}</span> når vi har behandlet forespørselen din.
             </p>
-            <div className="bg-[#111] border border-white/[0.07] rounded-xl p-5 text-left mb-6">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#444] mb-3">Hva skjer nå?</p>
-              <ul className="space-y-2 text-sm text-[#888]">
+            <div className="bg-[#0e1c17] border border-[#29524A]/25 rounded-xl p-5 text-left mb-6">
+              <p className="text-xs font-semibold uppercase tracking-widest text-[#3a5248] mb-3">Hva skjer nå?</p>
+              <ul className="space-y-2 text-sm text-[#94A187]">
                 <li className="flex items-start gap-2"><span className="text-white mt-0.5">1.</span> Ansora-teamet ser over forespørselen din</li>
                 <li className="flex items-start gap-2"><span className="text-white mt-0.5">2.</span> Du mottar e-post med bekreftelse</li>
                 <li className="flex items-start gap-2"><span className="text-white mt-0.5">3.</span> Etter godkjenning kan du poste stillinger og se søkere</li>
@@ -114,7 +114,7 @@ export default async function CompanyDashboard() {
             </div>
             <a
               href="/api/auth/signout"
-              className="text-sm text-[#555] hover:text-white transition-colors"
+              className="text-sm text-[#4a6358] hover:text-white transition-colors"
             >
               Logg ut
             </a>
@@ -148,7 +148,7 @@ export default async function CompanyDashboard() {
   const hiredApplications = applications?.filter((a: Application) => a.status === 'hired').length || 0
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-[#06070E]">
       <Navbar userRole="company" userName={company.name} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -156,20 +156,20 @@ export default async function CompanyDashboard() {
         {/* ── Header ────────────────────────────────────────────────── */}
         <div className="flex items-center justify-between mb-10">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#444] mb-1">Rekrutteringsdashboard</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#3a5248] mb-1">Rekrutteringsdashboard</p>
             <h1 className="text-2xl font-bold text-white">Hei, {company.name} 👋</h1>
           </div>
           <div className="flex items-center gap-3">
             {isAdmin && (
               <Link href="/admin">
-                <button className="inline-flex items-center gap-2 border border-white/30 text-white hover:bg-white/10 font-semibold px-4 py-2.5 rounded-xl transition-all text-sm">
+                <button className="inline-flex items-center gap-2 border border-[#94A187]/45 text-white hover:bg-[#29524A]/20 font-semibold px-4 py-2.5 rounded-xl transition-all text-sm">
                   <ShieldCheck className="w-4 h-4" />
                   <span className="hidden sm:inline">Admin</span>
                 </button>
               </Link>
             )}
             <Link href="/jobs/new">
-              <button className="inline-flex items-center gap-2 bg-white hover:bg-[#e0e0e0] text-black font-semibold px-5 py-2.5 rounded-xl transition-all text-sm">
+              <button className="inline-flex items-center gap-2 bg-[#C5AFA0] hover:bg-[#b09e91] text-black font-semibold px-5 py-2.5 rounded-xl transition-all text-sm">
                 <Plus className="w-4 h-4" />
                 <span className="hidden sm:inline">Ny stilling</span>
               </button>
@@ -185,7 +185,7 @@ export default async function CompanyDashboard() {
               label: 'Aktive stillinger',
               value: publishedJobs,
               sub: `${totalJobs} totalt`,
-              iconClass: 'text-white bg-white/10 border-white/20',
+              iconClass: 'text-white bg-[#29524A]/20 border-[#94A187]/35',
             },
             {
               icon: Users,
@@ -209,13 +209,13 @@ export default async function CompanyDashboard() {
               iconClass: 'text-green-400 bg-green-900/20 border-green-500/20',
             },
           ].map((stat, i) => (
-            <div key={stat.label} className={`bg-[#111111] border border-white/[0.07] rounded-2xl p-5 animate-slide-up`} style={{ animationDelay: `${i * 80}ms`, animationFillMode: 'both' }}>
+            <div key={stat.label} className={`bg-[#0e1c17] border border-[#29524A]/25 rounded-2xl p-5 animate-slide-up`} style={{ animationDelay: `${i * 80}ms`, animationFillMode: 'both' }}>
               <div className={`w-10 h-10 rounded-xl border flex items-center justify-center mb-4 ${stat.iconClass}`}>
                 <stat.icon className="w-4.5 h-4.5" />
               </div>
               <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
-              <div className="text-sm text-[#888]">{stat.label}</div>
-              <div className="text-xs text-[#444] mt-0.5">{stat.sub}</div>
+              <div className="text-sm text-[#94A187]">{stat.label}</div>
+              <div className="text-xs text-[#3a5248] mt-0.5">{stat.sub}</div>
             </div>
           ))}
         </div>
@@ -224,14 +224,14 @@ export default async function CompanyDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
           {/* Job list (1/3) */}
-          <div className="bg-[#111111] border border-white/[0.07] rounded-2xl overflow-hidden animate-slide-up anim-delay-400">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.06]">
+          <div className="bg-[#0e1c17] border border-[#29524A]/25 rounded-2xl overflow-hidden animate-slide-up anim-delay-400">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[#29524A]/25">
               <div>
                 <p className="font-semibold text-white text-sm">Mine stillinger</p>
-                <p className="text-[11px] text-[#444] mt-0.5">{totalJobs} stilling{totalJobs !== 1 ? 'er' : ''}</p>
+                <p className="text-[11px] text-[#3a5248] mt-0.5">{totalJobs} stilling{totalJobs !== 1 ? 'er' : ''}</p>
               </div>
               <Link href="/jobs/new">
-                <button className="text-xs text-white border border-white/20 hover:bg-white/5 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+                <button className="text-xs text-white border border-[#94A187]/35 hover:bg-[#29524A]/15 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
                   <Plus className="w-3 h-3" /> Ny
                 </button>
               </Link>
@@ -239,23 +239,23 @@ export default async function CompanyDashboard() {
 
             {!jobs || jobs.length === 0 ? (
               <div className="text-center py-12 px-4">
-                <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/[0.07] flex items-center justify-center mx-auto mb-4">
-                  <Briefcase className="w-5 h-5 text-[#333]" />
+                <div className="w-12 h-12 rounded-2xl bg-[#29524A]/[0.08] border border-[#29524A]/25 flex items-center justify-center mx-auto mb-4">
+                  <Briefcase className="w-5 h-5 text-[#2a3e36]" />
                 </div>
-                <p className="text-[#666] text-sm mb-4">Ingen stillinger ennå</p>
+                <p className="text-[#7a8a7d] text-sm mb-4">Ingen stillinger ennå</p>
                 <Link href="/jobs/new">
-                  <button className="text-sm text-white border border-white/20 hover:bg-white/5 px-4 py-2 rounded-xl transition-colors">
+                  <button className="text-sm text-white border border-[#94A187]/35 hover:bg-[#29524A]/15 px-4 py-2 rounded-xl transition-colors">
                     Opprett første stilling
                   </button>
                 </Link>
               </div>
             ) : (
-              <div className="divide-y divide-white/[0.05]">
+              <div className="divide-y divide-[#29524A]/20">
                 {jobs.map((job: Job) => {
                   const jobApplications = applications?.filter((a: Application) => a.job_id === job.id) || []
                   return (
                     <Link key={job.id} href={`/dashboard/company/jobs/${job.id}`}>
-                      <div className="flex items-center gap-3 px-5 py-3.5 hover:bg-white/[0.03] transition-colors cursor-pointer group">
+                      <div className="flex items-center gap-3 px-5 py-3.5 hover:bg-[#29524A]/[0.08] transition-colors cursor-pointer group">
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-white text-sm truncate group-hover:text-white transition-colors">
                             {job.title}
@@ -263,17 +263,17 @@ export default async function CompanyDashboard() {
                           <div className="flex items-center gap-2 mt-1">
                             <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
                               job.status === 'published' ? 'bg-green-900/30 text-green-400' :
-                              job.status === 'draft' ? 'bg-white/5 text-[#555]' :
+                              job.status === 'draft' ? 'bg-[#29524A]/15 text-[#4a6358]' :
                               'bg-red-900/30 text-red-400'
                             }`}>
                               {translateStatus(job.status)}
                             </span>
-                            <span className="text-[11px] text-[#444]">
+                            <span className="text-[11px] text-[#3a5248]">
                               {jobApplications.length} søk{jobApplications.length !== 1 ? 'ere' : 'er'}
                             </span>
                           </div>
                         </div>
-                        <ArrowRight className="w-4 h-4 text-[#333] group-hover:text-white transition-all flex-shrink-0" />
+                        <ArrowRight className="w-4 h-4 text-[#2a3e36] group-hover:text-white transition-all flex-shrink-0" />
                       </div>
                     </Link>
                   )
@@ -283,14 +283,14 @@ export default async function CompanyDashboard() {
           </div>
 
           {/* Applications table (2/3, Visuo numbered list) */}
-          <div className="lg:col-span-2 bg-[#111111] border border-white/[0.07] rounded-2xl overflow-hidden animate-slide-up anim-delay-500">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
+          <div className="lg:col-span-2 bg-[#0e1c17] border border-[#29524A]/25 rounded-2xl overflow-hidden animate-slide-up anim-delay-500">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#29524A]/25">
               <div>
                 <p className="font-semibold text-white text-sm">Søkere rangert etter AI-score</p>
-                <p className="text-[11px] text-[#444] mt-0.5">{totalApplications} totalt</p>
+                <p className="text-[11px] text-[#3a5248] mt-0.5">{totalApplications} totalt</p>
               </div>
               {totalApplications > 0 && (
-                <div className="flex items-center gap-1.5 text-xs text-[#555]">
+                <div className="flex items-center gap-1.5 text-xs text-[#4a6358]">
                   <Brain className="w-3.5 h-3.5 text-white" />
                   AI-sortert
                 </div>
@@ -299,33 +299,33 @@ export default async function CompanyDashboard() {
 
             {!applications || applications.length === 0 ? (
               <div className="text-center py-16 px-4">
-                <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/[0.07] flex items-center justify-center mx-auto mb-4">
-                  <Users className="w-5 h-5 text-[#333]" />
+                <div className="w-12 h-12 rounded-2xl bg-[#29524A]/[0.08] border border-[#29524A]/25 flex items-center justify-center mx-auto mb-4">
+                  <Users className="w-5 h-5 text-[#2a3e36]" />
                 </div>
-                <p className="text-[#666] font-medium mb-1">Ingen søknader ennå</p>
-                <p className="text-sm text-[#444]">
+                <p className="text-[#7a8a7d] font-medium mb-1">Ingen søknader ennå</p>
+                <p className="text-sm text-[#3a5248]">
                   Publiser en stilling for å begynne å motta søknader
                 </p>
               </div>
             ) : (
-              <div className="divide-y divide-white/[0.04]">
+              <div className="divide-y divide-[#29524A]/20">
                 {/* Table header */}
                 <div className="grid grid-cols-[28px_1fr_110px_72px_88px] gap-3 px-6 py-2.5">
-                  <span className="text-[10px] font-semibold uppercase tracking-widest text-[#333]">#</span>
-                  <span className="text-[10px] font-semibold uppercase tracking-widest text-[#333]">Kandidat</span>
-                  <span className="text-[10px] font-semibold uppercase tracking-widest text-[#333]">Stilling</span>
-                  <span className="text-[10px] font-semibold uppercase tracking-widest text-[#333] text-center">Score</span>
-                  <span className="text-[10px] font-semibold uppercase tracking-widest text-[#333] text-right">Status</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-[#2a3e36]">#</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-[#2a3e36]">Kandidat</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-[#2a3e36]">Stilling</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-[#2a3e36] text-center">Score</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-[#2a3e36] text-right">Status</span>
                 </div>
 
                 {applications.slice(0, 10).map((app: Application, idx: number) => (
                   <Link key={app.id} href={`/dashboard/company/applications/${app.id}`}>
-                    <div className="grid grid-cols-[28px_1fr_110px_72px_88px] gap-3 items-center px-6 py-3 hover:bg-white/[0.03] transition-colors cursor-pointer group">
-                      <span className="text-xs font-bold text-[#333]">{idx + 1}</span>
+                    <div className="grid grid-cols-[28px_1fr_110px_72px_88px] gap-3 items-center px-6 py-3 hover:bg-[#29524A]/[0.08] transition-colors cursor-pointer group">
+                      <span className="text-xs font-bold text-[#2a3e36]">{idx + 1}</span>
 
                       {/* Kandidat: bilde + navn + sekundær info */}
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <div className="w-8 h-8 rounded-full bg-[#1a1a1a] border border-white/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                        <div className="w-8 h-8 rounded-full bg-[#1a2c24] border border-[#94A187]/25 flex items-center justify-center flex-shrink-0 overflow-hidden">
                           {app.candidates?.profile_picture_url ? (
                             <img
                               src={app.candidates.profile_picture_url}
@@ -344,10 +344,10 @@ export default async function CompanyDashboard() {
                           </p>
                           <div className="flex items-center gap-1.5 mt-0.5">
                             {app.candidates?.phone && (
-                              <span className="text-[10px] text-[#555] truncate">{app.candidates.phone}</span>
+                              <span className="text-[10px] text-[#4a6358] truncate">{app.candidates.phone}</span>
                             )}
                             {app.interview_completed && (
-                              <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-white/10 text-white flex-shrink-0">
+                              <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-[#29524A]/20 text-white flex-shrink-0">
                                 Intervju ✓
                               </span>
                             )}
@@ -355,20 +355,20 @@ export default async function CompanyDashboard() {
                         </div>
                       </div>
 
-                      <span className="text-xs text-[#555] truncate">{app.jobs?.title}</span>
+                      <span className="text-xs text-[#4a6358] truncate">{app.jobs?.title}</span>
 
                       <div className="text-center">
                         {app.score != null ? (
                           <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                             app.score >= 80 ? 'bg-green-900/40 text-green-400' :
-                            app.score >= 60 ? 'bg-white/10 text-white' :
+                            app.score >= 60 ? 'bg-[#29524A]/20 text-white' :
                             app.score >= 40 ? 'bg-orange-900/30 text-orange-400' :
                             'bg-red-900/30 text-red-400'
                           }`}>
                             {app.score}
                           </span>
                         ) : (
-                          <span className="text-[11px] text-[#333]">—</span>
+                          <span className="text-[11px] text-[#2a3e36]">—</span>
                         )}
                       </div>
 
@@ -383,7 +383,7 @@ export default async function CompanyDashboard() {
 
                 {applications.length > 10 && (
                   <div className="px-6 py-3.5 text-center">
-                    <p className="text-xs text-[#444]">+{applications.length - 10} flere søknader</p>
+                    <p className="text-xs text-[#3a5248]">+{applications.length - 10} flere søknader</p>
                   </div>
                 )}
               </div>

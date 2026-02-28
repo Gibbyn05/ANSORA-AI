@@ -52,17 +52,17 @@ export default async function JobsPage({
     Math.floor((Date.now() - new Date(date).getTime()) / (1000 * 60 * 60 * 24))
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-[#06070E]">
       <Navbar userRole={userRole} userName={userName} />
 
       {/* ── HERO (Prospect left-aligned style) ───────────────────────── */}
-      <section className="pt-16 pb-12 border-b border-white/[0.06]">
+      <section className="pt-16 pb-12 border-b border-[#29524A]/25">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl">
             <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 leading-tight tracking-tight">
               Ledige stillinger
             </h1>
-            <p className="text-[#666] text-lg mb-8">
+            <p className="text-[#7a8a7d] text-lg mb-8">
               Finn din neste karrieremulighet blant{' '}
               <span className="text-white">{jobs?.length ?? 0} aktive stillinger</span>
             </p>
@@ -70,12 +70,12 @@ export default async function JobsPage({
             {/* Search bar */}
             <form method="GET" className="flex gap-3">
               <div className="flex-1 relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-[#444]" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-[#3a5248]" />
                 <input
                   name="search"
                   defaultValue={search}
                   placeholder="Søk på stilling, sted eller bransje..."
-                  className="w-full pl-11 pr-4 py-3.5 rounded-xl text-white bg-[#111111] border border-white/[0.08] focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent placeholder-[#3a3a3a] text-[15px] transition-all"
+                  className="w-full pl-11 pr-4 py-3.5 rounded-xl text-white bg-[#0e1c17] border border-[#29524A]/30 focus:outline-none focus:ring-2 focus:ring-[#94A187] focus:border-transparent placeholder-[#3a3a3a] text-[15px] transition-all"
                 />
                 {industry && (
                   <input type="hidden" name="industry" value={industry} />
@@ -83,7 +83,7 @@ export default async function JobsPage({
               </div>
               <button
                 type="submit"
-                className="bg-white hover:bg-[#e0e0e0] text-black px-6 py-3.5 rounded-xl font-semibold transition-colors text-[15px] flex-shrink-0"
+                className="bg-[#C5AFA0] hover:bg-[#b09e91] text-black px-6 py-3.5 rounded-xl font-semibold transition-colors text-[15px] flex-shrink-0"
               >
                 Søk
               </button>
@@ -93,7 +93,7 @@ export default async function JobsPage({
       </section>
 
       {/* ── INDUSTRY FILTER: Horizontal pills (Sasslo/modern pattern) ── */}
-      <section className="py-5 border-b border-white/[0.05] sticky top-16 z-40 bg-[#0a0a0a]/95 backdrop-blur-sm">
+      <section className="py-5 border-b border-[#29524A]/20 sticky top-16 z-40 bg-[#06070E]/95 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             {INDUSTRIES.map((ind) => (
@@ -106,8 +106,8 @@ export default async function JobsPage({
                 }
                 className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all duration-150 ${
                   (industry || '') === ind.value
-                    ? 'bg-white text-black'
-                    : 'bg-white/[0.04] border border-white/[0.07] text-[#666] hover:text-white hover:border-white/[0.15]'
+                    ? 'bg-[#C5AFA0] text-black'
+                    : 'bg-[#29524A]/10 border border-[#29524A]/25 text-[#7a8a7d] hover:text-white hover:border-[#94A187]/40'
                 }`}
               >
                 {ind.label}
@@ -122,7 +122,7 @@ export default async function JobsPage({
 
         {/* Count + active filter */}
         <div className="flex items-center justify-between mb-7">
-          <p className="text-sm text-[#555]">
+          <p className="text-sm text-[#4a6358]">
             <span className="text-white font-semibold">{filteredJobs.length}</span>{' '}
             stilling{filteredJobs.length !== 1 ? 'er' : ''}{' '}
             {industry && (
@@ -139,7 +139,7 @@ export default async function JobsPage({
           {(industry || search) && (
             <Link
               href="/jobs"
-              className="text-xs text-[#555] hover:text-white transition-colors border border-white/[0.07] px-3 py-1.5 rounded-full"
+              className="text-xs text-[#4a6358] hover:text-white transition-colors border border-[#29524A]/25 px-3 py-1.5 rounded-full"
             >
               Fjern filter ×
             </Link>
@@ -149,16 +149,16 @@ export default async function JobsPage({
         {filteredJobs.length === 0 ? (
           /* Empty state */
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/[0.07] flex items-center justify-center mb-5">
-              <Briefcase className="w-7 h-7 text-[#333]" />
+            <div className="w-16 h-16 rounded-2xl bg-[#29524A]/[0.08] border border-[#29524A]/25 flex items-center justify-center mb-5">
+              <Briefcase className="w-7 h-7 text-[#2a3e36]" />
             </div>
             <h3 className="text-xl font-semibold text-white mb-2">Ingen stillinger funnet</h3>
-            <p className="text-[#555] text-sm mb-6 max-w-sm">
+            <p className="text-[#4a6358] text-sm mb-6 max-w-sm">
               Prøv et annet søkeord eller fjern bransjefilter for å se alle stillinger.
             </p>
             <Link
               href="/jobs"
-              className="text-sm text-white border border-white/20 hover:bg-white/5 px-5 py-2.5 rounded-xl transition-colors"
+              className="text-sm text-white border border-[#94A187]/35 hover:bg-[#29524A]/15 px-5 py-2.5 rounded-xl transition-colors"
             >
               Vis alle stillinger
             </Link>
@@ -171,7 +171,7 @@ export default async function JobsPage({
               const isNew = days <= 3
               return (
                 <Link key={job.id} href={`/jobs/${job.id}`}>
-                  <article className="group bg-[#111111] border border-white/[0.07] rounded-2xl p-6 hover:border-white/[0.18] hover:bg-[#141414] transition-all duration-200 cursor-pointer h-full flex flex-col">
+                  <article className="group bg-[#0e1c17] border border-[#29524A]/25 rounded-2xl p-6 hover:border-white/[0.18] hover:bg-[#141414] transition-all duration-200 cursor-pointer h-full flex flex-col">
 
                     {/* Top row: company + badges */}
                     <div className="flex items-start justify-between gap-3 mb-4">
@@ -180,26 +180,26 @@ export default async function JobsPage({
                           <img
                             src={job.companies.logo}
                             alt={job.companies.name}
-                            className="w-9 h-9 rounded-lg object-contain bg-[#1a1a1a] border border-white/10 p-0.5 flex-shrink-0"
+                            className="w-9 h-9 rounded-lg object-contain bg-[#1a2c24] border border-[#94A187]/25 p-0.5 flex-shrink-0"
                           />
                         ) : (
-                          <div className="w-9 h-9 rounded-lg bg-[#1a1a1a] border border-white/10 flex items-center justify-center flex-shrink-0">
-                            <Building2 className="w-4 h-4 text-[#444]" />
+                          <div className="w-9 h-9 rounded-lg bg-[#1a2c24] border border-[#94A187]/25 flex items-center justify-center flex-shrink-0">
+                            <Building2 className="w-4 h-4 text-[#3a5248]" />
                           </div>
                         )}
                         <div>
-                          <p className="text-xs text-[#555] font-medium">
+                          <p className="text-xs text-[#4a6358] font-medium">
                             {job.companies?.name || 'Bedrift'}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
                         {isNew && (
-                          <span className="text-[11px] font-semibold bg-white text-black px-2.5 py-1 rounded-full">
+                          <span className="text-[11px] font-semibold bg-[#C5AFA0] text-black px-2.5 py-1 rounded-full">
                             Ny
                           </span>
                         )}
-                        <span className="text-[11px] text-[#444] border border-white/[0.07] px-2.5 py-1 rounded-full">
+                        <span className="text-[11px] text-[#3a5248] border border-[#29524A]/25 px-2.5 py-1 rounded-full">
                           {job.percentage}%
                         </span>
                       </div>
@@ -211,18 +211,18 @@ export default async function JobsPage({
                     </h2>
 
                     {/* Industry pill */}
-                    <span className="inline-flex items-center text-[11px] font-medium text-white bg-white/10 border border-white/20 px-2.5 py-0.5 rounded-full mb-3 w-fit">
+                    <span className="inline-flex items-center text-[11px] font-medium text-white bg-[#29524A]/20 border border-[#94A187]/35 px-2.5 py-0.5 rounded-full mb-3 w-fit">
                       {getIndustryLabel(job.industry as Industry)}
                     </span>
 
                     {/* Description preview */}
-                    <p className="text-sm text-[#555] line-clamp-2 leading-relaxed flex-1 mb-4">
+                    <p className="text-sm text-[#4a6358] line-clamp-2 leading-relaxed flex-1 mb-4">
                       {job.description.replace(/[#*_]/g, '').substring(0, 180)}…
                     </p>
 
                     {/* Bottom meta row */}
-                    <div className="flex items-center justify-between pt-4 border-t border-white/[0.05]">
-                      <div className="flex items-center gap-4 text-xs text-[#444]">
+                    <div className="flex items-center justify-between pt-4 border-t border-[#29524A]/20">
+                      <div className="flex items-center gap-4 text-xs text-[#3a5248]">
                         <span className="flex items-center gap-1.5">
                           <MapPin className="w-3.5 h-3.5" />
                           {job.location}
@@ -232,7 +232,7 @@ export default async function JobsPage({
                           {days === 0 ? 'I dag' : days === 1 ? 'I går' : `${days}d siden`}
                         </span>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-[#333] group-hover:text-white group-hover:translate-x-0.5 transition-all" />
+                      <ArrowRight className="w-4 h-4 text-[#2a3e36] group-hover:text-white group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </article>
                 </Link>

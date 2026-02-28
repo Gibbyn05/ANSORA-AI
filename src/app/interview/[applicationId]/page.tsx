@@ -264,28 +264,28 @@ export default function InterviewPage({
   // --- Start screen ---
   if (phase === 'idle') {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex flex-col">
-        <header className="bg-[#111111] border-b border-white/10 px-4 py-3 flex items-center gap-4">
-          <Link href="/dashboard/candidate" className="text-[#666] hover:text-white transition-colors">
+      <div className="min-h-screen bg-[#06070E] flex flex-col">
+        <header className="bg-[#0e1c17] border-b border-[#94A187]/25 px-4 py-3 flex items-center gap-4">
+          <Link href="/dashboard/candidate" className="text-[#7a8a7d] hover:text-white transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-[#C5AFA0] rounded-lg flex items-center justify-center">
               <Bot className="w-4 h-4 text-black" />
             </div>
             <div>
               <h1 className="font-semibold text-white text-sm">AI-Intervju</h1>
-              <p className="text-xs text-[#666]">Powered by Ansora</p>
+              <p className="text-xs text-[#7a8a7d]">Powered by Ansora</p>
             </div>
           </div>
         </header>
 
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
-          <div className="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center mb-6 border border-white/20">
+          <div className="w-24 h-24 bg-[#29524A]/20 rounded-full flex items-center justify-center mb-6 border border-[#94A187]/35">
             <Mic className="w-12 h-12 text-white" />
           </div>
           <h2 className="text-2xl font-bold text-white mb-3">Klar for AI-intervju?</h2>
-          <p className="text-[#999] mb-6 max-w-md leading-relaxed">
+          <p className="text-[#94A187] mb-6 max-w-md leading-relaxed">
             Du vil gjennomføre et stemmebasert intervju med vår AI. Intervjuet tar ca. 10–15 minutter og lagres for rekrutterer.
           </p>
 
@@ -306,7 +306,7 @@ export default function InterviewPage({
               <Sparkles className="w-4 h-4 text-white" />
               Tips for intervjuet
             </h3>
-            <ul className="space-y-2 text-sm text-[#999]">
+            <ul className="space-y-2 text-sm text-[#94A187]">
               <li>• Svar ærlig og utfyllende</li>
               <li>• Snakk tydelig inn i mikrofonen</li>
               <li>• Gi konkrete eksempler når mulig</li>
@@ -349,18 +349,18 @@ export default function InterviewPage({
 
   // --- Voice + Camera interface ---
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex flex-col">
-      <header className="bg-[#111111] border-b border-white/10 px-4 py-3 flex items-center gap-4">
-        <Link href="/dashboard/candidate" className="text-[#666] hover:text-white transition-colors">
+    <div className="min-h-screen bg-[#06070E] flex flex-col">
+      <header className="bg-[#0e1c17] border-b border-[#94A187]/25 px-4 py-3 flex items-center gap-4">
+        <Link href="/dashboard/candidate" className="text-[#7a8a7d] hover:text-white transition-colors">
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-[#C5AFA0] rounded-lg flex items-center justify-center">
             <Bot className="w-4 h-4 text-black" />
           </div>
           <div>
             <h1 className="font-semibold text-white text-sm">AI-Intervju</h1>
-            <p className="text-xs text-[#666]">Powered by Ansora</p>
+            <p className="text-xs text-[#7a8a7d]">Powered by Ansora</p>
           </div>
         </div>
         {phase === 'completed' && (
@@ -369,7 +369,7 @@ export default function InterviewPage({
           </div>
         )}
         {phase !== 'completed' && messages.length > 0 && (
-          <p className="ml-auto text-xs text-[#555]">
+          <p className="ml-auto text-xs text-[#4a6358]">
             {messages.filter((m) => m.role === 'user').length} / 7 svar
           </p>
         )}
@@ -379,16 +379,16 @@ export default function InterviewPage({
 
         {/* Camera panel (left on desktop, top on mobile) */}
         {cameraRequired !== 'disabled' && (
-          <div className="lg:w-72 lg:border-r border-b lg:border-b-0 border-white/[0.07] bg-[#0d0d0d] p-4 flex flex-col gap-3">
+          <div className="lg:w-72 lg:border-r border-b lg:border-b-0 border-[#29524A]/25 bg-[#06070E] p-4 flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-[#555] font-semibold uppercase tracking-wider">Kamera</span>
+              <span className="text-xs text-[#4a6358] font-semibold uppercase tracking-wider">Kamera</span>
               {cameraRequired === 'optional' && phase !== 'completed' && (
                 <button
                   onClick={toggleCamera}
                   className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-lg transition-colors ${
                     cameraEnabled
                       ? 'bg-red-900/30 text-red-400 border border-red-500/20 hover:bg-red-900/50'
-                      : 'bg-white/[0.05] text-[#888] border border-white/[0.1] hover:bg-white/[0.08]'
+                      : 'bg-[#29524A]/12 text-[#94A187] border border-[#29524A]/30 hover:bg-[#29524A]/20'
                   }`}
                 >
                   {cameraEnabled ? <CameraOff className="w-3 h-3" /> : <Camera className="w-3 h-3" />}
@@ -401,7 +401,7 @@ export default function InterviewPage({
             </div>
 
             {/* Video preview */}
-            <div className="relative aspect-video bg-[#111] rounded-xl border border-white/[0.07] overflow-hidden flex items-center justify-center">
+            <div className="relative aspect-video bg-[#0e1c17] rounded-xl border border-[#29524A]/25 overflow-hidden flex items-center justify-center">
               <video
                 ref={videoRef}
                 autoPlay
@@ -410,7 +410,7 @@ export default function InterviewPage({
                 className={`absolute inset-0 w-full h-full object-cover ${cameraEnabled ? 'block' : 'hidden'}`}
               />
               {!cameraEnabled && (
-                <div className="flex flex-col items-center gap-2 text-[#333]">
+                <div className="flex flex-col items-center gap-2 text-[#2a3e36]">
                   <VideoOff className="w-8 h-8" />
                   <span className="text-xs">Kamera av</span>
                 </div>
@@ -436,9 +436,9 @@ export default function InterviewPage({
           <div className="relative flex items-center justify-center">
             {phase === 'ai-speaking' && (
               <>
-                <div className="absolute w-60 h-60 rounded-full bg-white/5 animate-ping"
+                <div className="absolute w-60 h-60 rounded-full bg-[#29524A]/15 animate-ping"
                   style={{ animationDuration: '2s' }} />
-                <div className="absolute w-48 h-48 rounded-full bg-white/10 animate-ping"
+                <div className="absolute w-48 h-48 rounded-full bg-[#29524A]/20 animate-ping"
                   style={{ animationDuration: '2s', animationDelay: '0.5s' }} />
               </>
             )}
@@ -453,25 +453,25 @@ export default function InterviewPage({
 
             <div className={`relative w-40 h-40 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${
               phase === 'ai-speaking'
-                ? 'bg-white/15 border-white shadow-[0_0_60px_#ffffff30]'
+                ? 'bg-[#29524A]/25 border-white shadow-[0_0_60px_#29524A50]'
                 : phase === 'recording'
                 ? 'bg-red-500/15 border-red-500 shadow-[0_0_60px_#ef444430]'
                 : phase === 'completed'
                 ? 'bg-green-900/30 border-green-500'
-                : 'bg-[#1a1a1a] border-white/10'
+                : 'bg-[#1a2c24] border-[#94A187]/25'
             }`}>
               {phase === 'completed' ? (
                 <CheckCircle2 className="w-16 h-16 text-green-400" />
               ) : phase === 'recording' ? (
                 <Mic className="w-16 h-16 text-red-400" />
               ) : (
-                <Bot className={`w-16 h-16 ${phase === 'ai-speaking' ? 'text-white' : 'text-[#444]'}`} />
+                <Bot className={`w-16 h-16 ${phase === 'ai-speaking' ? 'text-white' : 'text-[#3a5248]'}`} />
               )}
             </div>
           </div>
 
           {/* Status label */}
-          <p className="text-[#555] text-xs font-semibold tracking-widest uppercase">
+          <p className="text-[#4a6358] text-xs font-semibold tracking-widest uppercase">
             {STATUS_LABELS[phase]}
           </p>
 
@@ -481,7 +481,7 @@ export default function InterviewPage({
               ? Array.from({ length: 20 }, (_, i) => (
                   <div
                     key={i}
-                    className="w-1.5 rounded-full bg-white"
+                    className="w-1.5 rounded-full bg-[#C5AFA0]"
                     style={{
                       height: '4px',
                       animation: 'voice-bar 0.7s ease-in-out infinite alternate',
@@ -514,7 +514,7 @@ export default function InterviewPage({
       </div>
 
       {/* Mic / control button */}
-      <div className="p-10 flex justify-center border-t border-white/[0.04]">
+      <div className="p-10 flex justify-center border-t border-[#29524A]/20">
         {phase === 'completed' ? (
           <Link href="/dashboard/candidate">
             <Button size="lg">
@@ -525,7 +525,7 @@ export default function InterviewPage({
         ) : phase === 'user-turn' ? (
           <button
             onClick={startRecording}
-            className="w-20 h-20 rounded-full bg-white hover:bg-[#e0e0e0] active:scale-95 transition-all duration-150 flex items-center justify-center shadow-[0_0_40px_#ffffff40] hover:shadow-[0_0_60px_#ffffff60]"
+            className="w-20 h-20 rounded-full bg-[#C5AFA0] hover:bg-[#b09e91] active:scale-95 transition-all duration-150 flex items-center justify-center shadow-[0_0_40px_#29524A60] hover:shadow-[0_0_60px_#29524A80]"
             aria-label="Start opptak"
           >
             <Mic className="w-8 h-8 text-black" />
@@ -540,7 +540,7 @@ export default function InterviewPage({
           </button>
         ) : (
           /* processing / ai-speaking – inactive placeholder */
-          <div className="w-20 h-20 rounded-full bg-[#111] border border-white/10 flex items-center justify-center">
+          <div className="w-20 h-20 rounded-full bg-[#0e1c17] border border-[#94A187]/25 flex items-center justify-center">
             <div className="flex gap-1">
               {[0, 1, 2].map((i) => (
                 <div

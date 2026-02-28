@@ -79,7 +79,7 @@ function DescriptionSection({ section, isLast }: { section: Section; isLast: boo
   }
 
   return (
-    <div className={`${!isLast ? 'pb-7 mb-7 border-b border-white/[0.06]' : ''}`}>
+    <div className={`${!isLast ? 'pb-7 mb-7 border-b border-[#29524A]/25' : ''}`}>
       {section.title && (
         <h2 className="text-white font-semibold text-[17px] mb-4 leading-snug">
           {section.title}
@@ -96,7 +96,7 @@ function DescriptionSection({ section, isLast }: { section: Section; isLast: boo
         <ul className={`space-y-2.5 ${prose.length > 0 ? 'mt-4' : ''}`}>
           {bullets.map((item, i) => (
             <li key={i} className="flex items-start gap-3">
-              <span className="mt-[9px] w-1.5 h-1.5 rounded-full bg-white flex-shrink-0" />
+              <span className="mt-[9px] w-1.5 h-1.5 rounded-full bg-[#C5AFA0] flex-shrink-0" />
               <span className="text-[#8a8a8a] text-[15px] leading-7">{item}</span>
             </li>
           ))}
@@ -156,7 +156,7 @@ export default async function JobDetailPage({
     `${postedDays} d. siden`
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-[#06070E]">
       <Navbar userRole={userRole} userName={userName} />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
@@ -164,7 +164,7 @@ export default async function JobDetailPage({
         {/* Back */}
         <Link
           href="/jobs"
-          className="inline-flex items-center gap-2 text-sm text-[#555] hover:text-white transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-sm text-[#4a6358] hover:text-white transition-colors mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
           Alle stillinger
@@ -178,11 +178,11 @@ export default async function JobDetailPage({
               <img
                 src={job.companies.logo}
                 alt={job.companies?.name}
-                className="w-9 h-9 rounded-md object-contain bg-[#1a1a1a] border border-white/10 p-0.5"
+                className="w-9 h-9 rounded-md object-contain bg-[#1a2c24] border border-[#94A187]/25 p-0.5"
               />
             ) : (
-              <div className="w-9 h-9 rounded-md bg-[#1a1a1a] border border-white/10 flex items-center justify-center">
-                <Building2 className="w-4 h-4 text-[#555]" />
+              <div className="w-9 h-9 rounded-md bg-[#1a2c24] border border-[#94A187]/25 flex items-center justify-center">
+                <Building2 className="w-4 h-4 text-[#4a6358]" />
               </div>
             )}
             <span className="text-[#a1a1a1] text-sm font-medium">{job.companies?.name || 'Bedrift'}</span>
@@ -199,11 +199,11 @@ export default async function JobDetailPage({
             <DarkChip icon={Percent}  text={`${job.percentage}%`} />
             <DarkChip icon={Clock}    text={postedLabel} />
             <DarkChip icon={Users}    text={`${applicationCount ?? 0} søkere`} />
-            <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-white/10 text-white border border-white/20">
+            <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-[#29524A]/20 text-white border border-[#94A187]/35">
               {getIndustryLabel(job.industry as Industry)}
             </span>
             {postedDays <= 3 && (
-              <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-white text-black">
+              <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-[#C5AFA0] text-black">
                 Ny
               </span>
             )}
@@ -214,7 +214,7 @@ export default async function JobDetailPage({
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-5 items-start">
 
           {/* Description */}
-          <div className="bg-[#111111] border border-white/[0.07] rounded-xl p-7 sm:p-8">
+          <div className="bg-[#0e1c17] border border-[#29524A]/25 rounded-xl p-7 sm:p-8">
             {sections.map((s, i) => (
               <DescriptionSection key={i} section={s} isLast={i === sections.length - 1} />
             ))}
@@ -224,7 +224,7 @@ export default async function JobDetailPage({
           <div className="space-y-4 lg:sticky lg:top-6">
 
             {/* Apply card */}
-            <div className="bg-[#111111] border border-white/[0.07] rounded-xl p-5">
+            <div className="bg-[#0e1c17] border border-[#29524A]/25 rounded-xl p-5">
               <DarkApplySection
                 jobId={job.id}
                 userRole={userRole}
@@ -234,13 +234,13 @@ export default async function JobDetailPage({
             </div>
 
             {/* Fact table */}
-            <div className="bg-[#111111] border border-white/[0.07] rounded-xl overflow-hidden">
-              <div className="px-5 pt-4 pb-3 border-b border-white/[0.06]">
-                <p className="text-[11px] font-semibold uppercase tracking-widest text-[#555]">
+            <div className="bg-[#0e1c17] border border-[#29524A]/25 rounded-xl overflow-hidden">
+              <div className="px-5 pt-4 pb-3 border-b border-[#29524A]/25">
+                <p className="text-[11px] font-semibold uppercase tracking-widest text-[#4a6358]">
                   Om stillingen
                 </p>
               </div>
-              <div className="divide-y divide-white/[0.05]">
+              <div className="divide-y divide-[#29524A]/20">
                 <DarkFactRow label="Arbeidsgiver"     value={job.companies?.name || '—'} />
                 <DarkFactRow label="Bransje"          value={getIndustryLabel(job.industry as Industry)} />
                 <DarkFactRow label="Sted"             value={job.location} />
@@ -252,8 +252,8 @@ export default async function JobDetailPage({
 
             {/* Company */}
             {job.companies && (
-              <div className="bg-[#111111] border border-white/[0.07] rounded-xl p-5">
-                <p className="text-[11px] font-semibold uppercase tracking-widest text-[#555] mb-4">
+              <div className="bg-[#0e1c17] border border-[#29524A]/25 rounded-xl p-5">
+                <p className="text-[11px] font-semibold uppercase tracking-widest text-[#4a6358] mb-4">
                   Om bedriften
                 </p>
                 <div className="flex items-center gap-3 mb-3">
@@ -261,17 +261,17 @@ export default async function JobDetailPage({
                     <img
                       src={job.companies.logo}
                       alt={job.companies.name}
-                      className="w-9 h-9 rounded-md object-contain bg-[#1a1a1a] border border-white/10 p-0.5"
+                      className="w-9 h-9 rounded-md object-contain bg-[#1a2c24] border border-[#94A187]/25 p-0.5"
                     />
                   ) : (
-                    <div className="w-9 h-9 rounded-md bg-[#1a1a1a] border border-white/10 flex items-center justify-center">
-                      <Building2 className="w-4 h-4 text-[#555]" />
+                    <div className="w-9 h-9 rounded-md bg-[#1a2c24] border border-[#94A187]/25 flex items-center justify-center">
+                      <Building2 className="w-4 h-4 text-[#4a6358]" />
                     </div>
                   )}
                   <p className="font-semibold text-white text-sm">{job.companies.name}</p>
                 </div>
                 {job.companies.description && (
-                  <p className="text-[13px] text-[#666] leading-relaxed mb-3">{job.companies.description}</p>
+                  <p className="text-[13px] text-[#7a8a7d] leading-relaxed mb-3">{job.companies.description}</p>
                 )}
                 {job.companies.website && (
                   <a
@@ -290,7 +290,7 @@ export default async function JobDetailPage({
         </div>
 
         {/* Mobile apply bar */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#111111] border-t border-white/[0.07] px-4 py-3 z-40">
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#0e1c17] border-t border-[#29524A]/25 px-4 py-3 z-40">
           <DarkApplySection
             jobId={job.id}
             userRole={userRole}
@@ -324,7 +324,7 @@ function DarkApplySection({
           <CheckCircle2 className="w-5 h-5" />
           Du har søkt
         </div>
-        <p className="text-xs text-[#555] mb-2">Vi har mottatt din søknad</p>
+        <p className="text-xs text-[#4a6358] mb-2">Vi har mottatt din søknad</p>
         <Link href="/dashboard/candidate" className="text-white text-sm hover:underline">
           Se mine søknader →
         </Link>
@@ -336,7 +336,7 @@ function DarkApplySection({
     return (
       <div>
         <Link href="/auth/login" className="block w-full">
-          <button className="w-full inline-flex items-center justify-center gap-2 bg-white text-black font-semibold px-5 py-3 rounded-lg text-[15px] hover:bg-[#e0e0e0] transition-colors">
+          <button className="w-full inline-flex items-center justify-center gap-2 bg-[#C5AFA0] text-black font-semibold px-5 py-3 rounded-lg text-[15px] hover:bg-[#b09e91] transition-colors">
             <LogIn className="w-4 h-4" />
             Logg inn for å søke
           </button>
@@ -350,19 +350,19 @@ function DarkApplySection({
 
   if (userRole === 'company') {
     return (
-      <p className="text-center text-sm text-[#555]">Bedriftskontoer kan ikke søke</p>
+      <p className="text-center text-sm text-[#4a6358]">Bedriftskontoer kan ikke søke</p>
     )
   }
 
   return (
     <div>
       <Link href={`/apply/${jobId}`} className="block w-full">
-        <button className="w-full inline-flex items-center justify-center gap-2 bg-white text-black font-semibold px-5 py-3 rounded-lg text-[15px] hover:bg-[#e0e0e0] transition-colors">
+        <button className="w-full inline-flex items-center justify-center gap-2 bg-[#C5AFA0] text-black font-semibold px-5 py-3 rounded-lg text-[15px] hover:bg-[#b09e91] transition-colors">
           <Send className="w-4 h-4" />
           Søk på stillingen
         </button>
       </Link>
-      <p className="text-[11px] text-[#444] text-center mt-2.5">
+      <p className="text-[11px] text-[#3a5248] text-center mt-2.5">
         CV og profil sendes direkte til bedriften
       </p>
     </div>
@@ -379,8 +379,8 @@ function DarkChip({
   text: string
 }) {
   return (
-    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1a1a1a] border border-white/[0.08] text-xs font-medium text-[#777]">
-      <Icon className="w-3.5 h-3.5 text-[#555]" />
+    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1a2c24] border border-[#29524A]/30 text-xs font-medium text-[#94A187]">
+      <Icon className="w-3.5 h-3.5 text-[#4a6358]" />
       {text}
     </span>
   )
@@ -389,8 +389,8 @@ function DarkChip({
 function DarkFactRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-4 px-5 py-3">
-      <span className="text-xs text-[#555] flex-shrink-0">{label}</span>
-      <span className="text-sm font-medium text-[#ccc] text-right">{value}</span>
+      <span className="text-xs text-[#4a6358] flex-shrink-0">{label}</span>
+      <span className="text-sm font-medium text-[#C5AFA0] text-right">{value}</span>
     </div>
   )
 }

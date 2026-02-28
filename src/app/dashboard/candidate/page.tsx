@@ -80,17 +80,17 @@ export default async function CandidateDashboard() {
         // 2. SUPABASE_SERVICE_ROLE_KEY not set on Vercel → add it
         const isRlsRecursion = (e1 as { code?: string } | null)?.code === '42P17'
         return (
-          <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-6 text-center">
+          <div className="min-h-screen bg-[#06070E] flex items-center justify-center p-6 text-center">
             <div className="max-w-sm">
               <p className="text-white font-semibold mb-2">Databaseoppsett mangler</p>
-              <p className="text-[#888] text-sm mb-6">
+              <p className="text-[#94A187] text-sm mb-6">
                 {isRlsRecursion
                   ? 'RLS-policyen på «candidates»-tabellen er rekursiv. Fiks policyen i Supabase SQL Editor og legg til SUPABASE_SERVICE_ROLE_KEY på Vercel.'
                   : 'Kandidatprofilen kunne ikke opprettes. Legg til SUPABASE_SERVICE_ROLE_KEY på Vercel og sjekk RLS-policies i Supabase.'}
               </p>
               <a
                 href="/api/auth/signout"
-                className="inline-block text-sm font-semibold text-white border border-white/30 px-5 py-2.5 rounded-xl hover:bg-white/10 transition-colors"
+                className="inline-block text-sm font-semibold text-white border border-[#94A187]/45 px-5 py-2.5 rounded-xl hover:bg-[#29524A]/20 transition-colors"
               >
                 Logg ut
               </a>
@@ -125,7 +125,7 @@ export default async function CandidateDashboard() {
   const hiredApps = applications?.filter((a: Application) => a.status === 'hired').length || 0
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-[#06070E]">
       <Navbar userRole="candidate" userName={candidate.name} profilePictureUrl={candidate.profile_picture_url} />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -138,31 +138,31 @@ export default async function CandidateDashboard() {
                 <img
                   src={candidate.profile_picture_url}
                   alt="Profilbilde"
-                  className="w-14 h-14 rounded-full object-cover border-2 border-white/10"
+                  className="w-14 h-14 rounded-full object-cover border-2 border-[#94A187]/25"
                 />
               ) : (
-                <div className="w-14 h-14 rounded-full bg-[#1a1a1a] border-2 border-white/10 flex items-center justify-center">
-                  <User className="w-6 h-6 text-[#444]" />
+                <div className="w-14 h-14 rounded-full bg-[#1a2c24] border-2 border-[#94A187]/25 flex items-center justify-center">
+                  <User className="w-6 h-6 text-[#3a5248]" />
                 </div>
               )}
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#444] mb-0.5">Mine søknader</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-[#3a5248] mb-0.5">Mine søknader</p>
               <h1 className="text-2xl font-bold text-white">Hei, {candidate.name} 👋</h1>
               {candidate.bio && (
-                <p className="text-xs text-[#666] mt-0.5 max-w-xs truncate">{candidate.bio}</p>
+                <p className="text-xs text-[#7a8a7d] mt-0.5 max-w-xs truncate">{candidate.bio}</p>
               )}
             </div>
           </div>
           <div className="flex items-center gap-2">
             <Link href="/dashboard/candidate/profile">
-              <button className="inline-flex items-center gap-2 border border-white/[0.1] hover:border-white/[0.2] hover:bg-white/[0.03] text-white font-semibold px-4 py-2.5 rounded-xl transition-all text-sm">
+              <button className="inline-flex items-center gap-2 border border-[#29524A]/30 hover:border-[#94A187]/45 hover:bg-[#29524A]/[0.08] text-white font-semibold px-4 py-2.5 rounded-xl transition-all text-sm">
                 <Pencil className="w-4 h-4" />
                 <span className="hidden sm:inline">Min profil</span>
               </button>
             </Link>
             <Link href="/jobs">
-              <button className="inline-flex items-center gap-2 border border-white/[0.1] hover:border-white/[0.2] hover:bg-white/[0.03] text-white font-semibold px-4 py-2.5 rounded-xl transition-all text-sm">
+              <button className="inline-flex items-center gap-2 border border-[#29524A]/30 hover:border-[#94A187]/45 hover:bg-[#29524A]/[0.08] text-white font-semibold px-4 py-2.5 rounded-xl transition-all text-sm">
                 <Briefcase className="w-4 h-4" />
                 <span className="hidden sm:inline">Finn stillinger</span>
               </button>
@@ -183,7 +183,7 @@ export default async function CandidateDashboard() {
                   </div>
                   <div>
                     <p className="font-bold text-white">Du har mottatt et jobbtilbud!</p>
-                    <p className="text-sm text-[#999] mt-0.5">
+                    <p className="text-sm text-[#94A187] mt-0.5">
                       {offer.applications?.jobs?.title} hos {offer.applications?.jobs?.companies?.name}
                     </p>
                   </div>
@@ -202,27 +202,27 @@ export default async function CandidateDashboard() {
         {/* ── Stats row (Visuo pattern) ──────────────────────────────── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
           {[
-            { icon: FileText, label: 'Totale søknader', value: totalApps, iconClass: 'text-white bg-white/10 border-white/20' },
+            { icon: FileText, label: 'Totale søknader', value: totalApps, iconClass: 'text-white bg-[#29524A]/20 border-[#94A187]/35' },
             { icon: Briefcase, label: 'Aktive', value: activeApps, iconClass: 'text-blue-400 bg-blue-900/20 border-blue-500/20' },
             { icon: Bot, label: 'AI-intervju', value: interviewApps, iconClass: 'text-orange-400 bg-orange-900/20 border-orange-500/20' },
             { icon: CheckCircle2, label: 'Ansatt', value: hiredApps, iconClass: 'text-green-400 bg-green-900/20 border-green-500/20' },
           ].map((stat, i) => (
-            <div key={stat.label} className="bg-[#111111] border border-white/[0.07] rounded-2xl p-5 animate-slide-up" style={{ animationDelay: `${i * 80}ms`, animationFillMode: 'both' }}>
+            <div key={stat.label} className="bg-[#0e1c17] border border-[#29524A]/25 rounded-2xl p-5 animate-slide-up" style={{ animationDelay: `${i * 80}ms`, animationFillMode: 'both' }}>
               <div className={`w-10 h-10 rounded-xl border flex items-center justify-center mb-4 ${stat.iconClass}`}>
                 <stat.icon className="w-4 h-4" />
               </div>
               <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
-              <div className="text-sm text-[#888]">{stat.label}</div>
+              <div className="text-sm text-[#94A187]">{stat.label}</div>
             </div>
           ))}
         </div>
 
         {/* ── Application cards ─────────────────────────────────────── */}
-        <div className="bg-[#111111] border border-white/[0.07] rounded-2xl overflow-hidden animate-slide-up anim-delay-400">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
+        <div className="bg-[#0e1c17] border border-[#29524A]/25 rounded-2xl overflow-hidden animate-slide-up anim-delay-400">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-[#29524A]/25">
             <div>
               <p className="font-semibold text-white text-sm">Søknadshistorikk</p>
-              <p className="text-[11px] text-[#444] mt-0.5">{totalApps} søknad{totalApps !== 1 ? 'er' : ''}</p>
+              <p className="text-[11px] text-[#3a5248] mt-0.5">{totalApps} søknad{totalApps !== 1 ? 'er' : ''}</p>
             </div>
             <Link href="/jobs">
               <button className="text-xs text-white hover:underline">
@@ -233,38 +233,38 @@ export default async function CandidateDashboard() {
 
           {!applications || applications.length === 0 ? (
             <div className="text-center py-20 px-4">
-              <div className="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/[0.07] flex items-center justify-center mx-auto mb-5">
-                <Briefcase className="w-7 h-7 text-[#333]" />
+              <div className="w-16 h-16 rounded-2xl bg-[#29524A]/[0.08] border border-[#29524A]/25 flex items-center justify-center mx-auto mb-5">
+                <Briefcase className="w-7 h-7 text-[#2a3e36]" />
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">Ingen søknader ennå</h3>
-              <p className="text-[#555] text-sm mb-7 max-w-sm mx-auto">
+              <p className="text-[#4a6358] text-sm mb-7 max-w-sm mx-auto">
                 Finn en stilling du er interessert i og send din første søknad med AI-intervju
               </p>
               <Link href="/jobs">
-                <button className="inline-flex items-center gap-2 bg-white hover:bg-[#e0e0e0] text-black font-semibold px-6 py-3 rounded-xl transition-all text-sm">
+                <button className="inline-flex items-center gap-2 bg-[#C5AFA0] hover:bg-[#b09e91] text-black font-semibold px-6 py-3 rounded-xl transition-all text-sm">
                   Se ledige stillinger
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </Link>
             </div>
           ) : (
-            <div className="divide-y divide-white/[0.04]">
+            <div className="divide-y divide-[#29524A]/20">
               {applications.map((app: Application) => {
                 const step = STATUS_STEP[app.status as ApplicationStatus] ?? 0
                 const isRejected = app.status === 'rejected'
                 const isHired = app.status === 'hired'
 
                 return (
-                  <div key={app.id} className="px-6 py-5 hover:bg-white/[0.02] transition-colors">
+                  <div key={app.id} className="px-6 py-5 hover:bg-[#C5AFA0]/[0.02] transition-colors">
                     <div className="flex items-start justify-between gap-4 mb-4">
                       {/* Left: Company + Job info */}
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-10 h-10 rounded-xl bg-[#1a1a1a] border border-white/10 flex items-center justify-center flex-shrink-0">
-                          <Building2 className="w-4 h-4 text-[#444]" />
+                        <div className="w-10 h-10 rounded-xl bg-[#1a2c24] border border-[#94A187]/25 flex items-center justify-center flex-shrink-0">
+                          <Building2 className="w-4 h-4 text-[#3a5248]" />
                         </div>
                         <div className="min-w-0">
                           <p className="font-semibold text-white truncate">{app.jobs?.title}</p>
-                          <div className="flex items-center gap-2 text-xs text-[#555] mt-0.5">
+                          <div className="flex items-center gap-2 text-xs text-[#4a6358] mt-0.5">
                             <span>{app.jobs?.companies?.name}</span>
                             <span>·</span>
                             <span className="flex items-center gap-0.5">
@@ -274,7 +274,7 @@ export default async function CandidateDashboard() {
                             <span>·</span>
                             <span>{app.jobs?.percentage}%</span>
                           </div>
-                          <p className="text-[11px] text-[#333] mt-1">Søkt {formatDate(app.created_at)}</p>
+                          <p className="text-[11px] text-[#2a3e36] mt-1">Søkt {formatDate(app.created_at)}</p>
                         </div>
                       </div>
 
@@ -286,8 +286,8 @@ export default async function CandidateDashboard() {
                         {app.score != null && (
                           <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
                             app.score >= 80 ? 'bg-green-900/40 text-green-400' :
-                            app.score >= 60 ? 'bg-white/10 text-white' :
-                            'bg-white/[0.05] text-[#888]'
+                            app.score >= 60 ? 'bg-[#29524A]/20 text-white' :
+                            'bg-[#29524A]/12 text-[#94A187]'
                           }`}>
                             Score: {app.score}
                           </span>
@@ -304,15 +304,15 @@ export default async function CandidateDashboard() {
                               key={s}
                               className={`h-1 flex-1 rounded-full transition-all ${
                                 s <= step
-                                  ? isHired ? 'bg-green-500' : 'bg-white'
-                                  : 'bg-white/[0.06]'
+                                  ? isHired ? 'bg-green-500' : 'bg-[#C5AFA0]'
+                                  : 'bg-[#29524A]/15'
                               }`}
                             />
                           ))}
                         </div>
                         <div className="flex justify-between mt-1.5">
                           {['Sendt', 'Vurderes', 'Intervju', 'Referanse', 'Tilbud', 'Ansatt'].map((label, i) => (
-                            <span key={label} className={`text-[10px] ${i + 1 <= step ? 'text-white' : 'text-[#333]'}`}>
+                            <span key={label} className={`text-[10px] ${i + 1 <= step ? 'text-white' : 'text-[#2a3e36]'}`}>
                               {label}
                             </span>
                           ))}
@@ -330,7 +330,7 @@ export default async function CandidateDashboard() {
                     <div className="flex flex-wrap gap-2">
                       {app.status === 'interview' && !app.interview_completed && (
                         <Link href={`/interview/${app.id}`}>
-                          <button className="inline-flex items-center gap-1.5 bg-white hover:bg-[#e0e0e0] text-black font-semibold text-xs px-3.5 py-2 rounded-lg transition-colors">
+                          <button className="inline-flex items-center gap-1.5 bg-[#C5AFA0] hover:bg-[#b09e91] text-black font-semibold text-xs px-3.5 py-2 rounded-lg transition-colors">
                             <Bot className="w-3.5 h-3.5" />
                             Start AI-intervju
                           </button>
@@ -344,13 +344,13 @@ export default async function CandidateDashboard() {
                       )}
                       {app.status === 'offer_sent' && (
                         <Link href={`/offers`}>
-                          <button className="inline-flex items-center gap-1.5 bg-white hover:bg-[#e0e0e0] text-black font-semibold text-xs px-3.5 py-2 rounded-lg transition-colors">
+                          <button className="inline-flex items-center gap-1.5 bg-[#C5AFA0] hover:bg-[#b09e91] text-black font-semibold text-xs px-3.5 py-2 rounded-lg transition-colors">
                             Se jobbtilbud
                           </button>
                         </Link>
                       )}
                       <Link href={`/jobs/${app.job_id}`}>
-                        <button className="text-xs text-[#555] hover:text-white flex items-center gap-1 py-2 px-3 rounded-lg hover:bg-white/[0.04] transition-colors">
+                        <button className="text-xs text-[#4a6358] hover:text-white flex items-center gap-1 py-2 px-3 rounded-lg hover:bg-[#29524A]/10 transition-colors">
                           Se stilling
                           <ArrowRight className="w-3 h-3" />
                         </button>

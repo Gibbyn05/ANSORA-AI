@@ -148,14 +148,14 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex">
+    <div className="min-h-screen bg-[#06070E] flex">
 
       {/* ── Left decorative panel ─────────────────────────────────── */}
-      <div className="hidden lg:flex lg:w-[46%] bg-[#111111] border-r border-white/[0.07] flex-col justify-between p-12">
+      <div className="hidden lg:flex lg:w-[46%] bg-[#0e1c17] border-r border-[#29524A]/25 flex-col justify-between p-12">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-9 h-9 bg-white rounded-xl flex items-center justify-center">
-            <span className="text-black font-bold text-base">A</span>
+          <div className="w-9 h-9 bg-[#29524A] rounded-xl flex items-center justify-center">
+            <span className="text-white font-bold text-base">A</span>
           </div>
           <span className="text-white font-bold text-xl tracking-tight">Ansora</span>
         </Link>
@@ -165,7 +165,7 @@ export default function RegisterPage() {
           <h2 className="text-3xl font-bold text-white leading-snug mb-4">
             Kom i gang på<br />under 5 minutter
           </h2>
-          <p className="text-[#666] leading-relaxed mb-10">
+          <p className="text-[#7a8a7d] leading-relaxed mb-10">
             Opprett konto og publiser din første stilling i dag – AI tar seg av resten.
           </p>
 
@@ -176,12 +176,12 @@ export default function RegisterPage() {
               { icon: Users, title: 'Gratis å starte', desc: 'Ingen kredittkort, ingen bindingstid' },
             ].map((f) => (
               <div key={f.title} className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-[#29524A]/20 border border-[#94A187]/35 flex items-center justify-center flex-shrink-0">
                   <f.icon className="w-4 h-4 text-white" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-white">{f.title}</p>
-                  <p className="text-xs text-[#555] mt-0.5">{f.desc}</p>
+                  <p className="text-xs text-[#4a6358] mt-0.5">{f.desc}</p>
                 </div>
               </div>
             ))}
@@ -195,9 +195,9 @@ export default function RegisterPage() {
             { value: '94%', label: 'Nøyaktighet' },
             { value: '200+', label: 'Bedrifter' },
           ].map((s) => (
-            <div key={s.label} className="bg-[#0a0a0a] border border-white/[0.07] rounded-xl p-4 text-center">
+            <div key={s.label} className="bg-[#06070E] border border-[#29524A]/25 rounded-xl p-4 text-center">
               <div className="text-xl font-bold text-white">{s.value}</div>
-              <div className="text-[11px] text-[#444] mt-0.5">{s.label}</div>
+              <div className="text-[11px] text-[#3a5248] mt-0.5">{s.label}</div>
             </div>
           ))}
         </div>
@@ -210,19 +210,19 @@ export default function RegisterPage() {
           {/* Mobile logo */}
           <div className="lg:hidden flex justify-center mb-8">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-9 h-9 bg-white rounded-xl flex items-center justify-center">
-                <span className="text-black font-bold text-base">A</span>
+              <div className="w-9 h-9 bg-[#29524A] rounded-xl flex items-center justify-center">
+                <span className="text-white font-bold text-base">A</span>
               </div>
               <span className="text-white font-bold text-xl tracking-tight">Ansora</span>
             </Link>
           </div>
 
           <h1 className="text-2xl font-bold text-white mb-1">Opprett konto</h1>
-          <p className="text-[#555] text-sm mb-8">Kom i gang med AI-rekruttering</p>
+          <p className="text-[#4a6358] text-sm mb-8">Kom i gang med AI-rekruttering</p>
 
           {/* Role selector */}
           <div className="mb-6">
-            <p className="text-xs font-semibold text-[#555] uppercase tracking-widest mb-3">Hvem er du?</p>
+            <p className="text-xs font-semibold text-[#4a6358] uppercase tracking-widest mb-3">Hvem er du?</p>
             <div className="grid grid-cols-2 gap-3">
               {([
                 { value: 'company', icon: Briefcase, label: 'Bedrift', sub: 'Jeg vil rekruttere' },
@@ -235,8 +235,8 @@ export default function RegisterPage() {
                   className={cn(
                     'flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all',
                     role === r.value
-                      ? 'border-white bg-white/5 text-white'
-                      : 'border-white/[0.08] text-[#555] hover:border-white/[0.2] hover:text-white'
+                      ? 'border-white bg-[#29524A]/15 text-white'
+                      : 'border-[#29524A]/30 text-[#4a6358] hover:border-[#94A187]/45 hover:text-white'
                   )}
                 >
                   <r.icon className="w-5 h-5" />
@@ -274,7 +274,7 @@ export default function RegisterPage() {
                     onClick={searchBrreg}
                     disabled={brregLoading || !name.trim()}
                     title="Finn bedrift i Brønnøysundregistrene"
-                    className="mt-[22px] flex items-center gap-1.5 border border-white/[0.12] hover:border-white/40 text-[#666] hover:text-white bg-[#111] px-3 h-[42px] rounded-xl transition-colors disabled:opacity-40 text-xs font-medium whitespace-nowrap"
+                    className="mt-[22px] flex items-center gap-1.5 border border-white/[0.12] hover:border-white/40 text-[#7a8a7d] hover:text-white bg-[#0e1c17] px-3 h-[42px] rounded-xl transition-colors disabled:opacity-40 text-xs font-medium whitespace-nowrap"
                   >
                     {brregLoading
                       ? <Loader2 className="w-4 h-4 animate-spin" />
@@ -285,8 +285,8 @@ export default function RegisterPage() {
 
                 {/* Søkeresultater */}
                 {brregResults.length > 0 && (
-                  <div className="bg-[#111] border border-white/[0.1] rounded-xl overflow-hidden">
-                    <p className="text-[10px] text-[#444] px-3 pt-2 pb-1 uppercase tracking-wider">
+                  <div className="bg-[#0e1c17] border border-[#29524A]/30 rounded-xl overflow-hidden">
+                    <p className="text-[10px] text-[#3a5248] px-3 pt-2 pb-1 uppercase tracking-wider">
                       Velg din bedrift
                     </p>
                     {brregResults.map((c) => (
@@ -294,16 +294,16 @@ export default function RegisterPage() {
                         key={c.orgnr}
                         type="button"
                         onClick={() => selectCompany(c)}
-                        className="w-full text-left px-3 py-2.5 hover:bg-white/[0.05] transition-colors border-t border-white/[0.04] first:border-0"
+                        className="w-full text-left px-3 py-2.5 hover:bg-[#29524A]/12 transition-colors border-t border-[#29524A]/20 first:border-0"
                       >
                         <div className="flex items-center justify-between gap-2">
                           <div>
                             <p className="text-sm font-medium text-white leading-tight">{c.name}</p>
-                            <p className="text-[11px] text-[#555] mt-0.5">
+                            <p className="text-[11px] text-[#4a6358] mt-0.5">
                               {c.orgnr}{c.city ? ` · ${c.city}` : ''}{c.orgForm ? ` · ${c.orgForm}` : ''}
                             </p>
                           </div>
-                          <ChevronDown className="w-3.5 h-3.5 text-[#444] rotate-[-90deg] flex-shrink-0" />
+                          <ChevronDown className="w-3.5 h-3.5 text-[#3a5248] rotate-[-90deg] flex-shrink-0" />
                         </div>
                       </button>
                     ))}
@@ -312,17 +312,17 @@ export default function RegisterPage() {
 
                 {/* Ingen resultater */}
                 {brregSearched && !brregLoading && brregResults.length === 0 && !selectedCompany && (
-                  <p className="text-xs text-[#555] px-1">
+                  <p className="text-xs text-[#4a6358] px-1">
                     Ingen treff i Brønnøysundregistrene. Du kan registrere deg likevel.
                   </p>
                 )}
 
                 {/* Valgt bedrift */}
                 {selectedCompany && (
-                  <div className="bg-[#0d1a00] border border-white/20 rounded-xl p-3">
+                  <div className="bg-[#0d1a00] border border-[#94A187]/35 rounded-xl p-3">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2 min-w-0">
-                        <div className="w-7 h-7 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <div className="w-7 h-7 bg-[#29524A]/20 rounded-lg flex items-center justify-center flex-shrink-0">
                           <Building2 className="w-3.5 h-3.5 text-white" />
                         </div>
                         <div className="min-w-0">
@@ -335,27 +335,27 @@ export default function RegisterPage() {
                       <button
                         type="button"
                         onClick={clearSelection}
-                        className="text-[#444] hover:text-[#888] flex-shrink-0"
+                        className="text-[#3a5248] hover:text-[#94A187] flex-shrink-0"
                       >
                         <X className="w-3.5 h-3.5" />
                       </button>
                     </div>
                     <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
-                      <span className="text-[11px] text-[#666]">Org.nr: {selectedCompany.orgnr}</span>
+                      <span className="text-[11px] text-[#7a8a7d]">Org.nr: {selectedCompany.orgnr}</span>
                       {selectedCompany.city && (
-                        <span className="flex items-center gap-1 text-[11px] text-[#666]">
+                        <span className="flex items-center gap-1 text-[11px] text-[#7a8a7d]">
                           <MapPin className="w-2.5 h-2.5" />
                           {selectedCompany.city}
                         </span>
                       )}
                       {selectedCompany.phone && (
-                        <span className="flex items-center gap-1 text-[11px] text-[#666]">
+                        <span className="flex items-center gap-1 text-[11px] text-[#7a8a7d]">
                           <Phone className="w-2.5 h-2.5" />
                           {selectedCompany.phone}
                         </span>
                       )}
                       {selectedCompany.industry && (
-                        <span className="text-[11px] text-[#666] truncate">{selectedCompany.industry}</span>
+                        <span className="text-[11px] text-[#7a8a7d] truncate">{selectedCompany.industry}</span>
                       )}
                     </div>
                   </div>
@@ -371,7 +371,7 @@ export default function RegisterPage() {
                       onChange={(e) => setOrgNumber(e.target.value)}
                       placeholder="123 456 789"
                     />
-                    <p className="text-[11px] text-[#444] mt-1 px-1">
+                    <p className="text-[11px] text-[#3a5248] mt-1 px-1">
                       Org.nr hjelper oss bekrefte at dette er en ekte bedrift
                     </p>
                   </div>
@@ -412,7 +412,7 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-[38px] text-[#666] hover:text-[#999] transition-colors"
+                className="absolute right-3 top-[38px] text-[#7a8a7d] hover:text-[#94A187] transition-colors"
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
@@ -421,7 +421,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full inline-flex items-center justify-center gap-2 bg-white hover:bg-[#e0e0e0] disabled:opacity-60 text-black font-semibold px-6 py-3.5 rounded-xl transition-all text-[15px]"
+              className="w-full inline-flex items-center justify-center gap-2 bg-[#C5AFA0] hover:bg-[#b09e91] disabled:opacity-60 text-black font-semibold px-6 py-3.5 rounded-xl transition-all text-[15px]"
             >
               {loading && (
                 <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
@@ -429,21 +429,21 @@ export default function RegisterPage() {
               {loading ? 'Oppretter konto…' : role === 'company' ? 'Opprett bedriftskonto' : 'Opprett kandidatkonto'}
             </button>
 
-            <div className="flex items-start gap-2 text-xs text-[#444] pt-1">
+            <div className="flex items-start gap-2 text-xs text-[#3a5248] pt-1">
               <CheckCircle2 className="w-3.5 h-3.5 text-white/60 flex-shrink-0 mt-0.5" />
               <span>Ved å registrere deg godtar du våre brukervilkår og personvernregler.</span>
             </div>
           </form>
 
-          <p className="text-sm text-[#555] text-center mt-7">
+          <p className="text-sm text-[#4a6358] text-center mt-7">
             Har du allerede konto?{' '}
             <Link href="/auth/login" className="text-white font-semibold hover:underline">
               Logg inn
             </Link>
           </p>
 
-          <div className="mt-8 pt-6 border-t border-white/[0.06] text-center">
-            <Link href="/" className="text-xs text-[#333] hover:text-[#666] transition-colors">
+          <div className="mt-8 pt-6 border-t border-[#29524A]/25 text-center">
+            <Link href="/" className="text-xs text-[#2a3e36] hover:text-[#7a8a7d] transition-colors">
               ← Tilbake til forsiden
             </Link>
           </div>

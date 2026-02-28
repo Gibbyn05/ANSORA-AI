@@ -81,7 +81,7 @@ function LoginForm() {
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 top-[38px] text-[#666] hover:text-[#999] transition-colors"
+          className="absolute right-3 top-[38px] text-[#7a8a7d] hover:text-[#94A187] transition-colors"
         >
           {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
         </button>
@@ -90,7 +90,7 @@ function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full inline-flex items-center justify-center gap-2 bg-white hover:bg-[#e0e0e0] disabled:opacity-60 text-black font-semibold px-6 py-3.5 rounded-xl transition-all text-[15px]"
+        className="w-full inline-flex items-center justify-center gap-2 bg-[#C5AFA0] hover:bg-[#b09e91] disabled:opacity-60 text-black font-semibold px-6 py-3.5 rounded-xl transition-all text-[15px]"
       >
         {loading ? (
           <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
@@ -105,14 +105,14 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex">
+    <div className="min-h-screen bg-[#06070E] flex">
 
       {/* ── Left decorative panel (Prospect split-screen) ────────── */}
-      <div className="hidden lg:flex lg:w-[46%] bg-[#111111] border-r border-white/[0.07] flex-col justify-between p-12">
+      <div className="hidden lg:flex lg:w-[46%] bg-[#0e1c17] border-r border-[#29524A]/25 flex-col justify-between p-12">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-9 h-9 bg-white rounded-xl flex items-center justify-center">
-            <span className="text-black font-bold text-base">A</span>
+          <div className="w-9 h-9 bg-[#29524A] rounded-xl flex items-center justify-center">
+            <span className="text-white font-bold text-base">A</span>
           </div>
           <span className="text-white font-bold text-xl tracking-tight">Ansora</span>
         </Link>
@@ -122,7 +122,7 @@ export default function LoginPage() {
           <h2 className="text-3xl font-bold text-white leading-snug mb-4">
             Rekruttering som<br />jobber for deg
           </h2>
-          <p className="text-[#666] leading-relaxed mb-10">
+          <p className="text-[#7a8a7d] leading-relaxed mb-10">
             AI screener kandidater, gjennomfører intervjuer og rangerer søkere – automatisk.
           </p>
 
@@ -133,12 +133,12 @@ export default function LoginPage() {
               { icon: Users, title: 'AI-intervju 24/7', desc: 'Tekstbasert kvalifisering hele døgnet' },
             ].map((f) => (
               <div key={f.title} className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-[#29524A]/20 border border-[#94A187]/35 flex items-center justify-center flex-shrink-0">
                   <f.icon className="w-4 h-4 text-white" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-white">{f.title}</p>
-                  <p className="text-xs text-[#555] mt-0.5">{f.desc}</p>
+                  <p className="text-xs text-[#4a6358] mt-0.5">{f.desc}</p>
                 </div>
               </div>
             ))}
@@ -146,22 +146,22 @@ export default function LoginPage() {
         </div>
 
         {/* Testimonial quote */}
-        <div className="bg-[#0a0a0a] border border-white/[0.07] rounded-xl p-5">
+        <div className="bg-[#06070E] border border-[#29524A]/25 rounded-xl p-5">
           <div className="flex mb-3">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} className="w-3.5 h-3.5 text-white fill-[#ffffff]" />
+              <Star key={i} className="w-3.5 h-3.5 text-white fill-[#C5AFA0]" />
             ))}
           </div>
-          <p className="text-sm text-[#888] italic leading-relaxed mb-4">
+          <p className="text-sm text-[#94A187] italic leading-relaxed mb-4">
             &ldquo;Ansora spart oss for uker med manuell screening. AI-analysen er forbløffende presis.&rdquo;
           </p>
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-[#1a1a1a] border border-white/10 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-[#1a2c24] border border-[#94A187]/25 flex items-center justify-center">
               <span className="text-[10px] font-bold text-white">KM</span>
             </div>
             <div>
               <p className="text-xs font-semibold text-white">Kristine M.</p>
-              <p className="text-[11px] text-[#444]">HR-leder, Helsegruppen AS</p>
+              <p className="text-[11px] text-[#3a5248]">HR-leder, Helsegruppen AS</p>
             </div>
           </div>
         </div>
@@ -174,29 +174,29 @@ export default function LoginPage() {
           {/* Mobile logo */}
           <div className="lg:hidden flex justify-center mb-8">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-9 h-9 bg-white rounded-xl flex items-center justify-center">
-                <span className="text-black font-bold text-base">A</span>
+              <div className="w-9 h-9 bg-[#29524A] rounded-xl flex items-center justify-center">
+                <span className="text-white font-bold text-base">A</span>
               </div>
               <span className="text-white font-bold text-xl tracking-tight">Ansora</span>
             </Link>
           </div>
 
           <h1 className="text-2xl font-bold text-white mb-1">Logg inn</h1>
-          <p className="text-[#555] text-sm mb-8">Velkommen tilbake!</p>
+          <p className="text-[#4a6358] text-sm mb-8">Velkommen tilbake!</p>
 
-          <Suspense fallback={<div className="h-48 animate-pulse bg-white/[0.03] rounded-xl" />}>
+          <Suspense fallback={<div className="h-48 animate-pulse bg-[#29524A]/[0.08] rounded-xl" />}>
             <LoginForm />
           </Suspense>
 
-          <p className="text-sm text-[#555] text-center mt-7">
+          <p className="text-sm text-[#4a6358] text-center mt-7">
             Har du ikke konto?{' '}
             <Link href="/auth/register" className="text-white font-semibold hover:underline">
               Registrer deg gratis
             </Link>
           </p>
 
-          <div className="mt-8 pt-6 border-t border-white/[0.06] text-center">
-            <Link href="/" className="text-xs text-[#333] hover:text-[#666] transition-colors">
+          <div className="mt-8 pt-6 border-t border-[#29524A]/25 text-center">
+            <Link href="/" className="text-xs text-[#2a3e36] hover:text-[#7a8a7d] transition-colors">
               ← Tilbake til forsiden
             </Link>
           </div>

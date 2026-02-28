@@ -53,11 +53,11 @@ export default async function CompanyJobDetailPage({
     .order('score', { ascending: false, nullsFirst: false })
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-[#06070E]">
       <Navbar userRole="company" />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Link href="/dashboard/company" className="inline-flex items-center gap-2 text-sm text-[#666] hover:text-white mb-6 transition-colors">
+        <Link href="/dashboard/company" className="inline-flex items-center gap-2 text-sm text-[#7a8a7d] hover:text-white mb-6 transition-colors">
           <ArrowLeft className="w-4 h-4" />
           Tilbake til dashboard
         </Link>
@@ -73,7 +73,7 @@ export default async function CompanyJobDetailPage({
                 <Badge variant="info">{getIndustryLabel(job.industry as Industry)}</Badge>
               </div>
               <h1 className="text-xl font-bold text-white">{job.title}</h1>
-              <div className="flex flex-wrap gap-4 mt-2 text-sm text-[#999]">
+              <div className="flex flex-wrap gap-4 mt-2 text-sm text-[#94A187]">
                 <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{job.location}</span>
                 <span className="flex items-center gap-1"><Percent className="w-3.5 h-3.5" />{job.percentage}%</span>
                 <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" />{applications?.length || 0} søkere</span>
@@ -91,27 +91,27 @@ export default async function CompanyJobDetailPage({
 
           {!applications || applications.length === 0 ? (
             <div className="text-center py-12">
-              <Users className="w-12 h-12 text-[#333] mx-auto mb-3" />
-              <p className="text-[#999]">Ingen søknader mottatt ennå</p>
+              <Users className="w-12 h-12 text-[#2a3e36] mx-auto mb-3" />
+              <p className="text-[#94A187]">Ingen søknader mottatt ennå</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-white/10">
-                    <th className="text-left text-xs font-semibold text-[#666] uppercase tracking-wide py-3 pr-4">
+                  <tr className="border-b border-[#94A187]/25">
+                    <th className="text-left text-xs font-semibold text-[#7a8a7d] uppercase tracking-wide py-3 pr-4">
                       Rang
                     </th>
-                    <th className="text-left text-xs font-semibold text-[#666] uppercase tracking-wide py-3 pr-4">
+                    <th className="text-left text-xs font-semibold text-[#7a8a7d] uppercase tracking-wide py-3 pr-4">
                       Kandidat
                     </th>
-                    <th className="text-left text-xs font-semibold text-[#666] uppercase tracking-wide py-3 pr-4">
+                    <th className="text-left text-xs font-semibold text-[#7a8a7d] uppercase tracking-wide py-3 pr-4">
                       Score
                     </th>
-                    <th className="text-left text-xs font-semibold text-[#666] uppercase tracking-wide py-3 pr-4">
+                    <th className="text-left text-xs font-semibold text-[#7a8a7d] uppercase tracking-wide py-3 pr-4">
                       Status
                     </th>
-                    <th className="text-left text-xs font-semibold text-[#666] uppercase tracking-wide py-3 pr-4">
+                    <th className="text-left text-xs font-semibold text-[#7a8a7d] uppercase tracking-wide py-3 pr-4">
                       Søknadsdato
                     </th>
                     <th className="py-3"></th>
@@ -119,27 +119,27 @@ export default async function CompanyJobDetailPage({
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {applications.map((app: Application, index: number) => (
-                    <tr key={app.id} className="hover:bg-white/5 transition-colors group">
+                    <tr key={app.id} className="hover:bg-[#29524A]/15 transition-colors group">
                       <td className="py-3 pr-4">
                         <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
                           index === 0 ? 'bg-yellow-900/40 text-yellow-400' :
-                          index === 1 ? 'bg-white/10 text-[#999]' :
+                          index === 1 ? 'bg-[#29524A]/20 text-[#94A187]' :
                           index === 2 ? 'bg-orange-900/30 text-orange-400' :
-                          'bg-white/5 text-[#666]'
+                          'bg-[#29524A]/15 text-[#7a8a7d]'
                         }`}>
                           {index + 1}
                         </span>
                       </td>
                       <td className="py-3 pr-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center">
+                          <div className="w-9 h-9 bg-[#29524A]/20 rounded-full flex items-center justify-center">
                             <span className="text-white font-bold text-sm">
                               {app.candidates?.name?.charAt(0).toUpperCase()}
                             </span>
                           </div>
                           <div>
                             <p className="font-medium text-white text-sm">{app.candidates?.name}</p>
-                            <p className="text-xs text-[#666]">{app.candidates?.email}</p>
+                            <p className="text-xs text-[#7a8a7d]">{app.candidates?.email}</p>
                           </div>
                         </div>
                       </td>
@@ -155,7 +155,7 @@ export default async function CompanyJobDetailPage({
                             {app.score}/100
                           </div>
                         ) : (
-                          <span className="text-[#444] text-sm">–</span>
+                          <span className="text-[#3a5248] text-sm">–</span>
                         )}
                       </td>
                       <td className="py-3 pr-4">
@@ -163,7 +163,7 @@ export default async function CompanyJobDetailPage({
                           {translateStatus(app.status)}
                         </Badge>
                       </td>
-                      <td className="py-3 pr-4 text-sm text-[#999]">
+                      <td className="py-3 pr-4 text-sm text-[#94A187]">
                         {formatDate(app.created_at)}
                       </td>
                       <td className="py-3">
