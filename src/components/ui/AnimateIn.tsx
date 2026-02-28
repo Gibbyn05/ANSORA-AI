@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 type Animation = 'slide-up' | 'slide-left' | 'slide-right' | 'scale-in' | 'fade-in'
 
@@ -10,7 +10,7 @@ interface AnimateInProps {
   animation?: Animation
   delay?: number
   threshold?: number
-  as?: keyof JSX.IntrinsicElements
+  as?: keyof React.JSX.IntrinsicElements
 }
 
 const ANIM_CLASS: Record<Animation, string> = {
