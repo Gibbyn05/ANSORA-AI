@@ -42,7 +42,7 @@ export default async function ApplicationDetailPage({
     .from('applications')
     .select(`
       *,
-      candidates (id, name, email, cv_url, cv_text, language, phone),
+      candidates (id, name, email, cv_url, cv_text, language, phone, profile_picture_url),
       jobs (
         id, title, description, industry, percentage, location,
         companies (id, name)
@@ -100,10 +100,18 @@ export default async function ApplicationDetailPage({
             {/* Kandidatprofil */}
             <Card>
               <div className="text-center mb-4">
-                <div className="w-16 h-16 bg-[#29524A]/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <span className="text-white font-bold text-xl">
-                    {isAnonymous ? '?' : application.candidates?.name?.charAt(0).toUpperCase()}
-                  </span>
+                <div className="w-16 h-16 rounded-full mx-auto mb-3 overflow-hidden bg-[#29524A]/20 flex items-center justify-center">
+                  {!isAnonymous && application.candidates?.profile_picture_url ? (
+                    <img
+                      src={application.candidates.profile_picture_url}
+                      alt={application.candidates.name}
+                      className="w-16 h-16 object-cover"
+                    />
+                  ) : (
+                    <span className="text-white font-bold text-xl">
+                      {isAnonymous ? '?' : application.candidates?.name?.charAt(0).toUpperCase()}
+                    </span>
+                  )}
                 </div>
                 {isAnonymous ? (
                   <div>

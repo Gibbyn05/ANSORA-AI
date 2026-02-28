@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
     const jobId = formData.get('jobId') as string
     const cvFile = formData.get('cv') as File
     const coverLetter = formData.get('coverLetter') as string | null
+    const submittedName = (formData.get('name') as string | null)?.trim() || null
 
     if (!jobId || !cvFile) {
       return NextResponse.json({ error: 'Mangler stilling-ID eller CV' }, { status: 400 })
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest) {
 
     if (!candidate) {
       const admin = createAdminClient()
-      const name = (user.user_metadata?.name as string | undefined) ?? user.email ?? 'Kandidat'
+      const name = submittedName ?? (user.user_metadata?.name as string | undefined) ?? user.email ?? 'Kandidat'
       const { data: created } = await admin
         .from('candidates')
         .insert({ user_id: user.id, name, email: user.email ?? '' })
@@ -41,6 +42,11 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Kunne ikke opprette kandidatprofil' }, { status: 500 })
       }
       candidate = created
+    } else if (submittedName && submittedName !== candidate.name) {
+      // Oppdater navn hvis kandidaten sendte inn et nytt navn
+      const admin = createAdminClient()
+      await admin.from('candidates').update({ name: submittedName }).eq('id', candidate.id)
+      candidate = { ...candidate, name: submittedName }
     }
 
     // Sjekk om kandidaten allerede har søkt

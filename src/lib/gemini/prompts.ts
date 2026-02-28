@@ -182,6 +182,16 @@ Svar med JSON:
   }
 }
 
+// Mapper engelske språknavn (fra detectLanguage) til norske ekvivalenter for system-prompter
+function toNorwegianLangName(lang: string): string {
+  const map: Record<string, string> = {
+    norwegian: 'norsk', english: 'engelsk', swedish: 'svensk', danish: 'dansk',
+    german: 'tysk', french: 'fransk', spanish: 'spansk', polish: 'polsk',
+    finnish: 'finsk', dutch: 'nederlandsk', italian: 'italiensk', portuguese: 'portugisisk',
+  }
+  return map[lang.toLowerCase()] ?? lang
+}
+
 // ===== AI-INTERVJU =====
 export async function runInterviewTurn(params: {
   job: Job
@@ -190,7 +200,7 @@ export async function runInterviewTurn(params: {
   conversationHistory: InterviewMessage[]
   language?: string
 }): Promise<string> {
-  const lang = params.language || 'norsk'
+  const lang = toNorwegianLangName(params.language || 'norsk')
   const isFirstMessage = params.conversationHistory.length === 0
 
   const systemInstruction = `Du er en profesjonell og vennlig rekrutterer som gjennomfører et strukturert jobbintervju på ${lang}.

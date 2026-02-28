@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
-import { Textarea } from '@/components/ui/Input'
+import { Input, Textarea } from '@/components/ui/Input'
 import { Card } from '@/components/ui/Card'
 import {
   Upload, FileText, CheckCircle2, ArrowRight, ArrowLeft,
@@ -21,6 +21,7 @@ export default function ApplyPage({
   const router = useRouter()
 
   const [step, setStep] = useState<'upload' | 'questions' | 'submitted'>('upload')
+  const [name, setName] = useState('')
   const [cvFile, setCvFile] = useState<File | null>(null)
   const [coverLetter, setCoverLetter] = useState('')
   const [uploading, setUploading] = useState(false)
@@ -49,6 +50,10 @@ export default function ApplyPage({
   }, [])
 
   const handleUpload = async () => {
+    if (!name.trim()) {
+      setError('Skriv inn navnet ditt')
+      return
+    }
     if (!cvFile) {
       setError('Last opp CV-en din')
       return
@@ -60,6 +65,7 @@ export default function ApplyPage({
     try {
       const formData = new FormData()
       formData.append('jobId', jobId)
+      formData.append('name', name.trim())
       formData.append('cv', cvFile)
       if (coverLetter) formData.append('coverLetter', coverLetter)
 
@@ -184,6 +190,15 @@ export default function ApplyPage({
         {step === 'upload' && (
           <Card>
             <div className="space-y-6">
+              {/* Navn */}
+              <Input
+                label="Fullt navn *"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Ola Nordmann"
+                autoComplete="name"
+              />
+
               {/* Filopplasting */}
               <div>
                 <label className="label">CV (PDF) *</label>
