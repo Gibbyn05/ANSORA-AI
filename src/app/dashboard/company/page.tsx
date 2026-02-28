@@ -135,7 +135,7 @@ export default async function CompanyDashboard() {
   const { data: applications } = jobIds.length > 0
     ? await supabase
         .from('applications')
-        .select(`*, candidates (id, name, email), jobs (id, title)`)
+        .select(`*, candidates (id, name, email, phone, bio, profile_picture_url), jobs (id, title)`)
         .in('job_id', jobIds)
         .order('score', { ascending: false, nullsFirst: false })
     : { data: [] }
@@ -310,7 +310,7 @@ export default async function CompanyDashboard() {
             ) : (
               <div className="divide-y divide-white/[0.04]">
                 {/* Table header */}
-                <div className="grid grid-cols-[28px_1fr_120px_80px_80px] gap-3 px-6 py-2.5">
+                <div className="grid grid-cols-[28px_1fr_110px_72px_88px] gap-3 px-6 py-2.5">
                   <span className="text-[10px] font-semibold uppercase tracking-widest text-[#333]">#</span>
                   <span className="text-[10px] font-semibold uppercase tracking-widest text-[#333]">Kandidat</span>
                   <span className="text-[10px] font-semibold uppercase tracking-widest text-[#333]">Stilling</span>
@@ -320,18 +320,39 @@ export default async function CompanyDashboard() {
 
                 {applications.slice(0, 10).map((app: Application, idx: number) => (
                   <Link key={app.id} href={`/dashboard/company/applications/${app.id}`}>
-                    <div className="grid grid-cols-[28px_1fr_120px_80px_80px] gap-3 items-center px-6 py-3.5 hover:bg-white/[0.03] transition-colors cursor-pointer group">
+                    <div className="grid grid-cols-[28px_1fr_110px_72px_88px] gap-3 items-center px-6 py-3 hover:bg-white/[0.03] transition-colors cursor-pointer group">
                       <span className="text-xs font-bold text-[#333]">{idx + 1}</span>
 
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-7 h-7 rounded-full bg-[#1a1a1a] border border-white/10 flex items-center justify-center flex-shrink-0">
-                          <span className="text-[10px] font-bold text-[#d7fe03]">
-                            {app.candidates?.name?.charAt(0).toUpperCase()}
-                          </span>
+                      {/* Kandidat: bilde + navn + sekundær info */}
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="w-8 h-8 rounded-full bg-[#1a1a1a] border border-white/10 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                          {app.candidates?.profile_picture_url ? (
+                            <img
+                              src={app.candidates.profile_picture_url}
+                              alt={app.candidates.name}
+                              className="w-8 h-8 object-cover rounded-full"
+                            />
+                          ) : (
+                            <span className="text-[11px] font-bold text-[#d7fe03]">
+                              {app.candidates?.name?.charAt(0).toUpperCase()}
+                            </span>
+                          )}
                         </div>
-                        <span className="text-sm font-medium text-white group-hover:text-[#d7fe03] transition-colors truncate">
-                          {app.candidates?.name}
-                        </span>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-white group-hover:text-[#d7fe03] transition-colors truncate leading-tight">
+                            {app.candidates?.name}
+                          </p>
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            {app.candidates?.phone && (
+                              <span className="text-[10px] text-[#555] truncate">{app.candidates.phone}</span>
+                            )}
+                            {app.interview_completed && (
+                              <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-[#d7fe03]/10 text-[#d7fe03] flex-shrink-0">
+                                Intervju ✓
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </div>
 
                       <span className="text-xs text-[#555] truncate">{app.jobs?.title}</span>
