@@ -272,3 +272,11 @@ CREATE INDEX IF NOT EXISTS idx_references_application_id ON job_references(appli
 -- Admin-godkjenning for bedrifter:
 -- ALTER TABLE companies ADD COLUMN IF NOT EXISTS approved BOOLEAN NOT NULL DEFAULT FALSE;
 -- UPDATE companies SET approved = TRUE; -- Godkjenn eksisterende bedrifter automatisk
+
+-- Bedriftsverifisering (org.nr og kontaktinfo fra Brønnøysundregistrene):
+-- ALTER TABLE companies ADD COLUMN IF NOT EXISTS org_number TEXT;
+-- ALTER TABLE companies ADD COLUMN IF NOT EXISTS phone TEXT;
+-- ALTER TABLE companies ADD COLUMN IF NOT EXISTS address TEXT;
+-- ALTER TABLE companies ADD COLUMN IF NOT EXISTS city TEXT;
+-- ALTER TABLE companies ADD COLUMN IF NOT EXISTS industry_description TEXT;
+-- ALTER TABLE companies ADD COLUMN IF NOT EXISTS employee_count INTEGER;

@@ -12,6 +12,26 @@ export interface Company {
   description?: string
   approved: boolean
   created_at: string
+  // Verifiseringsfelter fra Brønnøysundregistrene
+  org_number?: string
+  phone?: string
+  address?: string
+  city?: string
+  industry_description?: string
+  employee_count?: number
+}
+
+// ===== BRØNNØYSUNDREGISTRENE =====
+export interface BrregResult {
+  orgnr: string
+  name: string
+  orgForm: string
+  address: string
+  city: string
+  phone: string
+  website: string
+  industry: string
+  employees: number
 }
 
 // ===== STILLING =====

@@ -9,9 +9,10 @@ import { createClient } from '@/lib/supabase/client'
 import { Input } from '@/components/ui/Input'
 import {
   Briefcase, User, Eye, EyeOff, CheckCircle2,
-  Brain, TrendingUp, Users, Star,
+  Brain, TrendingUp, Users, Search, Loader2, Building2, MapPin, Phone, ChevronDown, X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import type { BrregResult } from '@/types'
 
 type Role = 'company' | 'candidate'
 
@@ -24,7 +25,66 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  // Bedriftsfelter
+  const [brregLoading, setBrregLoading] = useState(false)
+  const [brregResults, setBrregResults] = useState<BrregResult[]>([])
+  const [brregSearched, setBrregSearched] = useState(false)
+  const [selectedCompany, setSelectedCompany] = useState<BrregResult | null>(null)
+  const [orgNumber, setOrgNumber] = useState('')
+  const [companyPhone, setCompanyPhone] = useState('')
+  const [companyAddress, setCompanyAddress] = useState('')
+  const [companyCity, setCompanyCity] = useState('')
+  const [companyIndustry, setCompanyIndustry] = useState('')
+  const [employeeCount, setEmployeeCount] = useState<number>(0)
+
   const router = useRouter()
+
+  const searchBrreg = async () => {
+    const query = name.trim()
+    if (!query) return
+    setBrregLoading(true)
+    setBrregSearched(true)
+    setBrregResults([])
+    setSelectedCompany(null)
+
+    const isOrgNr = /^\d{9}$/.test(query.replace(/\s/g, ''))
+    const url = isOrgNr
+      ? `/api/company/lookup?orgnr=${query.replace(/\s/g, '')}`
+      : `/api/company/lookup?name=${encodeURIComponent(query)}`
+
+    try {
+      const res = await fetch(url)
+      const data = await res.json()
+      setBrregResults(data.results ?? [])
+    } catch {
+      setBrregResults([])
+    } finally {
+      setBrregLoading(false)
+    }
+  }
+
+  const selectCompany = (c: BrregResult) => {
+    setSelectedCompany(c)
+    setName(c.name)
+    setOrgNumber(c.orgnr)
+    setCompanyPhone(c.phone)
+    setCompanyAddress(c.address)
+    setCompanyCity(c.city)
+    setCompanyIndustry(c.industry)
+    setEmployeeCount(c.employees)
+    setBrregResults([])
+  }
+
+  const clearSelection = () => {
+    setSelectedCompany(null)
+    setOrgNumber('')
+    setCompanyPhone('')
+    setCompanyAddress('')
+    setCompanyCity('')
+    setCompanyIndustry('')
+    setEmployeeCount(0)
+    setBrregSearched(false)
+  }
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -63,6 +123,12 @@ export default function RegisterPage() {
           user_id: data.user.id,
           name,
           email,
+          org_number: orgNumber || null,
+          phone: companyPhone || null,
+          address: companyAddress || null,
+          city: companyCity || null,
+          industry_description: companyIndustry || null,
+          employee_count: employeeCount || null,
         })
         if (companyError) console.error('Feil ved opprettelse av bedriftsprofil:', companyError)
       } else {
@@ -165,7 +231,7 @@ export default function RegisterPage() {
                 <button
                   key={r.value}
                   type="button"
-                  onClick={() => setRole(r.value)}
+                  onClick={() => { setRole(r.value); clearSelection() }}
                   className={cn(
                     'flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all',
                     role === r.value
@@ -188,14 +254,139 @@ export default function RegisterPage() {
               </div>
             )}
 
-            <Input
-              label={role === 'company' ? 'Bedriftsnavn' : 'Fullt navn'}
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder={role === 'company' ? 'Ditt firma AS' : 'Ola Nordmann'}
-              required
-            />
+            {/* Bedriftsnavn med søk */}
+            {role === 'company' ? (
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <Input
+                      label="Bedriftsnavn"
+                      type="text"
+                      value={name}
+                      onChange={(e) => { setName(e.target.value); if (selectedCompany) clearSelection() }}
+                      placeholder="Europris Molde"
+                      required
+                      onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); searchBrreg() } }}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={searchBrreg}
+                    disabled={brregLoading || !name.trim()}
+                    title="Finn bedrift i Brønnøysundregistrene"
+                    className="mt-[22px] flex items-center gap-1.5 border border-white/[0.12] hover:border-[#d7fe03]/40 text-[#666] hover:text-[#d7fe03] bg-[#111] px-3 h-[42px] rounded-xl transition-colors disabled:opacity-40 text-xs font-medium whitespace-nowrap"
+                  >
+                    {brregLoading
+                      ? <Loader2 className="w-4 h-4 animate-spin" />
+                      : <Search className="w-4 h-4" />}
+                    Finn
+                  </button>
+                </div>
+
+                {/* Søkeresultater */}
+                {brregResults.length > 0 && (
+                  <div className="bg-[#111] border border-white/[0.1] rounded-xl overflow-hidden">
+                    <p className="text-[10px] text-[#444] px-3 pt-2 pb-1 uppercase tracking-wider">
+                      Velg din bedrift
+                    </p>
+                    {brregResults.map((c) => (
+                      <button
+                        key={c.orgnr}
+                        type="button"
+                        onClick={() => selectCompany(c)}
+                        className="w-full text-left px-3 py-2.5 hover:bg-white/[0.05] transition-colors border-t border-white/[0.04] first:border-0"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div>
+                            <p className="text-sm font-medium text-white leading-tight">{c.name}</p>
+                            <p className="text-[11px] text-[#555] mt-0.5">
+                              {c.orgnr}{c.city ? ` · ${c.city}` : ''}{c.orgForm ? ` · ${c.orgForm}` : ''}
+                            </p>
+                          </div>
+                          <ChevronDown className="w-3.5 h-3.5 text-[#444] rotate-[-90deg] flex-shrink-0" />
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Ingen resultater */}
+                {brregSearched && !brregLoading && brregResults.length === 0 && !selectedCompany && (
+                  <p className="text-xs text-[#555] px-1">
+                    Ingen treff i Brønnøysundregistrene. Du kan registrere deg likevel.
+                  </p>
+                )}
+
+                {/* Valgt bedrift */}
+                {selectedCompany && (
+                  <div className="bg-[#0d1a00] border border-[#d7fe03]/20 rounded-xl p-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-7 h-7 bg-[#d7fe03]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <Building2 className="w-3.5 h-3.5 text-[#d7fe03]" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[11px] font-semibold text-[#d7fe03]">
+                            Hentet fra Brønnøysundregistrene
+                          </p>
+                          <p className="text-xs text-white font-medium truncate">{selectedCompany.name}</p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={clearSelection}
+                        className="text-[#444] hover:text-[#888] flex-shrink-0"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
+                      <span className="text-[11px] text-[#666]">Org.nr: {selectedCompany.orgnr}</span>
+                      {selectedCompany.city && (
+                        <span className="flex items-center gap-1 text-[11px] text-[#666]">
+                          <MapPin className="w-2.5 h-2.5" />
+                          {selectedCompany.city}
+                        </span>
+                      )}
+                      {selectedCompany.phone && (
+                        <span className="flex items-center gap-1 text-[11px] text-[#666]">
+                          <Phone className="w-2.5 h-2.5" />
+                          {selectedCompany.phone}
+                        </span>
+                      )}
+                      {selectedCompany.industry && (
+                        <span className="text-[11px] text-[#666] truncate">{selectedCompany.industry}</span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Org.nr felt (manuell innskriving om ikke funnet) */}
+                {!selectedCompany && (
+                  <div>
+                    <Input
+                      label="Org.nr (anbefalt for verifisering)"
+                      type="text"
+                      value={orgNumber}
+                      onChange={(e) => setOrgNumber(e.target.value)}
+                      placeholder="123 456 789"
+                    />
+                    <p className="text-[11px] text-[#444] mt-1 px-1">
+                      Org.nr hjelper oss bekrefte at dette er en ekte bedrift
+                    </p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Input
+                label="Fullt navn"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Ola Nordmann"
+                required
+              />
+            )}
 
             <Input
               label="E-postadresse"
