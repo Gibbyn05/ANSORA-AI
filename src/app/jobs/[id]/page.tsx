@@ -96,7 +96,7 @@ function DescriptionSection({ section, isLast }: { section: Section; isLast: boo
         <ul className={`space-y-2.5 ${prose.length > 0 ? 'mt-4' : ''}`}>
           {bullets.map((item, i) => (
             <li key={i} className="flex items-start gap-3">
-              <span className="mt-[9px] w-1.5 h-1.5 rounded-full bg-[#d7fe03] flex-shrink-0" />
+              <span className="mt-[9px] w-1.5 h-1.5 rounded-full bg-white flex-shrink-0" />
               <span className="text-[#8a8a8a] text-[15px] leading-7">{item}</span>
             </li>
           ))}
@@ -199,11 +199,11 @@ export default async function JobDetailPage({
             <DarkChip icon={Percent}  text={`${job.percentage}%`} />
             <DarkChip icon={Clock}    text={postedLabel} />
             <DarkChip icon={Users}    text={`${applicationCount ?? 0} søkere`} />
-            <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-[#d7fe03]/10 text-[#d7fe03] border border-[#d7fe03]/20">
+            <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-white/10 text-white border border-white/20">
               {getIndustryLabel(job.industry as Industry)}
             </span>
             {postedDays <= 3 && (
-              <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-[#d7fe03] text-black">
+              <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold bg-white text-black">
                 Ny
               </span>
             )}
@@ -278,7 +278,7 @@ export default async function JobDetailPage({
                     href={job.companies.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-[#d7fe03] text-sm font-medium hover:underline"
+                    className="inline-flex items-center gap-1.5 text-white text-sm font-medium hover:underline"
                   >
                     <Globe className="w-3.5 h-3.5" />
                     Besøk nettsiden
@@ -320,12 +320,12 @@ function DarkApplySection({
   if (hasApplied) {
     return (
       <div className="text-center">
-        <div className="flex items-center justify-center gap-2 text-[#d7fe03] font-semibold mb-1.5">
+        <div className="flex items-center justify-center gap-2 text-white font-semibold mb-1.5">
           <CheckCircle2 className="w-5 h-5" />
           Du har søkt
         </div>
         <p className="text-xs text-[#555] mb-2">Vi har mottatt din søknad</p>
-        <Link href="/dashboard/candidate" className="text-[#d7fe03] text-sm hover:underline">
+        <Link href="/dashboard/candidate" className="text-white text-sm hover:underline">
           Se mine søknader →
         </Link>
       </div>
@@ -336,12 +336,12 @@ function DarkApplySection({
     return (
       <div>
         <Link href="/auth/login" className="block w-full">
-          <button className="w-full inline-flex items-center justify-center gap-2 bg-[#d7fe03] text-black font-semibold px-5 py-3 rounded-lg text-[15px] hover:bg-[#c8ef00] transition-colors">
+          <button className="w-full inline-flex items-center justify-center gap-2 bg-white text-black font-semibold px-5 py-3 rounded-lg text-[15px] hover:bg-[#e0e0e0] transition-colors">
             <LogIn className="w-4 h-4" />
             Logg inn for å søke
           </button>
         </Link>
-        <Link href="/auth/register" className="text-[#d7fe03] text-sm hover:underline mt-3 block text-center">
+        <Link href="/auth/register" className="text-white text-sm hover:underline mt-3 block text-center">
           Opprett gratis konto →
         </Link>
       </div>
@@ -357,7 +357,7 @@ function DarkApplySection({
   return (
     <div>
       <Link href={`/apply/${jobId}`} className="block w-full">
-        <button className="w-full inline-flex items-center justify-center gap-2 bg-[#d7fe03] text-black font-semibold px-5 py-3 rounded-lg text-[15px] hover:bg-[#c8ef00] transition-colors">
+        <button className="w-full inline-flex items-center justify-center gap-2 bg-white text-black font-semibold px-5 py-3 rounded-lg text-[15px] hover:bg-[#e0e0e0] transition-colors">
           <Send className="w-4 h-4" />
           Søk på stillingen
         </button>

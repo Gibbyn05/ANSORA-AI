@@ -154,7 +154,7 @@ export default function RegisterPage() {
       <div className="hidden lg:flex lg:w-[46%] bg-[#111111] border-r border-white/[0.07] flex-col justify-between p-12">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-9 h-9 bg-[#d7fe03] rounded-xl flex items-center justify-center">
+          <div className="w-9 h-9 bg-white rounded-xl flex items-center justify-center">
             <span className="text-black font-bold text-base">A</span>
           </div>
           <span className="text-white font-bold text-xl tracking-tight">Ansora</span>
@@ -176,8 +176,8 @@ export default function RegisterPage() {
               { icon: Users, title: 'Gratis å starte', desc: 'Ingen kredittkort, ingen bindingstid' },
             ].map((f) => (
               <div key={f.title} className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-[#d7fe03]/10 border border-[#d7fe03]/20 flex items-center justify-center flex-shrink-0">
-                  <f.icon className="w-4 h-4 text-[#d7fe03]" />
+                <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
+                  <f.icon className="w-4 h-4 text-white" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-white">{f.title}</p>
@@ -196,7 +196,7 @@ export default function RegisterPage() {
             { value: '200+', label: 'Bedrifter' },
           ].map((s) => (
             <div key={s.label} className="bg-[#0a0a0a] border border-white/[0.07] rounded-xl p-4 text-center">
-              <div className="text-xl font-bold text-[#d7fe03]">{s.value}</div>
+              <div className="text-xl font-bold text-white">{s.value}</div>
               <div className="text-[11px] text-[#444] mt-0.5">{s.label}</div>
             </div>
           ))}
@@ -210,7 +210,7 @@ export default function RegisterPage() {
           {/* Mobile logo */}
           <div className="lg:hidden flex justify-center mb-8">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-9 h-9 bg-[#d7fe03] rounded-xl flex items-center justify-center">
+              <div className="w-9 h-9 bg-white rounded-xl flex items-center justify-center">
                 <span className="text-black font-bold text-base">A</span>
               </div>
               <span className="text-white font-bold text-xl tracking-tight">Ansora</span>
@@ -235,7 +235,7 @@ export default function RegisterPage() {
                   className={cn(
                     'flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all',
                     role === r.value
-                      ? 'border-[#d7fe03] bg-[#d7fe03]/5 text-[#d7fe03]'
+                      ? 'border-white bg-white/5 text-white'
                       : 'border-white/[0.08] text-[#555] hover:border-white/[0.2] hover:text-white'
                   )}
                 >
@@ -274,7 +274,7 @@ export default function RegisterPage() {
                     onClick={searchBrreg}
                     disabled={brregLoading || !name.trim()}
                     title="Finn bedrift i Brønnøysundregistrene"
-                    className="mt-[22px] flex items-center gap-1.5 border border-white/[0.12] hover:border-[#d7fe03]/40 text-[#666] hover:text-[#d7fe03] bg-[#111] px-3 h-[42px] rounded-xl transition-colors disabled:opacity-40 text-xs font-medium whitespace-nowrap"
+                    className="mt-[22px] flex items-center gap-1.5 border border-white/[0.12] hover:border-white/40 text-[#666] hover:text-white bg-[#111] px-3 h-[42px] rounded-xl transition-colors disabled:opacity-40 text-xs font-medium whitespace-nowrap"
                   >
                     {brregLoading
                       ? <Loader2 className="w-4 h-4 animate-spin" />
@@ -319,14 +319,14 @@ export default function RegisterPage() {
 
                 {/* Valgt bedrift */}
                 {selectedCompany && (
-                  <div className="bg-[#0d1a00] border border-[#d7fe03]/20 rounded-xl p-3">
+                  <div className="bg-[#0d1a00] border border-white/20 rounded-xl p-3">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2 min-w-0">
-                        <div className="w-7 h-7 bg-[#d7fe03]/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <Building2 className="w-3.5 h-3.5 text-[#d7fe03]" />
+                        <div className="w-7 h-7 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <Building2 className="w-3.5 h-3.5 text-white" />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-[11px] font-semibold text-[#d7fe03]">
+                          <p className="text-[11px] font-semibold text-white">
                             Hentet fra Brønnøysundregistrene
                           </p>
                           <p className="text-xs text-white font-medium truncate">{selectedCompany.name}</p>
@@ -421,7 +421,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full inline-flex items-center justify-center gap-2 bg-[#d7fe03] hover:bg-[#c8ef00] disabled:opacity-60 text-black font-semibold px-6 py-3.5 rounded-xl transition-all text-[15px]"
+              className="w-full inline-flex items-center justify-center gap-2 bg-white hover:bg-[#e0e0e0] disabled:opacity-60 text-black font-semibold px-6 py-3.5 rounded-xl transition-all text-[15px]"
             >
               {loading && (
                 <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
@@ -430,14 +430,14 @@ export default function RegisterPage() {
             </button>
 
             <div className="flex items-start gap-2 text-xs text-[#444] pt-1">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#d7fe03]/60 flex-shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-white/60 flex-shrink-0 mt-0.5" />
               <span>Ved å registrere deg godtar du våre brukervilkår og personvernregler.</span>
             </div>
           </form>
 
           <p className="text-sm text-[#555] text-center mt-7">
             Har du allerede konto?{' '}
-            <Link href="/auth/login" className="text-[#d7fe03] font-semibold hover:underline">
+            <Link href="/auth/login" className="text-white font-semibold hover:underline">
               Logg inn
             </Link>
           </p>

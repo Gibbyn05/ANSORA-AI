@@ -113,7 +113,7 @@ export default function ReferencePage({
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 bg-[#d7fe03] rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
               <span className="text-black font-bold text-sm">A</span>
             </div>
             <span className="text-white font-bold text-xl">Ansora</span>

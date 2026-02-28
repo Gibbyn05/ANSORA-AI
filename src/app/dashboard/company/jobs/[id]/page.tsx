@@ -132,8 +132,8 @@ export default async function CompanyJobDetailPage({
                       </td>
                       <td className="py-3 pr-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 bg-[#d7fe03]/10 rounded-full flex items-center justify-center">
-                            <span className="text-[#d7fe03] font-bold text-sm">
+                          <div className="w-9 h-9 bg-white/10 rounded-full flex items-center justify-center">
+                            <span className="text-white font-bold text-sm">
                               {app.candidates?.name?.charAt(0).toUpperCase()}
                             </span>
                           </div>
@@ -168,7 +168,7 @@ export default async function CompanyJobDetailPage({
                       </td>
                       <td className="py-3">
                         <Link href={`/dashboard/company/applications/${app.id}`}>
-                          <button className="text-[#d7fe03] text-sm font-semibold hover:underline opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button className="text-white text-sm font-semibold hover:underline opacity-0 group-hover:opacity-100 transition-opacity">
                             Se detaljer →
                           </button>
                         </Link>

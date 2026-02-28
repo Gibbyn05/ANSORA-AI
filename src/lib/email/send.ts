@@ -184,10 +184,10 @@ export function createAdminNewCompanyEmailHtml(params: {
     body { font-family: Inter, Arial, sans-serif; color: #555555; background: #F8FBFF; margin: 0; padding: 0; }
     .container { max-width: 600px; margin: 40px auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
     .header { background: #0a0a0a; padding: 32px; text-align: center; }
-    .header h1 { color: #d7fe03; font-size: 24px; margin: 0; }
+    .header h1 { color: #ffffff; font-size: 24px; margin: 0; }
     .body { padding: 40px; }
-    .info-box { background: #f8f9fa; border-left: 4px solid #d7fe03; border-radius: 4px; padding: 16px 20px; margin: 20px 0; }
-    .btn { display: inline-block; background: #0a0a0a; color: #d7fe03; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; margin: 24px 0; }
+    .info-box { background: #f8f9fa; border-left: 4px solid #ffffff; border-radius: 4px; padding: 16px 20px; margin: 20px 0; }
+    .btn { display: inline-block; background: #0a0a0a; color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; margin: 24px 0; }
     .footer { background: #F8FBFF; padding: 24px; text-align: center; font-size: 12px; color: #999; }
   </style>
 </head>

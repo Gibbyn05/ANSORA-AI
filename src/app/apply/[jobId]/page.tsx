@@ -125,7 +125,7 @@ export default function ApplyPage({
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 bg-[#d7fe03] rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
               <span className="text-black font-bold text-sm">A</span>
             </div>
             <span className="text-white font-bold text-xl">Ansora</span>
@@ -151,11 +151,11 @@ export default function ApplyPage({
           ].map((s, i) => (
             <div key={s.key} className="flex items-center gap-1 sm:gap-4">
               <div className={`flex items-center gap-2 ${
-                step === s.key ? 'text-[#d7fe03]' : 'text-[#555]'
+                step === s.key ? 'text-white' : 'text-[#555]'
               }`}>
                 <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${
                   step === s.key
-                    ? 'border-[#d7fe03] bg-[#d7fe03] text-black'
+                    ? 'border-white bg-white text-black'
                     : (i === 0 && (step === 'questions' || step === 'submitted')) ||
                       (i === 1 && step === 'submitted')
                     ? 'border-green-500 bg-green-500 text-white'
@@ -194,10 +194,10 @@ export default function ApplyPage({
                   className={cn(
                     'border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer',
                     isDragging
-                      ? 'border-[#d7fe03] bg-[#d7fe03]/5'
+                      ? 'border-white bg-white/5'
                       : cvFile
                       ? 'border-green-500 bg-green-900/20'
-                      : 'border-white/10 hover:border-[#d7fe03]/50 hover:bg-white/5'
+                      : 'border-white/10 hover:border-white/50 hover:bg-white/5'
                   )}
                   onClick={() => document.getElementById('cv-upload')?.click()}
                 >
@@ -260,7 +260,7 @@ export default function ApplyPage({
               />
 
               <div className="bg-blue-900/20 border border-blue-500/20 rounded-xl p-4 flex items-start gap-3">
-                <Sparkles className="w-5 h-5 text-[#d7fe03] flex-shrink-0 mt-0.5" />
+                <Sparkles className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-white">AI analyserer din søknad</p>
                   <p className="text-xs text-[#999] mt-1">
@@ -295,10 +295,10 @@ export default function ApplyPage({
         {/* Steg 2: Oppfølgingsspørsmål */}
         {step === 'questions' && (
           <Card>
-            <div className="bg-[#d7fe03]/5 border border-[#d7fe03]/20 rounded-xl p-4 mb-6 flex items-start gap-3">
-              <Sparkles className="w-5 h-5 text-[#d7fe03] flex-shrink-0 mt-0.5" />
+            <div className="bg-white/5 border border-white/20 rounded-xl p-4 mb-6 flex items-start gap-3">
+              <Sparkles className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-[#d7fe03]">AI-genererte spørsmål</p>
+                <p className="text-sm font-medium text-white">AI-genererte spørsmål</p>
                 <p className="text-xs text-[#999] mt-1">
                   Disse spørsmålene er laget spesifikt for deg basert på din CV og stillingens krav
                 </p>
@@ -357,20 +357,20 @@ export default function ApplyPage({
 
             <div className="bg-blue-900/20 border border-blue-500/20 rounded-xl p-5 mb-8 text-left">
               <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-[#d7fe03]" />
+                <Sparkles className="w-4 h-4 text-white" />
                 Neste steg
               </h3>
               <ul className="space-y-2 text-sm text-[#999]">
                 <li className="flex items-start gap-2">
-                  <span className="w-5 h-5 bg-[#d7fe03]/10 rounded-full flex items-center justify-center text-[#d7fe03] text-xs font-bold flex-shrink-0 mt-0.5">1</span>
+                  <span className="w-5 h-5 bg-white/10 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5">1</span>
                   Rekrutterer gjennomgår din søknad og AI-analysen
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="w-5 h-5 bg-[#d7fe03]/10 rounded-full flex items-center justify-center text-[#d7fe03] text-xs font-bold flex-shrink-0 mt-0.5">2</span>
+                  <span className="w-5 h-5 bg-white/10 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5">2</span>
                   Du kan bli invitert til et AI-intervju direkte i appen
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="w-5 h-5 bg-[#d7fe03]/10 rounded-full flex items-center justify-center text-[#d7fe03] text-xs font-bold flex-shrink-0 mt-0.5">3</span>
+                  <span className="w-5 h-5 bg-white/10 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5">3</span>
                   Rekrutterer kontakter deg med neste steg
                 </li>
               </ul>

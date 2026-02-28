@@ -270,7 +270,7 @@ export default function InterviewPage({
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#d7fe03] rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
               <Bot className="w-4 h-4 text-black" />
             </div>
             <div>
@@ -281,8 +281,8 @@ export default function InterviewPage({
         </header>
 
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
-          <div className="w-24 h-24 bg-[#d7fe03]/10 rounded-full flex items-center justify-center mb-6 border border-[#d7fe03]/20">
-            <Mic className="w-12 h-12 text-[#d7fe03]" />
+          <div className="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center mb-6 border border-white/20">
+            <Mic className="w-12 h-12 text-white" />
           </div>
           <h2 className="text-2xl font-bold text-white mb-3">Klar for AI-intervju?</h2>
           <p className="text-[#999] mb-6 max-w-md leading-relaxed">
@@ -303,7 +303,7 @@ export default function InterviewPage({
 
           <div className="bg-blue-900/20 border border-blue-500/20 rounded-xl p-5 mb-8 text-left max-w-md w-full">
             <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#d7fe03]" />
+              <Sparkles className="w-4 h-4 text-white" />
               Tips for intervjuet
             </h3>
             <ul className="space-y-2 text-sm text-[#999]">
@@ -355,7 +355,7 @@ export default function InterviewPage({
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-[#d7fe03] rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
             <Bot className="w-4 h-4 text-black" />
           </div>
           <div>
@@ -436,9 +436,9 @@ export default function InterviewPage({
           <div className="relative flex items-center justify-center">
             {phase === 'ai-speaking' && (
               <>
-                <div className="absolute w-60 h-60 rounded-full bg-[#d7fe03]/5 animate-ping"
+                <div className="absolute w-60 h-60 rounded-full bg-white/5 animate-ping"
                   style={{ animationDuration: '2s' }} />
-                <div className="absolute w-48 h-48 rounded-full bg-[#d7fe03]/10 animate-ping"
+                <div className="absolute w-48 h-48 rounded-full bg-white/10 animate-ping"
                   style={{ animationDuration: '2s', animationDelay: '0.5s' }} />
               </>
             )}
@@ -453,7 +453,7 @@ export default function InterviewPage({
 
             <div className={`relative w-40 h-40 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${
               phase === 'ai-speaking'
-                ? 'bg-[#d7fe03]/15 border-[#d7fe03] shadow-[0_0_60px_#d7fe0330]'
+                ? 'bg-white/15 border-white shadow-[0_0_60px_#ffffff30]'
                 : phase === 'recording'
                 ? 'bg-red-500/15 border-red-500 shadow-[0_0_60px_#ef444430]'
                 : phase === 'completed'
@@ -465,7 +465,7 @@ export default function InterviewPage({
               ) : phase === 'recording' ? (
                 <Mic className="w-16 h-16 text-red-400" />
               ) : (
-                <Bot className={`w-16 h-16 ${phase === 'ai-speaking' ? 'text-[#d7fe03]' : 'text-[#444]'}`} />
+                <Bot className={`w-16 h-16 ${phase === 'ai-speaking' ? 'text-white' : 'text-[#444]'}`} />
               )}
             </div>
           </div>
@@ -481,7 +481,7 @@ export default function InterviewPage({
               ? Array.from({ length: 20 }, (_, i) => (
                   <div
                     key={i}
-                    className="w-1.5 rounded-full bg-[#d7fe03]"
+                    className="w-1.5 rounded-full bg-white"
                     style={{
                       height: '4px',
                       animation: 'voice-bar 0.7s ease-in-out infinite alternate',
@@ -525,7 +525,7 @@ export default function InterviewPage({
         ) : phase === 'user-turn' ? (
           <button
             onClick={startRecording}
-            className="w-20 h-20 rounded-full bg-[#d7fe03] hover:bg-[#c5eb00] active:scale-95 transition-all duration-150 flex items-center justify-center shadow-[0_0_40px_#d7fe0340] hover:shadow-[0_0_60px_#d7fe0360]"
+            className="w-20 h-20 rounded-full bg-white hover:bg-[#e0e0e0] active:scale-95 transition-all duration-150 flex items-center justify-center shadow-[0_0_40px_#ffffff40] hover:shadow-[0_0_60px_#ffffff60]"
             aria-label="Start opptak"
           >
             <Mic className="w-8 h-8 text-black" />

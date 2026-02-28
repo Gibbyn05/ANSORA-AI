@@ -100,8 +100,8 @@ export default async function ApplicationDetailPage({
             {/* Kandidatprofil */}
             <Card>
               <div className="text-center mb-4">
-                <div className="w-16 h-16 bg-[#d7fe03]/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <span className="text-[#d7fe03] font-bold text-xl">
+                <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-white font-bold text-xl">
                     {isAnonymous ? '?' : application.candidates?.name?.charAt(0).toUpperCase()}
                   </span>
                 </div>
@@ -169,7 +169,7 @@ export default async function ApplicationDetailPage({
                   href={application.candidates.cv_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 flex items-center justify-center gap-2 text-sm text-[#d7fe03] hover:underline"
+                  className="mt-4 flex items-center justify-center gap-2 text-sm text-white hover:underline"
                 >
                   <FileText className="w-4 h-4" />
                   Last ned CV
@@ -294,8 +294,8 @@ export default async function ApplicationDetailPage({
                 />
 
                 {application.interview_summary && (
-                  <div className="bg-[#d7fe03]/5 border border-[#d7fe03]/20 rounded-xl p-4 mb-5">
-                    <p className="text-xs font-semibold text-[#d7fe03] uppercase tracking-wide mb-2 flex items-center gap-1">
+                  <div className="bg-white/5 border border-white/20 rounded-xl p-4 mb-5">
+                    <p className="text-xs font-semibold text-white uppercase tracking-wide mb-2 flex items-center gap-1">
                       <Bot className="w-3.5 h-3.5" /> AI-oppsummering
                     </p>
                     <p className="text-sm text-[#ccc] leading-relaxed">
@@ -308,14 +308,14 @@ export default async function ApplicationDetailPage({
                   {transcript.map((msg, i) => (
                     <div key={i} className={`flex gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs ${
-                        msg.role === 'assistant' ? 'bg-[#d7fe03] text-black' : 'bg-white/10 text-[#999]'
+                        msg.role === 'assistant' ? 'bg-white text-black' : 'bg-white/10 text-[#999]'
                       }`}>
                         {msg.role === 'assistant' ? 'AI' : 'K'}
                       </div>
                       <div className={`max-w-[80%] rounded-xl px-3 py-2 text-sm ${
                         msg.role === 'assistant'
                           ? 'bg-[#1a1a1a] border border-white/10 text-[#ccc]'
-                          : 'bg-[#d7fe03]/10 text-white'
+                          : 'bg-white/10 text-white'
                       }`}>
                         {msg.content}
                       </div>

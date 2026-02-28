@@ -133,9 +133,9 @@ export default function NewJobPage() {
             <div key={label} className="flex items-center gap-2">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
                 step === 'form' && i === 0
-                  ? 'bg-[#d7fe03] text-black'
+                  ? 'bg-white text-black'
                   : step === 'preview' && i === 1
-                  ? 'bg-[#d7fe03] text-black'
+                  ? 'bg-white text-black'
                   : step === 'preview' && i === 0
                   ? 'bg-green-500 text-white'
                   : 'bg-white/10 text-[#555]'
@@ -212,7 +212,7 @@ export default function NewJobPage() {
               {/* Camera setting */}
               <div>
                 <label className="block text-sm font-medium text-[#ccc] mb-2 flex items-center gap-2">
-                  <Camera className="w-4 h-4 text-[#d7fe03]" />
+                  <Camera className="w-4 h-4 text-white" />
                   Kamera under AI-intervju
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -227,7 +227,7 @@ export default function NewJobPage() {
                       onClick={() => setCameraRequired(opt.value)}
                       className={`px-3 py-3 rounded-xl border text-left transition-all ${
                         cameraRequired === opt.value
-                          ? 'border-[#d7fe03] bg-[#d7fe03]/10 text-white'
+                          ? 'border-white bg-white/10 text-white'
                           : 'border-white/[0.1] bg-white/[0.02] text-[#888] hover:border-white/20'
                       }`}
                     >
@@ -275,7 +275,7 @@ export default function NewJobPage() {
             <Card>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-[#d7fe03]" />
+                  <FileText className="w-5 h-5 text-white" />
                   Generert stillingsannonse
                 </h2>
                 <Button
@@ -289,9 +289,9 @@ export default function NewJobPage() {
               </div>
 
               <div className="bg-blue-900/20 border border-blue-500/20 rounded-xl p-4 mb-6 flex items-start gap-3">
-                <Sparkles className="w-5 h-5 text-[#d7fe03] flex-shrink-0 mt-0.5" />
+                <Sparkles className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-[#d7fe03]">Generert av AI</p>
+                  <p className="text-sm font-medium text-white">Generert av AI</p>
                   <p className="text-xs text-[#999] mt-0.5">
                     Du kan redigere teksten nedenfor før du publiserer
                   </p>

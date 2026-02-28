@@ -143,7 +143,7 @@ export default function CandidateProfilePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-        <Loader2 className="w-6 h-6 text-[#d7fe03] animate-spin" />
+        <Loader2 className="w-6 h-6 text-white animate-spin" />
       </div>
     )
   }
@@ -179,7 +179,7 @@ export default function CandidateProfilePage() {
         {/* Profile picture */}
         <div className="bg-[#111111] border border-white/[0.07] rounded-2xl p-6 mb-6">
           <h2 className="font-semibold text-white mb-4 flex items-center gap-2">
-            <Camera className="w-4 h-4 text-[#d7fe03]" />
+            <Camera className="w-4 h-4 text-white" />
             Profilbilde
           </h2>
           <div className="flex items-center gap-5">
@@ -225,7 +225,7 @@ export default function CandidateProfilePage() {
         {/* CV */}
         <div className="bg-[#111111] border border-white/[0.07] rounded-2xl p-6 mb-6">
           <h2 className="font-semibold text-white mb-4 flex items-center gap-2">
-            <FileText className="w-4 h-4 text-[#d7fe03]" />
+            <FileText className="w-4 h-4 text-white" />
             CV
           </h2>
           <div className="flex items-center justify-between gap-4">
@@ -241,7 +241,7 @@ export default function CandidateProfilePage() {
                       href={profile.cv_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-[#d7fe03] hover:underline"
+                      className="text-xs text-white hover:underline"
                     >
                       Se CV
                     </a>
@@ -279,7 +279,7 @@ export default function CandidateProfilePage() {
         {/* Text fields */}
         <div className="bg-[#111111] border border-white/[0.07] rounded-2xl p-6">
           <h2 className="font-semibold text-white mb-5 flex items-center gap-2">
-            <Pencil className="w-4 h-4 text-[#d7fe03]" />
+            <Pencil className="w-4 h-4 text-white" />
             Personlig informasjon
           </h2>
 
@@ -330,7 +330,7 @@ export default function CandidateProfilePage() {
                   href={linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="absolute right-3 top-8 text-[#d7fe03] hover:opacity-80"
+                  className="absolute right-3 top-8 text-white hover:opacity-80"
                 >
                   <Linkedin className="w-4 h-4" />
                 </a>

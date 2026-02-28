@@ -70,7 +70,7 @@ export default async function CompanyDashboard() {
               </p>
               <a
                 href="/api/auth/signout"
-                className="inline-block text-sm font-semibold text-[#d7fe03] border border-[#d7fe03]/30 px-5 py-2.5 rounded-xl hover:bg-[#d7fe03]/10 transition-colors"
+                className="inline-block text-sm font-semibold text-white border border-white/30 px-5 py-2.5 rounded-xl hover:bg-white/10 transition-colors"
               >
                 Logg ut
               </a>
@@ -96,8 +96,8 @@ export default async function CompanyDashboard() {
         <Navbar userRole="company" userName={company.name} />
         <div className="min-h-[calc(100vh-64px)] flex items-center justify-center p-6">
           <div className="max-w-md text-center">
-            <div className="w-20 h-20 bg-[#d7fe03]/10 border border-[#d7fe03]/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <ShieldCheck className="w-10 h-10 text-[#d7fe03]" />
+            <div className="w-20 h-20 bg-white/10 border border-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <ShieldCheck className="w-10 h-10 text-white" />
             </div>
             <h1 className="text-2xl font-bold text-white mb-3">Kontoen din er til godkjenning</h1>
             <p className="text-[#888] text-sm leading-relaxed mb-8">
@@ -107,9 +107,9 @@ export default async function CompanyDashboard() {
             <div className="bg-[#111] border border-white/[0.07] rounded-xl p-5 text-left mb-6">
               <p className="text-xs font-semibold uppercase tracking-widest text-[#444] mb-3">Hva skjer nå?</p>
               <ul className="space-y-2 text-sm text-[#888]">
-                <li className="flex items-start gap-2"><span className="text-[#d7fe03] mt-0.5">1.</span> Ansora-teamet ser over forespørselen din</li>
-                <li className="flex items-start gap-2"><span className="text-[#d7fe03] mt-0.5">2.</span> Du mottar e-post med bekreftelse</li>
-                <li className="flex items-start gap-2"><span className="text-[#d7fe03] mt-0.5">3.</span> Etter godkjenning kan du poste stillinger og se søkere</li>
+                <li className="flex items-start gap-2"><span className="text-white mt-0.5">1.</span> Ansora-teamet ser over forespørselen din</li>
+                <li className="flex items-start gap-2"><span className="text-white mt-0.5">2.</span> Du mottar e-post med bekreftelse</li>
+                <li className="flex items-start gap-2"><span className="text-white mt-0.5">3.</span> Etter godkjenning kan du poste stillinger og se søkere</li>
               </ul>
             </div>
             <a
@@ -162,14 +162,14 @@ export default async function CompanyDashboard() {
           <div className="flex items-center gap-3">
             {isAdmin && (
               <Link href="/admin">
-                <button className="inline-flex items-center gap-2 border border-[#d7fe03]/30 text-[#d7fe03] hover:bg-[#d7fe03]/10 font-semibold px-4 py-2.5 rounded-xl transition-all text-sm">
+                <button className="inline-flex items-center gap-2 border border-white/30 text-white hover:bg-white/10 font-semibold px-4 py-2.5 rounded-xl transition-all text-sm">
                   <ShieldCheck className="w-4 h-4" />
                   <span className="hidden sm:inline">Admin</span>
                 </button>
               </Link>
             )}
             <Link href="/jobs/new">
-              <button className="inline-flex items-center gap-2 bg-[#d7fe03] hover:bg-[#c8ef00] text-black font-semibold px-5 py-2.5 rounded-xl transition-all text-sm">
+              <button className="inline-flex items-center gap-2 bg-white hover:bg-[#e0e0e0] text-black font-semibold px-5 py-2.5 rounded-xl transition-all text-sm">
                 <Plus className="w-4 h-4" />
                 <span className="hidden sm:inline">Ny stilling</span>
               </button>
@@ -185,7 +185,7 @@ export default async function CompanyDashboard() {
               label: 'Aktive stillinger',
               value: publishedJobs,
               sub: `${totalJobs} totalt`,
-              iconClass: 'text-[#d7fe03] bg-[#d7fe03]/10 border-[#d7fe03]/20',
+              iconClass: 'text-white bg-white/10 border-white/20',
             },
             {
               icon: Users,
@@ -231,7 +231,7 @@ export default async function CompanyDashboard() {
                 <p className="text-[11px] text-[#444] mt-0.5">{totalJobs} stilling{totalJobs !== 1 ? 'er' : ''}</p>
               </div>
               <Link href="/jobs/new">
-                <button className="text-xs text-[#d7fe03] border border-[#d7fe03]/20 hover:bg-[#d7fe03]/5 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+                <button className="text-xs text-white border border-white/20 hover:bg-white/5 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
                   <Plus className="w-3 h-3" /> Ny
                 </button>
               </Link>
@@ -244,7 +244,7 @@ export default async function CompanyDashboard() {
                 </div>
                 <p className="text-[#666] text-sm mb-4">Ingen stillinger ennå</p>
                 <Link href="/jobs/new">
-                  <button className="text-sm text-[#d7fe03] border border-[#d7fe03]/20 hover:bg-[#d7fe03]/5 px-4 py-2 rounded-xl transition-colors">
+                  <button className="text-sm text-white border border-white/20 hover:bg-white/5 px-4 py-2 rounded-xl transition-colors">
                     Opprett første stilling
                   </button>
                 </Link>
@@ -257,7 +257,7 @@ export default async function CompanyDashboard() {
                     <Link key={job.id} href={`/dashboard/company/jobs/${job.id}`}>
                       <div className="flex items-center gap-3 px-5 py-3.5 hover:bg-white/[0.03] transition-colors cursor-pointer group">
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-white text-sm truncate group-hover:text-[#d7fe03] transition-colors">
+                          <p className="font-medium text-white text-sm truncate group-hover:text-white transition-colors">
                             {job.title}
                           </p>
                           <div className="flex items-center gap-2 mt-1">
@@ -273,7 +273,7 @@ export default async function CompanyDashboard() {
                             </span>
                           </div>
                         </div>
-                        <ArrowRight className="w-4 h-4 text-[#333] group-hover:text-[#d7fe03] transition-all flex-shrink-0" />
+                        <ArrowRight className="w-4 h-4 text-[#333] group-hover:text-white transition-all flex-shrink-0" />
                       </div>
                     </Link>
                   )
@@ -291,7 +291,7 @@ export default async function CompanyDashboard() {
               </div>
               {totalApplications > 0 && (
                 <div className="flex items-center gap-1.5 text-xs text-[#555]">
-                  <Brain className="w-3.5 h-3.5 text-[#d7fe03]" />
+                  <Brain className="w-3.5 h-3.5 text-white" />
                   AI-sortert
                 </div>
               )}
@@ -333,13 +333,13 @@ export default async function CompanyDashboard() {
                               className="w-8 h-8 object-cover rounded-full"
                             />
                           ) : (
-                            <span className="text-[11px] font-bold text-[#d7fe03]">
+                            <span className="text-[11px] font-bold text-white">
                               {app.candidates?.name?.charAt(0).toUpperCase()}
                             </span>
                           )}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-medium text-white group-hover:text-[#d7fe03] transition-colors truncate leading-tight">
+                          <p className="text-sm font-medium text-white group-hover:text-white transition-colors truncate leading-tight">
                             {app.candidates?.name}
                           </p>
                           <div className="flex items-center gap-1.5 mt-0.5">
@@ -347,7 +347,7 @@ export default async function CompanyDashboard() {
                               <span className="text-[10px] text-[#555] truncate">{app.candidates.phone}</span>
                             )}
                             {app.interview_completed && (
-                              <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-[#d7fe03]/10 text-[#d7fe03] flex-shrink-0">
+                              <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-white/10 text-white flex-shrink-0">
                                 Intervju ✓
                               </span>
                             )}
@@ -361,7 +361,7 @@ export default async function CompanyDashboard() {
                         {app.score != null ? (
                           <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                             app.score >= 80 ? 'bg-green-900/40 text-green-400' :
-                            app.score >= 60 ? 'bg-[#d7fe03]/10 text-[#d7fe03]' :
+                            app.score >= 60 ? 'bg-white/10 text-white' :
                             app.score >= 40 ? 'bg-orange-900/30 text-orange-400' :
                             'bg-red-900/30 text-red-400'
                           }`}>

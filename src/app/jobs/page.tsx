@@ -75,7 +75,7 @@ export default async function JobsPage({
                   name="search"
                   defaultValue={search}
                   placeholder="Søk på stilling, sted eller bransje..."
-                  className="w-full pl-11 pr-4 py-3.5 rounded-xl text-white bg-[#111111] border border-white/[0.08] focus:outline-none focus:ring-2 focus:ring-[#d7fe03] focus:border-transparent placeholder-[#3a3a3a] text-[15px] transition-all"
+                  className="w-full pl-11 pr-4 py-3.5 rounded-xl text-white bg-[#111111] border border-white/[0.08] focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent placeholder-[#3a3a3a] text-[15px] transition-all"
                 />
                 {industry && (
                   <input type="hidden" name="industry" value={industry} />
@@ -83,7 +83,7 @@ export default async function JobsPage({
               </div>
               <button
                 type="submit"
-                className="bg-[#d7fe03] hover:bg-[#c8ef00] text-black px-6 py-3.5 rounded-xl font-semibold transition-colors text-[15px] flex-shrink-0"
+                className="bg-white hover:bg-[#e0e0e0] text-black px-6 py-3.5 rounded-xl font-semibold transition-colors text-[15px] flex-shrink-0"
               >
                 Søk
               </button>
@@ -106,7 +106,7 @@ export default async function JobsPage({
                 }
                 className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all duration-150 ${
                   (industry || '') === ind.value
-                    ? 'bg-[#d7fe03] text-black'
+                    ? 'bg-white text-black'
                     : 'bg-white/[0.04] border border-white/[0.07] text-[#666] hover:text-white hover:border-white/[0.15]'
                 }`}
               >
@@ -127,12 +127,12 @@ export default async function JobsPage({
             stilling{filteredJobs.length !== 1 ? 'er' : ''}{' '}
             {industry && (
               <span>
-                i <span className="text-[#d7fe03]">{getIndustryLabel(industry as Industry)}</span>
+                i <span className="text-white">{getIndustryLabel(industry as Industry)}</span>
               </span>
             )}
             {search && (
               <span>
-                {' '}for <span className="text-[#d7fe03]">&ldquo;{search}&rdquo;</span>
+                {' '}for <span className="text-white">&ldquo;{search}&rdquo;</span>
               </span>
             )}
           </p>
@@ -158,7 +158,7 @@ export default async function JobsPage({
             </p>
             <Link
               href="/jobs"
-              className="text-sm text-[#d7fe03] border border-[#d7fe03]/20 hover:bg-[#d7fe03]/5 px-5 py-2.5 rounded-xl transition-colors"
+              className="text-sm text-white border border-white/20 hover:bg-white/5 px-5 py-2.5 rounded-xl transition-colors"
             >
               Vis alle stillinger
             </Link>
@@ -195,7 +195,7 @@ export default async function JobsPage({
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
                         {isNew && (
-                          <span className="text-[11px] font-semibold bg-[#d7fe03] text-black px-2.5 py-1 rounded-full">
+                          <span className="text-[11px] font-semibold bg-white text-black px-2.5 py-1 rounded-full">
                             Ny
                           </span>
                         )}
@@ -206,12 +206,12 @@ export default async function JobsPage({
                     </div>
 
                     {/* Title */}
-                    <h2 className="text-[17px] font-semibold text-white group-hover:text-[#d7fe03] transition-colors mb-2 leading-snug">
+                    <h2 className="text-[17px] font-semibold text-white group-hover:text-white transition-colors mb-2 leading-snug">
                       {job.title}
                     </h2>
 
                     {/* Industry pill */}
-                    <span className="inline-flex items-center text-[11px] font-medium text-[#d7fe03] bg-[#d7fe03]/10 border border-[#d7fe03]/20 px-2.5 py-0.5 rounded-full mb-3 w-fit">
+                    <span className="inline-flex items-center text-[11px] font-medium text-white bg-white/10 border border-white/20 px-2.5 py-0.5 rounded-full mb-3 w-fit">
                       {getIndustryLabel(job.industry as Industry)}
                     </span>
 
@@ -232,7 +232,7 @@ export default async function JobsPage({
                           {days === 0 ? 'I dag' : days === 1 ? 'I går' : `${days}d siden`}
                         </span>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-[#333] group-hover:text-[#d7fe03] group-hover:translate-x-0.5 transition-all" />
+                      <ArrowRight className="w-4 h-4 text-[#333] group-hover:text-white group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </article>
                 </Link>

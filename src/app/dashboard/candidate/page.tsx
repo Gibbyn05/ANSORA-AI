@@ -90,7 +90,7 @@ export default async function CandidateDashboard() {
               </p>
               <a
                 href="/api/auth/signout"
-                className="inline-block text-sm font-semibold text-[#d7fe03] border border-[#d7fe03]/30 px-5 py-2.5 rounded-xl hover:bg-[#d7fe03]/10 transition-colors"
+                className="inline-block text-sm font-semibold text-white border border-white/30 px-5 py-2.5 rounded-xl hover:bg-white/10 transition-colors"
               >
                 Logg ut
               </a>
@@ -202,7 +202,7 @@ export default async function CandidateDashboard() {
         {/* ── Stats row (Visuo pattern) ──────────────────────────────── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
           {[
-            { icon: FileText, label: 'Totale søknader', value: totalApps, iconClass: 'text-[#d7fe03] bg-[#d7fe03]/10 border-[#d7fe03]/20' },
+            { icon: FileText, label: 'Totale søknader', value: totalApps, iconClass: 'text-white bg-white/10 border-white/20' },
             { icon: Briefcase, label: 'Aktive', value: activeApps, iconClass: 'text-blue-400 bg-blue-900/20 border-blue-500/20' },
             { icon: Bot, label: 'AI-intervju', value: interviewApps, iconClass: 'text-orange-400 bg-orange-900/20 border-orange-500/20' },
             { icon: CheckCircle2, label: 'Ansatt', value: hiredApps, iconClass: 'text-green-400 bg-green-900/20 border-green-500/20' },
@@ -225,7 +225,7 @@ export default async function CandidateDashboard() {
               <p className="text-[11px] text-[#444] mt-0.5">{totalApps} søknad{totalApps !== 1 ? 'er' : ''}</p>
             </div>
             <Link href="/jobs">
-              <button className="text-xs text-[#d7fe03] hover:underline">
+              <button className="text-xs text-white hover:underline">
                 Finn stillinger →
               </button>
             </Link>
@@ -241,7 +241,7 @@ export default async function CandidateDashboard() {
                 Finn en stilling du er interessert i og send din første søknad med AI-intervju
               </p>
               <Link href="/jobs">
-                <button className="inline-flex items-center gap-2 bg-[#d7fe03] hover:bg-[#c8ef00] text-black font-semibold px-6 py-3 rounded-xl transition-all text-sm">
+                <button className="inline-flex items-center gap-2 bg-white hover:bg-[#e0e0e0] text-black font-semibold px-6 py-3 rounded-xl transition-all text-sm">
                   Se ledige stillinger
                   <ArrowRight className="w-4 h-4" />
                 </button>
@@ -286,7 +286,7 @@ export default async function CandidateDashboard() {
                         {app.score != null && (
                           <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
                             app.score >= 80 ? 'bg-green-900/40 text-green-400' :
-                            app.score >= 60 ? 'bg-[#d7fe03]/10 text-[#d7fe03]' :
+                            app.score >= 60 ? 'bg-white/10 text-white' :
                             'bg-white/[0.05] text-[#888]'
                           }`}>
                             Score: {app.score}
@@ -304,7 +304,7 @@ export default async function CandidateDashboard() {
                               key={s}
                               className={`h-1 flex-1 rounded-full transition-all ${
                                 s <= step
-                                  ? isHired ? 'bg-green-500' : 'bg-[#d7fe03]'
+                                  ? isHired ? 'bg-green-500' : 'bg-white'
                                   : 'bg-white/[0.06]'
                               }`}
                             />
@@ -312,7 +312,7 @@ export default async function CandidateDashboard() {
                         </div>
                         <div className="flex justify-between mt-1.5">
                           {['Sendt', 'Vurderes', 'Intervju', 'Referanse', 'Tilbud', 'Ansatt'].map((label, i) => (
-                            <span key={label} className={`text-[10px] ${i + 1 <= step ? 'text-[#d7fe03]' : 'text-[#333]'}`}>
+                            <span key={label} className={`text-[10px] ${i + 1 <= step ? 'text-white' : 'text-[#333]'}`}>
                               {label}
                             </span>
                           ))}
@@ -330,7 +330,7 @@ export default async function CandidateDashboard() {
                     <div className="flex flex-wrap gap-2">
                       {app.status === 'interview' && !app.interview_completed && (
                         <Link href={`/interview/${app.id}`}>
-                          <button className="inline-flex items-center gap-1.5 bg-[#d7fe03] hover:bg-[#c8ef00] text-black font-semibold text-xs px-3.5 py-2 rounded-lg transition-colors">
+                          <button className="inline-flex items-center gap-1.5 bg-white hover:bg-[#e0e0e0] text-black font-semibold text-xs px-3.5 py-2 rounded-lg transition-colors">
                             <Bot className="w-3.5 h-3.5" />
                             Start AI-intervju
                           </button>
@@ -344,13 +344,13 @@ export default async function CandidateDashboard() {
                       )}
                       {app.status === 'offer_sent' && (
                         <Link href={`/offers`}>
-                          <button className="inline-flex items-center gap-1.5 bg-[#d7fe03] hover:bg-[#c8ef00] text-black font-semibold text-xs px-3.5 py-2 rounded-lg transition-colors">
+                          <button className="inline-flex items-center gap-1.5 bg-white hover:bg-[#e0e0e0] text-black font-semibold text-xs px-3.5 py-2 rounded-lg transition-colors">
                             Se jobbtilbud
                           </button>
                         </Link>
                       )}
                       <Link href={`/jobs/${app.job_id}`}>
-                        <button className="text-xs text-[#555] hover:text-[#d7fe03] flex items-center gap-1 py-2 px-3 rounded-lg hover:bg-white/[0.04] transition-colors">
+                        <button className="text-xs text-[#555] hover:text-white flex items-center gap-1 py-2 px-3 rounded-lg hover:bg-white/[0.04] transition-colors">
                           Se stilling
                           <ArrowRight className="w-3 h-3" />
                         </button>

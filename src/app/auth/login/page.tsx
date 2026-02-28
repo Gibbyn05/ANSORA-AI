@@ -90,7 +90,7 @@ function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full inline-flex items-center justify-center gap-2 bg-[#d7fe03] hover:bg-[#c8ef00] disabled:opacity-60 text-black font-semibold px-6 py-3.5 rounded-xl transition-all text-[15px]"
+        className="w-full inline-flex items-center justify-center gap-2 bg-white hover:bg-[#e0e0e0] disabled:opacity-60 text-black font-semibold px-6 py-3.5 rounded-xl transition-all text-[15px]"
       >
         {loading ? (
           <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
@@ -111,7 +111,7 @@ export default function LoginPage() {
       <div className="hidden lg:flex lg:w-[46%] bg-[#111111] border-r border-white/[0.07] flex-col justify-between p-12">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-9 h-9 bg-[#d7fe03] rounded-xl flex items-center justify-center">
+          <div className="w-9 h-9 bg-white rounded-xl flex items-center justify-center">
             <span className="text-black font-bold text-base">A</span>
           </div>
           <span className="text-white font-bold text-xl tracking-tight">Ansora</span>
@@ -133,8 +133,8 @@ export default function LoginPage() {
               { icon: Users, title: 'AI-intervju 24/7', desc: 'Tekstbasert kvalifisering hele døgnet' },
             ].map((f) => (
               <div key={f.title} className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-[#d7fe03]/10 border border-[#d7fe03]/20 flex items-center justify-center flex-shrink-0">
-                  <f.icon className="w-4 h-4 text-[#d7fe03]" />
+                <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
+                  <f.icon className="w-4 h-4 text-white" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-white">{f.title}</p>
@@ -149,7 +149,7 @@ export default function LoginPage() {
         <div className="bg-[#0a0a0a] border border-white/[0.07] rounded-xl p-5">
           <div className="flex mb-3">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} className="w-3.5 h-3.5 text-[#d7fe03] fill-[#d7fe03]" />
+              <Star key={i} className="w-3.5 h-3.5 text-white fill-[#ffffff]" />
             ))}
           </div>
           <p className="text-sm text-[#888] italic leading-relaxed mb-4">
@@ -157,7 +157,7 @@ export default function LoginPage() {
           </p>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-[#1a1a1a] border border-white/10 flex items-center justify-center">
-              <span className="text-[10px] font-bold text-[#d7fe03]">KM</span>
+              <span className="text-[10px] font-bold text-white">KM</span>
             </div>
             <div>
               <p className="text-xs font-semibold text-white">Kristine M.</p>
@@ -174,7 +174,7 @@ export default function LoginPage() {
           {/* Mobile logo */}
           <div className="lg:hidden flex justify-center mb-8">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-9 h-9 bg-[#d7fe03] rounded-xl flex items-center justify-center">
+              <div className="w-9 h-9 bg-white rounded-xl flex items-center justify-center">
                 <span className="text-black font-bold text-base">A</span>
               </div>
               <span className="text-white font-bold text-xl tracking-tight">Ansora</span>
@@ -190,7 +190,7 @@ export default function LoginPage() {
 
           <p className="text-sm text-[#555] text-center mt-7">
             Har du ikke konto?{' '}
-            <Link href="/auth/register" className="text-[#d7fe03] font-semibold hover:underline">
+            <Link href="/auth/register" className="text-white font-semibold hover:underline">
               Registrer deg gratis
             </Link>
           </p>

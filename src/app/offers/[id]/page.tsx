@@ -113,7 +113,7 @@ export default function OfferPage({
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 bg-[#d7fe03] rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
               <span className="text-black font-bold text-sm">A</span>
             </div>
             <span className="text-white font-bold text-xl">Ansora</span>
@@ -151,8 +151,8 @@ export default function OfferPage({
         ) : (
           <Card>
             <div className="text-center mb-6">
-              <div className="w-20 h-20 bg-[#d7fe03]/10 border border-[#d7fe03]/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Award className="w-10 h-10 text-[#d7fe03]" />
+              <div className="w-20 h-20 bg-white/10 border border-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Award className="w-10 h-10 text-white" />
               </div>
               <h1 className="text-2xl font-bold text-white mb-1">Gratulerer!</h1>
               <p className="text-[#999] text-sm">
@@ -163,7 +163,7 @@ export default function OfferPage({
             {/* Tilbudsdetaljer */}
             <div className="bg-blue-900/20 border border-blue-500/20 rounded-xl p-5 mb-6 space-y-3">
               <div className="flex items-center gap-3">
-                <Briefcase className="w-5 h-5 text-[#d7fe03] flex-shrink-0" />
+                <Briefcase className="w-5 h-5 text-white flex-shrink-0" />
                 <div>
                   <p className="text-xs text-[#555]">Stilling</p>
                   <p className="font-semibold text-white">
@@ -178,7 +178,7 @@ export default function OfferPage({
               </div>
 
               <div className="flex items-center gap-3">
-                <Calendar className="w-5 h-5 text-[#d7fe03] flex-shrink-0" />
+                <Calendar className="w-5 h-5 text-white flex-shrink-0" />
                 <div>
                   <p className="text-xs text-[#555]">Startdato</p>
                   <p className="font-semibold text-white">
@@ -191,7 +191,7 @@ export default function OfferPage({
 
               {offer.salary && (
                 <div className="flex items-center gap-3">
-                  <Banknote className="w-5 h-5 text-[#d7fe03] flex-shrink-0" />
+                  <Banknote className="w-5 h-5 text-white flex-shrink-0" />
                   <div>
                     <p className="text-xs text-[#555]">Lønn</p>
                     <p className="font-semibold text-white">{offer.salary}</p>

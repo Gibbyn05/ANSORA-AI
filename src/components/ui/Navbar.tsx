@@ -31,7 +31,7 @@ export function Navbar({ userRole, userName, profilePictureUrl }: NavbarProps) {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#d7fe03] rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
               <span className="text-black font-bold text-sm">A</span>
             </div>
             <span className="text-white font-bold text-xl tracking-tight">Ansora</span>
@@ -62,13 +62,13 @@ export function Navbar({ userRole, userName, profilePictureUrl }: NavbarProps) {
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/5 transition-colors"
                 >
-                  <div className="w-8 h-8 rounded-full bg-[#d7fe03]/10 flex items-center justify-center overflow-hidden">
+                  <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden">
                     {profilePictureUrl ? (
                       <img src={profilePictureUrl} alt="Profilbilde" className="w-8 h-8 rounded-full object-cover" />
                     ) : userRole === 'company' ? (
-                      <Briefcase className="w-4 h-4 text-[#d7fe03]" />
+                      <Briefcase className="w-4 h-4 text-white" />
                     ) : (
-                      <User className="w-4 h-4 text-[#d7fe03]" />
+                      <User className="w-4 h-4 text-white" />
                     )}
                   </div>
                   <span className="text-sm font-medium text-white max-w-[120px] truncate">

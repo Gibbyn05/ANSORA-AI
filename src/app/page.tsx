@@ -30,7 +30,7 @@ export default async function HomePage() {
 
             {/* Left: Text block */}
             <div>
-              <div className="inline-flex items-center gap-2 bg-[#d7fe03]/10 border border-[#d7fe03]/20 px-4 py-1.5 rounded-full text-sm font-medium mb-7 text-[#d7fe03]">
+              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-1.5 rounded-full text-sm font-medium mb-7 text-white">
                 <Brain className="w-3.5 h-3.5" />
                 AI-drevet rekruttering
               </div>
@@ -38,7 +38,7 @@ export default async function HomePage() {
               <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-bold leading-[1.1] tracking-tight text-white mb-6">
                 Finn de riktige<br />
                 kandidatene med<br />
-                <span className="text-[#d7fe03]">kunstig intelligens</span>
+                <span className="text-white">kunstig intelligens</span>
               </h1>
 
               <p className="text-[#999] text-lg leading-relaxed mb-8 max-w-lg">
@@ -49,7 +49,7 @@ export default async function HomePage() {
               {/* Dual CTA (Sasslo/Prospect pattern) */}
               <div className="flex flex-col sm:flex-row gap-3 mb-10">
                 <Link href="/auth/register">
-                  <button className="inline-flex items-center gap-2 bg-[#d7fe03] hover:bg-[#c8ef00] text-black font-semibold px-7 py-3.5 rounded-xl transition-all duration-200 text-[15px]">
+                  <button className="inline-flex items-center gap-2 bg-white hover:bg-[#e0e0e0] text-black font-semibold px-7 py-3.5 rounded-xl transition-all duration-200 text-[15px]">
                     Start gratis i dag
                     <ArrowRight className="w-4 h-4" />
                   </button>
@@ -67,14 +67,14 @@ export default async function HomePage() {
                 <div className="flex -space-x-2">
                   {['B', 'T', 'K', 'M'].map((initial, i) => (
                     <div key={i} className="w-8 h-8 rounded-full bg-[#1a1a1a] border-2 border-[#0a0a0a] flex items-center justify-center">
-                      <span className="text-[10px] font-bold text-[#d7fe03]">{initial}</span>
+                      <span className="text-[10px] font-bold text-white">{initial}</span>
                     </div>
                   ))}
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="flex">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 text-[#d7fe03] fill-[#d7fe03]" />
+                      <Star key={i} className="w-3.5 h-3.5 text-white fill-[#ffffff]" />
                     ))}
                   </div>
                   <span className="text-sm text-[#999]">
@@ -90,7 +90,7 @@ export default async function HomePage() {
                 {/* Mock top bar */}
                 <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/[0.06]">
                   <span className="text-sm font-semibold text-white">Søkere — Frontend Utvikler</span>
-                  <span className="text-xs bg-[#d7fe03]/10 text-[#d7fe03] px-2.5 py-1 rounded-full border border-[#d7fe03]/20">
+                  <span className="text-xs bg-white/10 text-white px-2.5 py-1 rounded-full border border-white/20">
                     12 nye
                   </span>
                 </div>
@@ -98,13 +98,13 @@ export default async function HomePage() {
                 {/* Mock candidate rows */}
                 {[
                   { name: 'Marte S.', score: 94, status: 'Intervju', color: 'bg-green-900/40 text-green-400' },
-                  { name: 'Jonas H.', score: 87, status: 'Ny', color: 'bg-[#d7fe03]/10 text-[#d7fe03]' },
-                  { name: 'Lena K.', score: 81, status: 'Ny', color: 'bg-[#d7fe03]/10 text-[#d7fe03]' },
+                  { name: 'Jonas H.', score: 87, status: 'Ny', color: 'bg-white/10 text-white' },
+                  { name: 'Lena K.', score: 81, status: 'Ny', color: 'bg-white/10 text-white' },
                   { name: 'Erik B.', score: 68, status: 'Vurderer', color: 'bg-orange-900/30 text-orange-400' },
                 ].map((c) => (
                   <div key={c.name} className="flex items-center gap-3 py-2.5 border-b border-white/[0.04] last:border-0">
                     <div className="w-8 h-8 rounded-full bg-[#1a1a1a] border border-white/10 flex items-center justify-center flex-shrink-0">
-                      <span className="text-[10px] font-bold text-[#d7fe03]">{c.name[0]}</span>
+                      <span className="text-[10px] font-bold text-white">{c.name[0]}</span>
                     </div>
                     <span className="text-sm text-white flex-1">{c.name}</span>
                     <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${c.color}`}>{c.score}</span>
@@ -115,8 +115,8 @@ export default async function HomePage() {
                 {/* AI insight preview */}
                 <div className="mt-4 p-3 bg-[#1a1a1a] rounded-xl border border-white/[0.06]">
                   <div className="flex items-center gap-2 mb-1.5">
-                    <Brain className="w-3.5 h-3.5 text-[#d7fe03]" />
-                    <span className="text-[11px] font-semibold text-[#d7fe03]">AI-analyse · Marte S.</span>
+                    <Brain className="w-3.5 h-3.5 text-white" />
+                    <span className="text-[11px] font-semibold text-white">AI-analyse · Marte S.</span>
                   </div>
                   <p className="text-[11px] text-[#666] leading-relaxed">
                     Sterk teknisk bakgrunn i React/TS. Kommuniserer tydelig. Anbefales for intervju.
@@ -126,7 +126,7 @@ export default async function HomePage() {
 
               {/* Floating stat badge */}
               <div className="absolute -top-4 -right-4 bg-[#111111] border border-white/[0.08] rounded-xl px-4 py-3 shadow-xl">
-                <div className="text-2xl font-bold text-[#d7fe03]">10x</div>
+                <div className="text-2xl font-bold text-white">10x</div>
                 <div className="text-xs text-[#555]">Raskere screening</div>
               </div>
             </div>
@@ -178,8 +178,8 @@ export default async function HomePage() {
             },
           ].map((f) => (
             <div key={f.title} className="p-8 rounded-2xl border border-white/[0.07] bg-[#111111] hover:border-white/[0.15] transition-colors duration-200">
-              <div className="w-12 h-12 rounded-xl bg-[#d7fe03]/10 border border-[#d7fe03]/20 flex items-center justify-center mb-5">
-                <f.icon className="w-5 h-5 text-[#d7fe03]" />
+              <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center mb-5">
+                <f.icon className="w-5 h-5 text-white" />
               </div>
               <h3 className="text-lg font-semibold text-white mb-3">{f.title}</h3>
               <p className="text-[#666] text-sm leading-relaxed">{f.desc}</p>
@@ -195,7 +195,7 @@ export default async function HomePage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="order-2 lg:order-1 bg-[#111111] border border-white/[0.07] rounded-2xl p-7">
             <div className="flex items-center gap-2 mb-5">
-              <Briefcase className="w-4 h-4 text-[#d7fe03]" />
+              <Briefcase className="w-4 h-4 text-white" />
               <span className="text-sm font-semibold text-white">AI Stillingsbuilder</span>
             </div>
             <div className="space-y-2 mb-5">
@@ -205,15 +205,15 @@ export default async function HomePage() {
               <div className="h-2.5 bg-white/[0.06] rounded-full w-5/6" />
             </div>
             <div className="flex items-start gap-2.5 p-3.5 bg-[#1a1a1a] rounded-xl border border-white/[0.06]">
-              <Brain className="w-3.5 h-3.5 text-[#d7fe03] mt-0.5 flex-shrink-0" />
+              <Brain className="w-3.5 h-3.5 text-white mt-0.5 flex-shrink-0" />
               <div>
-                <p className="text-[11px] font-semibold text-[#d7fe03] mb-1">AI genererer stillingsannonse</p>
+                <p className="text-[11px] font-semibold text-white mb-1">AI genererer stillingsannonse</p>
                 <p className="text-[11px] text-[#555]">Frontend-utvikler med React/TS, remote-vennlig, Oslo…</p>
               </div>
             </div>
           </div>
           <div className="order-1 lg:order-2">
-            <span className="text-[#d7fe03] font-bold text-xs uppercase tracking-widest">Steg 01</span>
+            <span className="text-white font-bold text-xs uppercase tracking-widest">Steg 01</span>
             <h2 className="text-3xl font-bold text-white mt-3 mb-5 leading-snug">
               Opprett stillingen på sekunder
             </h2>
@@ -228,7 +228,7 @@ export default async function HomePage() {
                 'Publiser med ett klikk',
               ].map((item) => (
                 <li key={item} className="flex items-center gap-3 text-sm text-[#bbb]">
-                  <CheckCircle2 className="w-4 h-4 text-[#d7fe03] flex-shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-white flex-shrink-0" />
                   {item}
                 </li>
               ))}
@@ -239,7 +239,7 @@ export default async function HomePage() {
         {/* Row 2: CV-screening */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
-            <span className="text-[#d7fe03] font-bold text-xs uppercase tracking-widest">Steg 02</span>
+            <span className="text-white font-bold text-xs uppercase tracking-widest">Steg 02</span>
             <h2 className="text-3xl font-bold text-white mt-3 mb-5 leading-snug">
               Automatisk screening av alle søkere
             </h2>
@@ -254,7 +254,7 @@ export default async function HomePage() {
                 'Flerspråklig – AI svarer alltid på norsk',
               ].map((item) => (
                 <li key={item} className="flex items-center gap-3 text-sm text-[#bbb]">
-                  <CheckCircle2 className="w-4 h-4 text-[#d7fe03] flex-shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-white flex-shrink-0" />
                   {item}
                 </li>
               ))}
@@ -263,10 +263,10 @@ export default async function HomePage() {
           <div className="bg-[#111111] border border-white/[0.07] rounded-2xl p-7">
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-[#d7fe03]" />
+                <FileText className="w-4 h-4 text-white" />
                 <span className="text-sm font-semibold text-white">CV-analyse</span>
               </div>
-              <div className="text-3xl font-bold text-[#d7fe03]">94</div>
+              <div className="text-3xl font-bold text-white">94</div>
             </div>
             <div className="space-y-3.5">
               {[
@@ -282,7 +282,7 @@ export default async function HomePage() {
                   </div>
                   <div className="h-1.5 bg-white/[0.05] rounded-full">
                     <div
-                      className="h-1.5 bg-[#d7fe03] rounded-full"
+                      className="h-1.5 bg-white rounded-full"
                       style={{ width: `${bar.pct}%` }}
                     />
                   </div>
@@ -296,7 +296,7 @@ export default async function HomePage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="order-2 lg:order-1 bg-[#111111] border border-white/[0.07] rounded-2xl p-7">
             <div className="flex items-center gap-2 mb-5">
-              <MessageSquare className="w-4 h-4 text-[#d7fe03]" />
+              <MessageSquare className="w-4 h-4 text-white" />
               <span className="text-sm font-semibold text-white">AI-intervju</span>
               <span className="ml-auto text-xs text-green-400 flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" />
@@ -305,7 +305,7 @@ export default async function HomePage() {
             </div>
             <div className="space-y-3">
               <div className="flex justify-end">
-                <div className="bg-[#d7fe03]/10 border border-[#d7fe03]/20 rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[85%]">
+                <div className="bg-white/10 border border-white/20 rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[85%]">
                   <p className="text-xs text-[#ccc]">Beskriv din erfaring med React og TypeScript i et produksjonsmiljø.</p>
                 </div>
               </div>
@@ -315,14 +315,14 @@ export default async function HomePage() {
                 </div>
               </div>
               <div className="flex justify-end">
-                <div className="bg-[#d7fe03]/10 border border-[#d7fe03]/20 rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[85%]">
+                <div className="bg-white/10 border border-white/20 rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[85%]">
                   <p className="text-xs text-[#ccc]">Hvordan håndterer du state management i store React-applikasjoner?</p>
                 </div>
               </div>
             </div>
           </div>
           <div className="order-1 lg:order-2">
-            <span className="text-[#d7fe03] font-bold text-xs uppercase tracking-widest">Steg 03</span>
+            <span className="text-white font-bold text-xs uppercase tracking-widest">Steg 03</span>
             <h2 className="text-3xl font-bold text-white mt-3 mb-5 leading-snug">
               AI gjennomfører intervjuet for deg
             </h2>
@@ -337,7 +337,7 @@ export default async function HomePage() {
                 'Anonymisert vurdering mulig',
               ].map((item) => (
                 <li key={item} className="flex items-center gap-3 text-sm text-[#bbb]">
-                  <CheckCircle2 className="w-4 h-4 text-[#d7fe03] flex-shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-white flex-shrink-0" />
                   {item}
                 </li>
               ))}
@@ -348,7 +348,7 @@ export default async function HomePage() {
         {/* Row 4: Beslutning */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
-            <span className="text-[#d7fe03] font-bold text-xs uppercase tracking-widest">Steg 04</span>
+            <span className="text-white font-bold text-xs uppercase tracking-widest">Steg 04</span>
             <h2 className="text-3xl font-bold text-white mt-3 mb-5 leading-snug">
               Ta beslutning på informert grunnlag
             </h2>
@@ -363,7 +363,7 @@ export default async function HomePage() {
                 'Innhent referanser automatisk',
               ].map((item) => (
                 <li key={item} className="flex items-center gap-3 text-sm text-[#bbb]">
-                  <CheckCircle2 className="w-4 h-4 text-[#d7fe03] flex-shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-white flex-shrink-0" />
                   {item}
                 </li>
               ))}
@@ -376,19 +376,19 @@ export default async function HomePage() {
             </div>
             {[
               { name: 'Marte S.', score: 94, rank: '#1', color: 'bg-green-900/40 text-green-400' },
-              { name: 'Jonas H.', score: 87, rank: '#2', color: 'bg-[#d7fe03]/10 text-[#d7fe03]' },
-              { name: 'Lena K.', score: 81, rank: '#3', color: 'bg-[#d7fe03]/10 text-[#d7fe03]' },
+              { name: 'Jonas H.', score: 87, rank: '#2', color: 'bg-white/10 text-white' },
+              { name: 'Lena K.', score: 81, rank: '#3', color: 'bg-white/10 text-white' },
             ].map((c, i) => (
               <div key={c.name} className={`flex items-center gap-3 py-3 ${i < 2 ? 'border-b border-white/[0.05]' : ''}`}>
                 <span className="text-xs text-[#333] w-6 font-bold">{c.rank}</span>
                 <div className="w-8 h-8 rounded-full bg-[#1a1a1a] border border-white/10 flex items-center justify-center flex-shrink-0">
-                  <span className="text-[10px] font-bold text-[#d7fe03]">{c.name[0]}</span>
+                  <span className="text-[10px] font-bold text-white">{c.name[0]}</span>
                 </div>
                 <span className="text-sm text-white flex-1">{c.name}</span>
                 <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${c.color}`}>{c.score}</span>
               </div>
             ))}
-            <button className="mt-5 w-full text-xs text-[#d7fe03] border border-[#d7fe03]/20 hover:bg-[#d7fe03]/5 rounded-xl py-3 transition-colors">
+            <button className="mt-5 w-full text-xs text-white border border-white/20 hover:bg-white/5 rounded-xl py-3 transition-colors">
               Send tilbud til Marte S. →
             </button>
           </div>
@@ -410,7 +410,7 @@ export default async function HomePage() {
               { value: '200+', label: 'Bedrifter', sub: 'bruker Ansora' },
             ].map((stat) => (
               <div key={stat.label} className="text-center px-4">
-                <div className="text-5xl font-bold text-[#d7fe03] mb-2">{stat.value}</div>
+                <div className="text-5xl font-bold text-white mb-2">{stat.value}</div>
                 <div className="text-white font-semibold mb-1.5">{stat.label}</div>
                 <div className="text-xs text-[#444]">{stat.sub}</div>
               </div>
@@ -458,8 +458,8 @@ export default async function HomePage() {
               { icon: Zap, title: 'Jobbtilbud digitalt', desc: 'Send, signer og administrer jobbtilbud direkte i plattformen.' },
             ].map((feat) => (
               <div key={feat.title} className="flex gap-4 p-4 rounded-xl border border-white/[0.07] bg-[#111111] hover:border-white/[0.15] transition-colors">
-                <div className="w-10 h-10 rounded-lg bg-[#d7fe03]/10 border border-[#d7fe03]/20 flex items-center justify-center flex-shrink-0">
-                  <feat.icon className="w-4 h-4 text-[#d7fe03]" />
+                <div className="w-10 h-10 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
+                  <feat.icon className="w-4 h-4 text-white" />
                 </div>
                 <div>
                   <h4 className="text-sm font-semibold text-white mb-1">{feat.title}</h4>
@@ -500,13 +500,13 @@ export default async function HomePage() {
               },
             ].map((t) => (
               <div key={t.name} className="bg-[#0a0a0a] border border-white/[0.07] rounded-2xl p-7 flex flex-col hover:border-white/[0.14] transition-colors">
-                <Quote className="w-7 h-7 text-[#d7fe03]/30 mb-5 flex-shrink-0" />
+                <Quote className="w-7 h-7 text-white/30 mb-5 flex-shrink-0" />
                 <p className="text-[#999] text-sm leading-relaxed flex-1 mb-7 italic">
                   &ldquo;{t.quote}&rdquo;
                 </p>
                 <div className="flex items-center gap-3 pt-5 border-t border-white/[0.06]">
                   <div className="w-10 h-10 rounded-full bg-[#1a1a1a] border border-white/10 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xs font-bold text-[#d7fe03]">{t.initials}</span>
+                    <span className="text-xs font-bold text-white">{t.initials}</span>
                   </div>
                   <div>
                     <div className="text-sm font-semibold text-white">{t.name}</div>
@@ -514,7 +514,7 @@ export default async function HomePage() {
                   </div>
                   <div className="ml-auto flex">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3 h-3 text-[#d7fe03] fill-[#d7fe03]" />
+                      <Star key={i} className="w-3 h-3 text-white fill-[#ffffff]" />
                     ))}
                   </div>
                 </div>
@@ -526,8 +526,8 @@ export default async function HomePage() {
 
       {/* ── CTA SECTION ───────────────────────────────────────────────── */}
       <section className="py-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="w-14 h-14 rounded-2xl bg-[#d7fe03]/10 border border-[#d7fe03]/20 flex items-center justify-center mx-auto mb-7">
-          <Zap className="w-7 h-7 text-[#d7fe03]" />
+        <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center mx-auto mb-7">
+          <Zap className="w-7 h-7 text-white" />
         </div>
         <h2 className="text-3xl sm:text-4xl font-bold text-white mb-5 leading-snug">
           Klar til å effektivisere rekrutteringen?
@@ -537,7 +537,7 @@ export default async function HomePage() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
           <Link href="/auth/register">
-            <button className="inline-flex items-center gap-2 bg-[#d7fe03] hover:bg-[#c8ef00] text-black font-semibold px-8 py-4 rounded-xl transition-all text-[15px]">
+            <button className="inline-flex items-center gap-2 bg-white hover:bg-[#e0e0e0] text-black font-semibold px-8 py-4 rounded-xl transition-all text-[15px]">
               Registrer bedrift gratis
               <ArrowRight className="w-4 h-4" />
             </button>
@@ -552,7 +552,7 @@ export default async function HomePage() {
         <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-[#555]">
           {['Gratis å komme i gang', 'Ingen kredittkort', 'Kom i gang på minutter'].map((item) => (
             <div key={item} className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-[#d7fe03]" />
+              <CheckCircle2 className="w-4 h-4 text-white" />
               {item}
             </div>
           ))}
@@ -567,7 +567,7 @@ export default async function HomePage() {
             {/* Brand */}
             <div className="lg:col-span-2">
               <Link href="/" className="flex items-center gap-2 mb-5">
-                <div className="w-8 h-8 bg-[#d7fe03] rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
                   <span className="text-black font-bold text-sm">A</span>
                 </div>
                 <span className="text-white font-bold text-xl tracking-tight">Ansora</span>
@@ -578,7 +578,7 @@ export default async function HomePage() {
               </p>
               <div className="flex items-center gap-1.5">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3.5 h-3.5 text-[#d7fe03] fill-[#d7fe03]" />
+                  <Star key={i} className="w-3.5 h-3.5 text-white fill-[#ffffff]" />
                 ))}
                 <span className="text-xs text-[#444] ml-1.5">4.9/5 fra 200+ bedrifter</span>
               </div>
