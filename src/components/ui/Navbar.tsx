@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from './Button'
@@ -30,11 +31,8 @@ export function Navbar({ userRole, userName, profilePictureUrl }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#29524A] rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">A</span>
-            </div>
-            <span className="text-white font-bold text-xl tracking-tight">Ansora</span>
+          <Link href="/" className="flex items-center">
+            <Image src="/LogoA.png" alt="Ansora" width={120} height={40} className="h-10 w-auto" />
           </Link>
 
           {/* Desktop nav */}
