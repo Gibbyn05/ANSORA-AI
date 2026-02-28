@@ -208,8 +208,8 @@ export default async function CompanyDashboard() {
               sub: 'via Ansora',
               iconClass: 'text-green-400 bg-green-900/20 border-green-500/20',
             },
-          ].map((stat) => (
-            <div key={stat.label} className="bg-[#111111] border border-white/[0.07] rounded-2xl p-5">
+          ].map((stat, i) => (
+            <div key={stat.label} className={`bg-[#111111] border border-white/[0.07] rounded-2xl p-5 animate-slide-up`} style={{ animationDelay: `${i * 80}ms`, animationFillMode: 'both' }}>
               <div className={`w-10 h-10 rounded-xl border flex items-center justify-center mb-4 ${stat.iconClass}`}>
                 <stat.icon className="w-4.5 h-4.5" />
               </div>
@@ -224,7 +224,7 @@ export default async function CompanyDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
           {/* Job list (1/3) */}
-          <div className="bg-[#111111] border border-white/[0.07] rounded-2xl overflow-hidden">
+          <div className="bg-[#111111] border border-white/[0.07] rounded-2xl overflow-hidden animate-slide-up anim-delay-400">
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.06]">
               <div>
                 <p className="font-semibold text-white text-sm">Mine stillinger</p>
@@ -283,7 +283,7 @@ export default async function CompanyDashboard() {
           </div>
 
           {/* Applications table (2/3, Visuo numbered list) */}
-          <div className="lg:col-span-2 bg-[#111111] border border-white/[0.07] rounded-2xl overflow-hidden">
+          <div className="lg:col-span-2 bg-[#111111] border border-white/[0.07] rounded-2xl overflow-hidden animate-slide-up anim-delay-500">
             <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
               <div>
                 <p className="font-semibold text-white text-sm">Søkere rangert etter AI-score</p>

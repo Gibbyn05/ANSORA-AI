@@ -206,8 +206,8 @@ export default async function CandidateDashboard() {
             { icon: Briefcase, label: 'Aktive', value: activeApps, iconClass: 'text-blue-400 bg-blue-900/20 border-blue-500/20' },
             { icon: Bot, label: 'AI-intervju', value: interviewApps, iconClass: 'text-orange-400 bg-orange-900/20 border-orange-500/20' },
             { icon: CheckCircle2, label: 'Ansatt', value: hiredApps, iconClass: 'text-green-400 bg-green-900/20 border-green-500/20' },
-          ].map((stat) => (
-            <div key={stat.label} className="bg-[#111111] border border-white/[0.07] rounded-2xl p-5">
+          ].map((stat, i) => (
+            <div key={stat.label} className="bg-[#111111] border border-white/[0.07] rounded-2xl p-5 animate-slide-up" style={{ animationDelay: `${i * 80}ms`, animationFillMode: 'both' }}>
               <div className={`w-10 h-10 rounded-xl border flex items-center justify-center mb-4 ${stat.iconClass}`}>
                 <stat.icon className="w-4 h-4" />
               </div>
@@ -218,7 +218,7 @@ export default async function CandidateDashboard() {
         </div>
 
         {/* ── Application cards ─────────────────────────────────────── */}
-        <div className="bg-[#111111] border border-white/[0.07] rounded-2xl overflow-hidden">
+        <div className="bg-[#111111] border border-white/[0.07] rounded-2xl overflow-hidden animate-slide-up anim-delay-400">
           <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
             <div>
               <p className="font-semibold text-white text-sm">Søknadshistorikk</p>

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/ui/Navbar'
+import { AnimateIn } from '@/components/ui/AnimateIn'
 import {
   Briefcase, Users, Brain, MessageSquare, Star, ArrowRight,
   CheckCircle2, Globe, FileText, Zap, TrendingUp, Shield,
@@ -30,62 +31,72 @@ export default async function HomePage() {
 
             {/* Left: Text block */}
             <div>
-              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-1.5 rounded-full text-sm font-medium mb-7 text-white">
-                <Brain className="w-3.5 h-3.5" />
-                AI-drevet rekruttering
-              </div>
+              <AnimateIn animation="slide-up" delay={0}>
+                <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-1.5 rounded-full text-sm font-medium mb-7 text-white">
+                  <Brain className="w-3.5 h-3.5" />
+                  AI-drevet rekruttering
+                </div>
+              </AnimateIn>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-bold leading-[1.1] tracking-tight text-white mb-6">
-                Finn de riktige<br />
-                kandidatene med<br />
-                <span className="text-white">kunstig intelligens</span>
-              </h1>
+              <AnimateIn animation="slide-up" delay={80}>
+                <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-bold leading-[1.1] tracking-tight text-white mb-6">
+                  Finn de riktige<br />
+                  kandidatene med<br />
+                  <span className="text-white">kunstig intelligens</span>
+                </h1>
+              </AnimateIn>
 
-              <p className="text-[#999] text-lg leading-relaxed mb-8 max-w-lg">
-                Ansora effektiviserer hele rekrutteringsprosessen – fra stillingsannonse til
-                ansettelse – med AI som scorer, analyserer og intervjuer kandidater automatisk.
-              </p>
+              <AnimateIn animation="slide-up" delay={160}>
+                <p className="text-[#999] text-lg leading-relaxed mb-8 max-w-lg">
+                  Ansora effektiviserer hele rekrutteringsprosessen – fra stillingsannonse til
+                  ansettelse – med AI som scorer, analyserer og intervjuer kandidater automatisk.
+                </p>
+              </AnimateIn>
 
               {/* Dual CTA (Sasslo/Prospect pattern) */}
-              <div className="flex flex-col sm:flex-row gap-3 mb-10">
-                <Link href="/auth/register">
-                  <button className="inline-flex items-center gap-2 bg-white hover:bg-[#e0e0e0] text-black font-semibold px-7 py-3.5 rounded-xl transition-all duration-200 text-[15px]">
-                    Start gratis i dag
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </Link>
-                <Link href="/jobs">
-                  <button className="inline-flex items-center gap-2 border border-white/15 hover:border-white/30 hover:bg-white/5 text-white font-semibold px-7 py-3.5 rounded-xl transition-all duration-200 text-[15px]">
-                    Se ledige stillinger
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </Link>
-              </div>
+              <AnimateIn animation="slide-up" delay={240}>
+                <div className="flex flex-col sm:flex-row gap-3 mb-10">
+                  <Link href="/auth/register">
+                    <button className="inline-flex items-center gap-2 bg-white hover:bg-[#e0e0e0] active:scale-95 text-black font-semibold px-7 py-3.5 rounded-xl transition-all duration-200 text-[15px]">
+                      Start gratis i dag
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </Link>
+                  <Link href="/jobs">
+                    <button className="inline-flex items-center gap-2 border border-white/15 hover:border-white/30 hover:bg-white/5 active:scale-95 text-white font-semibold px-7 py-3.5 rounded-xl transition-all duration-200 text-[15px]">
+                      Se ledige stillinger
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </Link>
+                </div>
+              </AnimateIn>
 
               {/* Social proof (Prospect inline pattern) */}
-              <div className="flex items-center gap-4">
-                <div className="flex -space-x-2">
-                  {['B', 'T', 'K', 'M'].map((initial, i) => (
-                    <div key={i} className="w-8 h-8 rounded-full bg-[#1a1a1a] border-2 border-[#0a0a0a] flex items-center justify-center">
-                      <span className="text-[10px] font-bold text-white">{initial}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 text-white fill-[#ffffff]" />
+              <AnimateIn animation="slide-up" delay={320}>
+                <div className="flex items-center gap-4">
+                  <div className="flex -space-x-2">
+                    {['B', 'T', 'K', 'M'].map((initial, i) => (
+                      <div key={i} className="w-8 h-8 rounded-full bg-[#1a1a1a] border-2 border-[#0a0a0a] flex items-center justify-center">
+                        <span className="text-[10px] font-bold text-white">{initial}</span>
+                      </div>
                     ))}
                   </div>
-                  <span className="text-sm text-[#999]">
-                    4.9/5 fra <span className="text-white">200+ bedrifter</span>
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <div className="flex">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-3.5 h-3.5 text-white fill-[#ffffff]" />
+                      ))}
+                    </div>
+                    <span className="text-sm text-[#999]">
+                      4.9/5 fra <span className="text-white">200+ bedrifter</span>
+                    </span>
+                  </div>
                 </div>
-              </div>
+              </AnimateIn>
             </div>
 
             {/* Right: Dashboard mockup (Visuo-inspired) */}
-            <div className="relative">
+            <AnimateIn animation="slide-left" delay={200} className="relative">
               <div className="bg-[#111111] border border-white/[0.08] rounded-2xl p-5 shadow-2xl">
                 {/* Mock top bar */}
                 <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/[0.06]">
@@ -125,11 +136,11 @@ export default async function HomePage() {
               </div>
 
               {/* Floating stat badge */}
-              <div className="absolute -top-4 -right-4 bg-[#111111] border border-white/[0.08] rounded-xl px-4 py-3 shadow-xl">
+              <div className="absolute -top-4 -right-4 bg-[#111111] border border-white/[0.08] rounded-xl px-4 py-3 shadow-xl animate-float">
                 <div className="text-2xl font-bold text-white">10x</div>
                 <div className="text-xs text-[#555]">Raskere screening</div>
               </div>
-            </div>
+            </AnimateIn>
           </div>
         </div>
       </section>
@@ -137,27 +148,29 @@ export default async function HomePage() {
       {/* ── TRUST STRIP (Sasslo/Prospect) ────────────────────────────── */}
       <section className="py-10 border-y border-white/[0.06]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-[11px] font-semibold uppercase tracking-widest text-[#3a3a3a] mb-6">
-            Brukt av bedrifter i hele Norge
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            {['Helse og omsorg', 'Bygg og anlegg', 'IT og teknologi', 'Handel og dagligvare', 'Lager og logistikk', 'Restaurant og servering'].map((name) => (
-              <div key={name} className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.07] text-sm text-[#444] font-medium">
-                {name}
-              </div>
-            ))}
-          </div>
+          <AnimateIn animation="fade-in">
+            <p className="text-center text-[11px] font-semibold uppercase tracking-widest text-[#3a3a3a] mb-6">
+              Brukt av bedrifter i hele Norge
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              {['Helse og omsorg', 'Bygg og anlegg', 'IT og teknologi', 'Handel og dagligvare', 'Lager og logistikk', 'Restaurant og servering'].map((name, i) => (
+                <div key={name} className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.07] text-sm text-[#444] font-medium animate-slide-up" style={{ animationDelay: `${i * 60}ms`, animationFillMode: 'both' }}>
+                  {name}
+                </div>
+              ))}
+            </div>
+          </AnimateIn>
         </div>
       </section>
 
       {/* ── 3-ICON QUICK FEATURES (Sasslo horizontal) ────────────────── */}
       <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
+        <AnimateIn animation="slide-up" className="text-center mb-16">
           <h2 className="text-3xl font-bold text-white mb-4">Alt du trenger for smart rekruttering</h2>
           <p className="text-[#666] max-w-xl mx-auto leading-relaxed">
             En fullstendig plattform som håndterer hele prosessen fra annonse til ansettelse
           </p>
-        </div>
+        </AnimateIn>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
@@ -176,14 +189,16 @@ export default async function HomePage() {
               title: 'Rangert oversikt',
               desc: 'Kandidater sorteres etter AI-score slik at du alltid tar beslutning på informert grunnlag.',
             },
-          ].map((f) => (
-            <div key={f.title} className="p-8 rounded-2xl border border-white/[0.07] bg-[#111111] hover:border-white/[0.15] transition-colors duration-200">
-              <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center mb-5">
-                <f.icon className="w-5 h-5 text-white" />
+          ].map((f, i) => (
+            <AnimateIn key={f.title} animation="scale-in" delay={i * 100}>
+              <div className="p-8 rounded-2xl border border-white/[0.07] bg-[#111111] hover:border-white/[0.15] hover:-translate-y-1 transition-all duration-300 h-full">
+                <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110">
+                  <f.icon className="w-5 h-5 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-3">{f.title}</h3>
+                <p className="text-[#666] text-sm leading-relaxed">{f.desc}</p>
               </div>
-              <h3 className="text-lg font-semibold text-white mb-3">{f.title}</h3>
-              <p className="text-[#666] text-sm leading-relaxed">{f.desc}</p>
-            </div>
+            </AnimateIn>
           ))}
         </div>
       </section>
@@ -193,7 +208,7 @@ export default async function HomePage() {
 
         {/* Row 1: Stillingsbuilder */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div className="order-2 lg:order-1 bg-[#111111] border border-white/[0.07] rounded-2xl p-7">
+          <AnimateIn animation="slide-right" className="order-2 lg:order-1 bg-[#111111] border border-white/[0.07] rounded-2xl p-7">
             <div className="flex items-center gap-2 mb-5">
               <Briefcase className="w-4 h-4 text-white" />
               <span className="text-sm font-semibold text-white">AI Stillingsbuilder</span>
@@ -211,8 +226,8 @@ export default async function HomePage() {
                 <p className="text-[11px] text-[#555]">Frontend-utvikler med React/TS, remote-vennlig, Oslo…</p>
               </div>
             </div>
-          </div>
-          <div className="order-1 lg:order-2">
+          </AnimateIn>
+          <AnimateIn animation="slide-left" className="order-1 lg:order-2">
             <span className="text-white font-bold text-xs uppercase tracking-widest">Steg 01</span>
             <h2 className="text-3xl font-bold text-white mt-3 mb-5 leading-snug">
               Opprett stillingen på sekunder
@@ -233,12 +248,12 @@ export default async function HomePage() {
                 </li>
               ))}
             </ul>
-          </div>
+          </AnimateIn>
         </div>
 
         {/* Row 2: CV-screening */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div>
+          <AnimateIn animation="slide-right">
             <span className="text-white font-bold text-xs uppercase tracking-widest">Steg 02</span>
             <h2 className="text-3xl font-bold text-white mt-3 mb-5 leading-snug">
               Automatisk screening av alle søkere
@@ -259,8 +274,8 @@ export default async function HomePage() {
                 </li>
               ))}
             </ul>
-          </div>
-          <div className="bg-[#111111] border border-white/[0.07] rounded-2xl p-7">
+          </AnimateIn>
+          <AnimateIn animation="slide-left" className="bg-[#111111] border border-white/[0.07] rounded-2xl p-7">
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2">
                 <FileText className="w-4 h-4 text-white" />
@@ -289,12 +304,12 @@ export default async function HomePage() {
                 </div>
               ))}
             </div>
-          </div>
+          </AnimateIn>
         </div>
 
         {/* Row 3: AI-intervju */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div className="order-2 lg:order-1 bg-[#111111] border border-white/[0.07] rounded-2xl p-7">
+          <AnimateIn animation="slide-right" className="order-2 lg:order-1 bg-[#111111] border border-white/[0.07] rounded-2xl p-7">
             <div className="flex items-center gap-2 mb-5">
               <MessageSquare className="w-4 h-4 text-white" />
               <span className="text-sm font-semibold text-white">AI-intervju</span>
@@ -320,8 +335,8 @@ export default async function HomePage() {
                 </div>
               </div>
             </div>
-          </div>
-          <div className="order-1 lg:order-2">
+          </AnimateIn>
+          <AnimateIn animation="slide-left" className="order-1 lg:order-2">
             <span className="text-white font-bold text-xs uppercase tracking-widest">Steg 03</span>
             <h2 className="text-3xl font-bold text-white mt-3 mb-5 leading-snug">
               AI gjennomfører intervjuet for deg
@@ -342,12 +357,12 @@ export default async function HomePage() {
                 </li>
               ))}
             </ul>
-          </div>
+          </AnimateIn>
         </div>
 
         {/* Row 4: Beslutning */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div>
+          <AnimateIn animation="slide-right">
             <span className="text-white font-bold text-xs uppercase tracking-widest">Steg 04</span>
             <h2 className="text-3xl font-bold text-white mt-3 mb-5 leading-snug">
               Ta beslutning på informert grunnlag
@@ -368,8 +383,8 @@ export default async function HomePage() {
                 </li>
               ))}
             </ul>
-          </div>
-          <div className="bg-[#111111] border border-white/[0.07] rounded-2xl p-7">
+          </AnimateIn>
+          <AnimateIn animation="slide-left" className="bg-[#111111] border border-white/[0.07] rounded-2xl p-7">
             <div className="flex items-center justify-between mb-5">
               <span className="text-sm font-semibold text-white">Rangert liste</span>
               <span className="text-xs text-[#555]">4 søkere</span>
@@ -391,7 +406,7 @@ export default async function HomePage() {
             <button className="mt-5 w-full text-xs text-white border border-white/20 hover:bg-white/5 rounded-xl py-3 transition-colors">
               Send tilbud til Marte S. →
             </button>
-          </div>
+          </AnimateIn>
         </div>
       </section>
 
@@ -408,12 +423,12 @@ export default async function HomePage() {
               { value: '94%', label: 'Nøyaktighet i scoring', sub: 'AI-vurdering' },
               { value: '6+', label: 'Bransjer støttet', sub: 'forhåndstilpasset' },
               { value: '200+', label: 'Bedrifter', sub: 'bruker Ansora' },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center px-4">
+            ].map((stat, i) => (
+              <AnimateIn key={stat.label} animation="slide-up" delay={i * 100} className="text-center px-4">
                 <div className="text-5xl font-bold text-white mb-2">{stat.value}</div>
                 <div className="text-white font-semibold mb-1.5">{stat.label}</div>
                 <div className="text-xs text-[#444]">{stat.sub}</div>
-              </div>
+              </AnimateIn>
             ))}
           </div>
         </div>
@@ -436,8 +451,8 @@ export default async function HomePage() {
                 { icon: '🍽️', label: 'Restaurant og servering' },
                 { icon: '📦', label: 'Lager og logistikk' },
                 { icon: '💻', label: 'IT og teknologi' },
-              ].map((industry) => (
-                <div key={industry.label} className="flex items-center gap-3 p-4 rounded-xl border border-white/[0.07] bg-[#111111] hover:border-white/[0.15] transition-colors cursor-pointer">
+              ].map((industry, i) => (
+                <div key={industry.label} className="flex items-center gap-3 p-4 rounded-xl border border-white/[0.07] bg-[#111111] hover:border-white/[0.15] hover:-translate-y-0.5 transition-all duration-200 cursor-pointer animate-slide-up" style={{ animationDelay: `${i * 60}ms`, animationFillMode: 'both' }}>
                   <span className="text-xl">{industry.icon}</span>
                   <p className="text-sm font-medium text-[#ccc]">{industry.label}</p>
                 </div>
@@ -456,8 +471,8 @@ export default async function HomePage() {
               { icon: Shield, title: 'Anonymisert vurdering', desc: 'Skjul personidentifiserende info og ta objektive beslutninger.' },
               { icon: Users, title: 'Referansesjekk', desc: 'Send referanseforespørsler automatisk og motta strukturerte svar.' },
               { icon: Zap, title: 'Jobbtilbud digitalt', desc: 'Send, signer og administrer jobbtilbud direkte i plattformen.' },
-            ].map((feat) => (
-              <div key={feat.title} className="flex gap-4 p-4 rounded-xl border border-white/[0.07] bg-[#111111] hover:border-white/[0.15] transition-colors">
+            ].map((feat, i) => (
+              <div key={feat.title} className="flex gap-4 p-4 rounded-xl border border-white/[0.07] bg-[#111111] hover:border-white/[0.15] hover:translate-x-1 transition-all duration-200 animate-slide-up" style={{ animationDelay: `${i * 80}ms`, animationFillMode: 'both' }}>
                 <div className="w-10 h-10 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
                   <feat.icon className="w-4 h-4 text-white" />
                 </div>
@@ -498,8 +513,9 @@ export default async function HomePage() {
                 title: 'Rekrutteringssjef, Bygg & Co',
                 initials: 'LH',
               },
-            ].map((t) => (
-              <div key={t.name} className="bg-[#0a0a0a] border border-white/[0.07] rounded-2xl p-7 flex flex-col hover:border-white/[0.14] transition-colors">
+            ].map((t, i) => (
+              <AnimateIn key={t.name} animation="scale-in" delay={i * 120}>
+              <div className="bg-[#0a0a0a] border border-white/[0.07] rounded-2xl p-7 flex flex-col hover:border-white/[0.14] hover:-translate-y-1 transition-all duration-300">
                 <Quote className="w-7 h-7 text-white/30 mb-5 flex-shrink-0" />
                 <p className="text-[#999] text-sm leading-relaxed flex-1 mb-7 italic">
                   &ldquo;{t.quote}&rdquo;
@@ -519,6 +535,7 @@ export default async function HomePage() {
                   </div>
                 </div>
               </div>
+              </AnimateIn>
             ))}
           </div>
         </div>
@@ -526,6 +543,7 @@ export default async function HomePage() {
 
       {/* ── CTA SECTION ───────────────────────────────────────────────── */}
       <section className="py-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <AnimateIn animation="scale-in">
         <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center mx-auto mb-7">
           <Zap className="w-7 h-7 text-white" />
         </div>
@@ -557,6 +575,7 @@ export default async function HomePage() {
             </div>
           ))}
         </div>
+        </AnimateIn>
       </section>
 
       {/* ── FOOTER (Prospect multi-column) ───────────────────────────── */}
