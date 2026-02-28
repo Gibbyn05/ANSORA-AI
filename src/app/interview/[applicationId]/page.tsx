@@ -71,7 +71,7 @@ export default function InterviewPage({
   }, [])
 
   // Camera helpers
-  const startCamera = useCallback(async () => {
+  const startCamera = useCallback(async (): Promise<boolean> => {
     setCameraError('')
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
@@ -81,11 +81,13 @@ export default function InterviewPage({
         videoRef.current.play().catch(() => {})
       }
       setCameraEnabled(true)
+      return true
     } catch {
       setCameraError('Kunne ikke få tilgang til kamera. Sjekk tillatelser i nettleseren.')
       if (cameraRequired === 'required') {
         setError('Kamera er påkrevd for dette intervjuet. Gi tilgang i nettleseren og prøv igjen.')
       }
+      return false
     }
   }, [cameraRequired])
 
@@ -323,8 +325,11 @@ export default function InterviewPage({
               try {
                 // Auto-start camera if required
                 if (cameraRequired === 'required') {
-                  await startCamera()
-                  if (cameraRequired === 'required' && !cameraEnabled) return
+                  const cameraStarted = await startCamera()
+                  if (!cameraStarted) {
+                    setPhase('idle')
+                    return
+                  }
                 }
                 await sendMessage(null)
               } catch (err) {
