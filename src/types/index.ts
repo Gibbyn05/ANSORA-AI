@@ -111,6 +111,7 @@ export interface Application {
   follow_up_answers?: Record<string, string>
   rejection_sent?: boolean
   anonymous_view?: boolean
+  recording_url?: string
   created_at: string
   jobs?: Job
   candidates?: Candidate

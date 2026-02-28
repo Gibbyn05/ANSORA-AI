@@ -362,6 +362,22 @@ export default async function ApplicationDetailPage({
               </Card>
             )}
 
+            {/* Intervjuopptak */}
+            {!isAnonymous && application.recording_url && (
+              <Card>
+                <CardHeader
+                  title="Intervjuopptak"
+                  subtitle="Spill av hele intervjuet"
+                />
+                <video
+                  src={application.recording_url}
+                  controls
+                  className="w-full rounded-xl bg-black"
+                  style={{ maxHeight: '360px' }}
+                />
+              </Card>
+            )}
+
             {/* Referanser */}
             {references && references.length > 0 && (
               <Card>

@@ -3,33 +3,27 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
-import { ArrowLeft, Mic, MicOff, CheckCircle2, Bot, Sparkles, Camera, CameraOff, VideoOff } from 'lucide-react'
+import { ArrowLeft, Mic, CheckCircle2, Bot, Sparkles, Camera, CameraOff, VideoOff, Square } from 'lucide-react'
 import type { InterviewMessage } from '@/types'
 
-type Phase =
-  | 'idle'
-  | 'ai-speaking'
-  | 'user-turn'
-  | 'recording'
-  | 'processing'
-  | 'completed'
-
+type Phase = 'idle' | 'ai-speaking' | 'listening' | 'processing' | 'uploading' | 'completed'
 type CameraRequired = 'disabled' | 'optional' | 'required'
+
+// Voice Activity Detection constants
+const VAD_SILENCE_THRESHOLD = 10  // avg amplitude below this = silence
+const VAD_SILENCE_MS = 2000       // 2s consecutive silence → auto-submit
+const VAD_MIN_SPEECH_MS = 800     // must have spoken ≥0.8s before silence detection kicks in
 
 const STATUS_LABELS: Record<Phase, string> = {
   idle: '',
   'ai-speaking': 'AI snakker...',
-  'user-turn': 'Trykk for å svare',
-  recording: 'Tar opp – trykk for å stoppe',
+  listening: 'Lytter...',
   processing: 'Behandler...',
+  uploading: 'Lagrer opptak...',
   completed: 'Intervjuet er fullført',
 }
 
-export default function InterviewPage({
-  params,
-}: {
-  params: { applicationId: string }
-}) {
+export default function InterviewPage({ params }: { params: { applicationId: string } }) {
   const { applicationId } = params
 
   const [phase, setPhase] = useState<Phase>('idle')
@@ -37,40 +31,62 @@ export default function InterviewPage({
   const [caption, setCaption] = useState('')
   const [error, setError] = useState('')
   const [micBars, setMicBars] = useState<number[]>(Array(20).fill(4))
+  // 0–100: how close to auto-submitting on silence
+  const [silenceProgress, setSilenceProgress] = useState(0)
 
-  // Camera state
+  // Camera
   const [cameraRequired, setCameraRequired] = useState<CameraRequired>('optional')
   const [cameraEnabled, setCameraEnabled] = useState(false)
   const [cameraError, setCameraError] = useState('')
   const videoRef = useRef<HTMLVideoElement>(null)
   const cameraStreamRef = useRef<MediaStream | null>(null)
 
+  // Persistent mic stream (lives for the entire interview)
+  const micStreamRef = useRef<MediaStream | null>(null)
+
+  // Per-turn recorder (audio only, for transcription)
+  const turnRecorderRef = useRef<MediaRecorder | null>(null)
+  const turnChunksRef = useRef<Blob[]>([])
+
+  // Full-interview recorder (video+audio or audio-only, for company playback)
+  const fullRecorderRef = useRef<MediaRecorder | null>(null)
+  const fullChunksRef = useRef<Blob[]>([])
+  const fullMimeTypeRef = useRef<string>('audio/webm')
+
+  // Audio analysis
   const audioCtxRef = useRef<AudioContext | null>(null)
   const animFrameRef = useRef<number | null>(null)
-  const recorderRef = useRef<MediaRecorder | null>(null)
-  const chunksRef = useRef<Blob[]>([])
-  const streamRef = useRef<MediaStream | null>(null)
 
-  // Fetch camera_required on mount
+  // VAD
+  const lastSoundRef = useRef<number>(Date.now())
+  const hasSpokeRef = useRef(false)
+  const vadIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const recordingStartRef = useRef<number>(0)
+
+  // Allows sendMessage → startListening cycle without circular useCallback deps
+  const startListeningRef = useRef<() => Promise<void>>(() => Promise.resolve())
+
+  // Fetch camera_required
   useEffect(() => {
     fetch(`/api/interviews?applicationId=${applicationId}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.camera_required) setCameraRequired(data.camera_required as CameraRequired)
-      })
+      .then(r => r.json())
+      .then(d => { if (d.camera_required) setCameraRequired(d.camera_required as CameraRequired) })
       .catch(() => {})
   }, [applicationId])
 
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
-      streamRef.current?.getTracks().forEach((t) => t.stop())
-      cameraStreamRef.current?.getTracks().forEach((t) => t.stop())
+      if (vadIntervalRef.current) clearInterval(vadIntervalRef.current)
+      micStreamRef.current?.getTracks().forEach(t => t.stop())
+      cameraStreamRef.current?.getTracks().forEach(t => t.stop())
       audioCtxRef.current?.close()
     }
   }, [])
 
-  // Camera helpers
+  // ── Camera helpers ────────────────────────────────────────────────────────
+
   const startCamera = useCallback(async (): Promise<boolean> => {
     setCameraError('')
     try {
@@ -85,57 +101,80 @@ export default function InterviewPage({
     } catch {
       setCameraError('Kunne ikke få tilgang til kamera. Sjekk tillatelser i nettleseren.')
       if (cameraRequired === 'required') {
-        setError('Kamera er påkrevd for dette intervjuet. Gi tilgang i nettleseren og prøv igjen.')
+        setError('Kamera er påkrevd for dette intervjuet. Gi tilgang og prøv igjen.')
       }
       return false
     }
   }, [cameraRequired])
 
   const stopCamera = useCallback(() => {
-    cameraStreamRef.current?.getTracks().forEach((t) => t.stop())
+    cameraStreamRef.current?.getTracks().forEach(t => t.stop())
     cameraStreamRef.current = null
     if (videoRef.current) videoRef.current.srcObject = null
     setCameraEnabled(false)
   }, [])
 
   const toggleCamera = useCallback(() => {
-    if (cameraEnabled) {
-      stopCamera()
-    } else {
-      startCamera()
-    }
+    if (cameraEnabled) stopCamera()
+    else startCamera()
   }, [cameraEnabled, startCamera, stopCamera])
 
-  // --- Mic waveform ---
-  const startMicViz = (stream: MediaStream) => {
-    const ctx = new AudioContext()
-    audioCtxRef.current = ctx
-    const analyser = ctx.createAnalyser()
-    analyser.fftSize = 64
-    ctx.createMediaStreamSource(stream).connect(analyser)
+  // ── Mic visualiser ────────────────────────────────────────────────────────
 
-    const tick = () => {
-      const data = new Uint8Array(analyser.frequencyBinCount)
-      analyser.getByteFrequencyData(data)
-      setMicBars(
-        Array.from({ length: 20 }, (_, i) => {
-          const idx = Math.floor((i / 20) * data.length)
-          return Math.max(4, (data[idx] / 255) * 60)
-        })
-      )
-      animFrameRef.current = requestAnimationFrame(tick)
-    }
-    tick()
-  }
-
-  const stopMicViz = () => {
+  const stopMicViz = useCallback(() => {
     if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
     setMicBars(Array(20).fill(4))
     audioCtxRef.current?.close()
     audioCtxRef.current = null
-  }
+  }, [])
 
-  // --- TTS playback ---
+  // ── Full-interview recording ──────────────────────────────────────────────
+
+  const startFullRecording = useCallback(() => {
+    if (!micStreamRef.current) return
+
+    // Combine video (if available) + audio
+    const tracks: MediaStreamTrack[] = [
+      ...(cameraStreamRef.current?.getVideoTracks() ?? []),
+      ...micStreamRef.current.getAudioTracks(),
+    ]
+    const stream = new MediaStream(tracks)
+
+    const hasVideo = tracks.some(t => t.kind === 'video')
+    const mimeType = hasVideo
+      ? (MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus') ? 'video/webm;codecs=vp9,opus'
+        : MediaRecorder.isTypeSupported('video/webm') ? 'video/webm'
+        : 'audio/webm')
+      : (MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4')
+
+    fullMimeTypeRef.current = mimeType
+    fullChunksRef.current = []
+
+    const recorder = new MediaRecorder(stream, { mimeType })
+    fullRecorderRef.current = recorder
+    recorder.ondataavailable = e => { if (e.data.size > 0) fullChunksRef.current.push(e.data) }
+    recorder.start(1000) // chunk every 1s
+  }, [])
+
+  const uploadRecording = useCallback(async () => {
+    if (fullChunksRef.current.length === 0) return
+    try {
+      const mimeType = fullMimeTypeRef.current
+      const blob = new Blob(fullChunksRef.current, { type: mimeType })
+      const ext = mimeType.startsWith('video/') ? 'webm'
+        : mimeType === 'audio/mp4' ? 'm4a' : 'webm'
+
+      const fd = new FormData()
+      fd.append('applicationId', applicationId)
+      fd.append('recording', blob, `interview.${ext}`)
+      await fetch('/api/interviews/recording', { method: 'POST', body: fd })
+    } catch (e) {
+      console.warn('Opplasting av opptak feilet:', e)
+    }
+  }, [applicationId])
+
+  // ── TTS ───────────────────────────────────────────────────────────────────
+
   const playTTS = useCallback(async (text: string): Promise<void> => {
     const res = await fetch('/api/interviews/tts', {
       method: 'POST',
@@ -143,11 +182,9 @@ export default function InterviewPage({
       body: JSON.stringify({ text }),
     })
     if (!res.ok) throw new Error('TTS feilet')
-
     const blob = await res.blob()
     const url = URL.createObjectURL(blob)
     const audio = new Audio(url)
-
     return new Promise((resolve, reject) => {
       audio.onended = () => { URL.revokeObjectURL(url); resolve() }
       audio.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Avspilling feilet')) }
@@ -155,113 +192,174 @@ export default function InterviewPage({
     })
   }, [])
 
-  // --- Interview API ---
-  const sendMessage = useCallback(
-    async (userText: string | null) => {
-      setPhase('processing')
-      setError('')
+  // ── Interview API ─────────────────────────────────────────────────────────
 
-      const res = await fetch('/api/interviews', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ applicationId, message: userText }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
-
-      setMessages(data.transcript)
-
-      const lastAI = [...(data.transcript as InterviewMessage[])]
-        .reverse()
-        .find((m) => m.role === 'assistant')
-
-      if (lastAI) {
-        setPhase('ai-speaking')
-        setCaption(lastAI.content)
-        await playTTS(lastAI.content)
-      }
-
-      if (data.isCompleted) {
-        setPhase('completed')
-        stopCamera()
-      } else {
-        setPhase('user-turn')
-      }
-    },
-    [applicationId, playTTS, stopCamera]
-  )
-
-  // --- Recording ---
-  const startRecording = async () => {
+  const sendMessage = useCallback(async (userText: string | null) => {
+    setPhase('processing')
     setError('')
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      streamRef.current = stream
-      chunksRef.current = []
 
-      const mimeType = MediaRecorder.isTypeSupported('audio/webm')
-        ? 'audio/webm'
-        : 'audio/mp4'
-      const recorder = new MediaRecorder(stream, { mimeType })
-      recorderRef.current = recorder
+    const res = await fetch('/api/interviews', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ applicationId, message: userText }),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error)
 
-      recorder.ondataavailable = (e) => {
-        if (e.data.size > 0) chunksRef.current.push(e.data)
+    setMessages(data.transcript)
+
+    const lastAI = [...(data.transcript as InterviewMessage[])].reverse().find(m => m.role === 'assistant')
+    if (lastAI) {
+      setPhase('ai-speaking')
+      setCaption(lastAI.content)
+      await playTTS(lastAI.content)
+    }
+
+    if (data.isCompleted) {
+      fullRecorderRef.current?.stop()
+      setPhase('uploading')
+      await uploadRecording()
+      setPhase('completed')
+      stopCamera()
+    } else {
+      // Automatically start listening after AI finishes speaking
+      await startListeningRef.current()
+    }
+  }, [applicationId, playTTS, uploadRecording, stopCamera])
+
+  // ── Auto-listen with VAD ──────────────────────────────────────────────────
+
+  const startListening = useCallback(async () => {
+    if (!micStreamRef.current) return
+    setError('')
+
+    // Reset VAD state
+    turnChunksRef.current = []
+    hasSpokeRef.current = false
+    lastSoundRef.current = Date.now()
+    recordingStartRef.current = Date.now()
+    setSilenceProgress(0)
+
+    const mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4'
+    const audioStream = new MediaStream(micStreamRef.current.getAudioTracks())
+    const turnRecorder = new MediaRecorder(audioStream, { mimeType })
+    turnRecorderRef.current = turnRecorder
+
+    turnRecorder.ondataavailable = e => { if (e.data.size > 0) turnChunksRef.current.push(e.data) }
+
+    turnRecorder.onstop = async () => {
+      if (vadIntervalRef.current) { clearInterval(vadIntervalRef.current); vadIntervalRef.current = null }
+      stopMicViz()
+      setSilenceProgress(0)
+
+      const blob = new Blob(turnChunksRef.current, { type: mimeType })
+      try {
+        setPhase('processing')
+        const fd = new FormData()
+        fd.append('audio', blob, `recording.${mimeType === 'audio/mp4' ? 'm4a' : 'webm'}`)
+
+        const tr = await fetch('/api/interviews/transcribe', { method: 'POST', body: fd })
+        const td = await tr.json()
+        if (!tr.ok) throw new Error(td.error)
+
+        const text: string = td.text?.trim() ?? ''
+        if (!text) {
+          setError('Ingen tale oppdaget – lytter på nytt...')
+          await startListeningRef.current()
+          return
+        }
+
+        setCaption(text)
+        await sendMessage(text)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Feil – lytter på nytt om 2s...')
+        setTimeout(() => { startListeningRef.current() }, 2000)
+      }
+    }
+
+    // Audio analyser for mic visualiser + VAD
+    const ctx = new AudioContext()
+    audioCtxRef.current = ctx
+    const analyser = ctx.createAnalyser()
+    analyser.fftSize = 64
+    ctx.createMediaStreamSource(audioStream).connect(analyser)
+
+    const tick = () => {
+      const data = new Uint8Array(analyser.frequencyBinCount)
+      analyser.getByteFrequencyData(data)
+      const avg = data.reduce((a, b) => a + b, 0) / data.length
+
+      if (avg > VAD_SILENCE_THRESHOLD) {
+        lastSoundRef.current = Date.now()
+        hasSpokeRef.current = true
       }
 
-      recorder.onstop = async () => {
-        stream.getTracks().forEach((t) => t.stop())
-        stopMicViz()
+      setMicBars(Array.from({ length: 20 }, (_, i) => {
+        const idx = Math.floor((i / 20) * data.length)
+        return Math.max(4, (data[idx] / 255) * 60)
+      }))
 
-        const blob = new Blob(chunksRef.current, { type: mimeType })
-        const ext = mimeType === 'audio/mp4' ? 'mp4' : 'webm'
+      animFrameRef.current = requestAnimationFrame(tick)
+    }
+    tick()
 
-        try {
-          setPhase('processing')
-          const fd = new FormData()
-          fd.append('audio', blob, `recording.${ext}`)
+    // VAD checker – fires every 80ms
+    vadIntervalRef.current = setInterval(() => {
+      const elapsed = Date.now() - recordingStartRef.current
+      const silenceMs = Date.now() - lastSoundRef.current
 
-          const tr = await fetch('/api/interviews/transcribe', {
-            method: 'POST',
-            body: fd,
-          })
-          const td = await tr.json()
-          if (!tr.ok) throw new Error(td.error)
-
-          const text: string = td.text?.trim() ?? ''
-          if (!text) {
-            setError('Ingen tale registrert – prøv igjen.')
-            setPhase('user-turn')
-            return
-          }
-
-          setCaption(text)
-          await sendMessage(text)
-        } catch (err) {
-          setError(err instanceof Error ? err.message : 'Feil ved behandling')
-          setPhase('user-turn')
+      if (hasSpokeRef.current && elapsed >= VAD_MIN_SPEECH_MS) {
+        setSilenceProgress(Math.min(100, (silenceMs / VAD_SILENCE_MS) * 100))
+        if (silenceMs >= VAD_SILENCE_MS) {
+          turnRecorder.stop()
         }
       }
+    }, 80)
 
-      startMicViz(stream)
-      recorder.start()
-      setPhase('recording')
-    } catch {
-      setError('Kunne ikke få tilgang til mikrofon. Sjekk tillatelser i nettleseren.')
+    turnRecorder.start()
+    setPhase('listening')
+  }, [sendMessage, stopMicViz])
+
+  // Keep ref in sync so sendMessage can call it without circular deps
+  useEffect(() => { startListeningRef.current = startListening }, [startListening])
+
+  // ── Start interview ───────────────────────────────────────────────────────
+
+  const startInterview = async () => {
+    setPhase('processing')
+    setError('')
+    try {
+      if (cameraRequired === 'required') {
+        const ok = await startCamera()
+        if (!ok) { setPhase('idle'); return }
+      }
+
+      const mic = await navigator.mediaDevices.getUserMedia({ audio: true })
+      micStreamRef.current = mic
+
+      // Small delay to let camera stream settle before starting full recording
+      setTimeout(() => startFullRecording(), 100)
+
+      await sendMessage(null)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Feil ved start')
+      setPhase('idle')
     }
   }
 
-  const stopRecording = () => recorderRef.current?.stop()
+  // ── Manual stop (fallback for users who want to submit early) ─────────────
 
-  // Camera label
-  const cameraLabel =
-    cameraRequired === 'required'
-      ? 'Kamera er påkrevd'
-      : cameraRequired === 'optional'
-      ? 'Kamera er valgfritt'
-      : null
+  const submitNow = () => {
+    if (turnRecorderRef.current?.state === 'recording') {
+      turnRecorderRef.current.stop()
+    }
+  }
 
-  // --- Start screen ---
+  const cameraLabel = cameraRequired === 'required' ? 'Kamera er påkrevd'
+    : cameraRequired === 'optional' ? 'Kamera er valgfritt' : null
+
+  // ── Idle / start screen ───────────────────────────────────────────────────
+
   if (phase === 'idle') {
     return (
       <div className="min-h-screen bg-[#06070E] flex flex-col">
@@ -286,10 +384,9 @@ export default function InterviewPage({
           </div>
           <h2 className="text-2xl font-bold text-white mb-3">Klar for AI-intervju?</h2>
           <p className="text-[#94A187] mb-6 max-w-md leading-relaxed">
-            Du vil gjennomføre et stemmebasert intervju med vår AI. Intervjuet tar ca. 10–15 minutter og lagres for rekrutterer.
+            Du vil gjennomføre en naturlig stemmesamtale med vår AI. Intervjuet tar ca. 10–15 minutter og lagres for rekrutterer.
           </p>
 
-          {/* Camera info */}
           {cameraLabel && (
             <div className={`mb-4 flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium border ${
               cameraRequired === 'required'
@@ -304,50 +401,32 @@ export default function InterviewPage({
           <div className="bg-blue-900/20 border border-blue-500/20 rounded-xl p-5 mb-8 text-left max-w-md w-full">
             <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-white" />
-              Tips for intervjuet
+              Slik fungerer det
             </h3>
             <ul className="space-y-2 text-sm text-[#94A187]">
-              <li>• Svar ærlig og utfyllende</li>
-              <li>• Snakk tydelig inn i mikrofonen</li>
+              <li>• AI-en stiller spørsmål – svar naturlig med stemmen din</li>
+              <li>• Den lytter automatisk og oppdager når du er ferdig</li>
+              <li>• Snakk tydelig i et stille rom</li>
               <li>• Gi konkrete eksempler når mulig</li>
-              <li>• Sørg for at du er i et stille rom</li>
               {cameraRequired !== 'disabled' && (
-                <li>• {cameraRequired === 'required' ? 'Kamera er påkrevd – sørg for god belysning' : 'Du kan aktivere kamera hvis du ønsker det'}</li>
+                <li>• {cameraRequired === 'required' ? 'Kamera er påkrevd – sørg for god belysning' : 'Du kan aktivere kamera hvis du ønsker'}</li>
               )}
             </ul>
           </div>
 
           {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
 
-          <Button
-            onClick={async () => {
-              setPhase('processing')
-              try {
-                // Auto-start camera if required
-                if (cameraRequired === 'required') {
-                  const cameraStarted = await startCamera()
-                  if (!cameraStarted) {
-                    setPhase('idle')
-                    return
-                  }
-                }
-                await sendMessage(null)
-              } catch (err) {
-                setError(err instanceof Error ? err.message : 'Feil ved start')
-                setPhase('idle')
-              }
-            }}
-            size="lg"
-          >
+          <Button onClick={startInterview} size="lg">
             <Mic className="w-5 h-5" />
-            Start stemmeintervjuet
+            Start samtaleintervju
           </Button>
         </div>
       </div>
     )
   }
 
-  // --- Voice + Camera interface ---
+  // ── Main interview interface ──────────────────────────────────────────────
+
   return (
     <div className="min-h-screen bg-[#06070E] flex flex-col">
       <header className="bg-[#0e1c17] border-b border-[#94A187]/25 px-4 py-3 flex items-center gap-4">
@@ -370,14 +449,14 @@ export default function InterviewPage({
         )}
         {phase !== 'completed' && messages.length > 0 && (
           <p className="ml-auto text-xs text-[#4a6358]">
-            {messages.filter((m) => m.role === 'user').length} / 7 svar
+            {messages.filter(m => m.role === 'user').length} / 7 svar
           </p>
         )}
       </header>
 
       <div className="flex-1 flex flex-col lg:flex-row">
 
-        {/* Camera panel (left on desktop, top on mobile) */}
+        {/* Camera panel */}
         {cameraRequired !== 'disabled' && (
           <div className="lg:w-72 lg:border-r border-b lg:border-b-0 border-[#29524A]/25 bg-[#06070E] p-4 flex flex-col gap-3">
             <div className="flex items-center justify-between">
@@ -400,7 +479,6 @@ export default function InterviewPage({
               )}
             </div>
 
-            {/* Video preview */}
             <div className="relative aspect-video bg-[#0e1c17] rounded-xl border border-[#29524A]/25 overflow-hidden flex items-center justify-center">
               <video
                 ref={videoRef}
@@ -420,57 +498,45 @@ export default function InterviewPage({
               )}
             </div>
 
-            {cameraError && (
-              <p className="text-xs text-red-400 leading-relaxed">{cameraError}</p>
-            )}
-            {cameraRequired === 'required' && !cameraEnabled && phase !== 'completed' && (
-              <p className="text-xs text-orange-400 leading-relaxed">Kamera er påkrevd for dette intervjuet</p>
-            )}
+            {cameraError && <p className="text-xs text-red-400 leading-relaxed">{cameraError}</p>}
           </div>
         )}
 
         {/* Main voice interface */}
-        <div className="flex-1 flex flex-col items-center justify-center px-6 gap-10 py-8">
+        <div className="flex-1 flex flex-col items-center justify-center px-6 gap-8 py-8">
 
           {/* Avatar with glow rings */}
           <div className="relative flex items-center justify-center">
             {phase === 'ai-speaking' && (
               <>
-                <div className="absolute w-60 h-60 rounded-full bg-[#29524A]/15 animate-ping"
-                  style={{ animationDuration: '2s' }} />
-                <div className="absolute w-48 h-48 rounded-full bg-[#29524A]/20 animate-ping"
-                  style={{ animationDuration: '2s', animationDelay: '0.5s' }} />
+                <div className="absolute w-60 h-60 rounded-full bg-[#29524A]/15 animate-ping" style={{ animationDuration: '2s' }} />
+                <div className="absolute w-48 h-48 rounded-full bg-[#29524A]/20 animate-ping" style={{ animationDuration: '2s', animationDelay: '0.5s' }} />
               </>
             )}
-            {phase === 'recording' && (
+            {phase === 'listening' && (
               <>
-                <div className="absolute w-60 h-60 rounded-full bg-red-500/5 animate-ping"
-                  style={{ animationDuration: '1.4s' }} />
-                <div className="absolute w-48 h-48 rounded-full bg-red-500/10 animate-ping"
-                  style={{ animationDuration: '1.4s', animationDelay: '0.3s' }} />
+                <div className="absolute w-60 h-60 rounded-full bg-[#94A187]/10 animate-ping" style={{ animationDuration: '1.6s' }} />
+                <div className="absolute w-48 h-48 rounded-full bg-[#94A187]/15 animate-ping" style={{ animationDuration: '1.6s', animationDelay: '0.4s' }} />
               </>
             )}
 
             <div className={`relative w-40 h-40 rounded-full flex items-center justify-center border-2 transition-all duration-500 ${
-              phase === 'ai-speaking'
-                ? 'bg-[#29524A]/25 border-white shadow-[0_0_60px_#29524A50]'
-                : phase === 'recording'
-                ? 'bg-red-500/15 border-red-500 shadow-[0_0_60px_#ef444430]'
-                : phase === 'completed'
-                ? 'bg-green-900/30 border-green-500'
-                : 'bg-[#1a2c24] border-[#94A187]/25'
+              phase === 'ai-speaking' ? 'bg-[#29524A]/25 border-white shadow-[0_0_60px_#29524A50]'
+              : phase === 'listening' ? 'bg-[#94A187]/15 border-[#94A187] shadow-[0_0_60px_#94A18730]'
+              : phase === 'completed' ? 'bg-green-900/30 border-green-500'
+              : 'bg-[#1a2c24] border-[#94A187]/25'
             }`}>
               {phase === 'completed' ? (
                 <CheckCircle2 className="w-16 h-16 text-green-400" />
-              ) : phase === 'recording' ? (
-                <Mic className="w-16 h-16 text-red-400" />
+              ) : phase === 'listening' ? (
+                <Mic className="w-16 h-16 text-[#94A187]" />
               ) : (
                 <Bot className={`w-16 h-16 ${phase === 'ai-speaking' ? 'text-white' : 'text-[#3a5248]'}`} />
               )}
             </div>
           </div>
 
-          {/* Status label */}
+          {/* Status */}
           <p className="text-[#4a6358] text-xs font-semibold tracking-widest uppercase">
             {STATUS_LABELS[phase]}
           </p>
@@ -479,26 +545,30 @@ export default function InterviewPage({
           <div className="flex items-center justify-center gap-[3px] h-16 w-52">
             {phase === 'ai-speaking'
               ? Array.from({ length: 20 }, (_, i) => (
-                  <div
-                    key={i}
-                    className="w-1.5 rounded-full bg-[#C5AFA0]"
-                    style={{
-                      height: '4px',
-                      animation: 'voice-bar 0.7s ease-in-out infinite alternate',
-                      animationDelay: `${i * 0.04}s`,
-                    }}
+                  <div key={i} className="w-1.5 rounded-full bg-[#C5AFA0]"
+                    style={{ height: '4px', animation: 'voice-bar 0.7s ease-in-out infinite alternate', animationDelay: `${i * 0.04}s` }}
                   />
                 ))
               : micBars.map((h, i) => (
-                  <div
-                    key={i}
-                    className={`w-1.5 rounded-full transition-all duration-75 ${
-                      phase === 'recording' ? 'bg-red-400' : 'bg-[#2a2a2a]'
-                    }`}
+                  <div key={i}
+                    className={`w-1.5 rounded-full transition-all duration-75 ${phase === 'listening' ? 'bg-[#94A187]' : 'bg-[#2a2a2a]'}`}
                     style={{ height: `${h}px` }}
                   />
                 ))}
           </div>
+
+          {/* Silence countdown bar – only visible when user is speaking & about to auto-submit */}
+          {phase === 'listening' && silenceProgress > 5 && (
+            <div className="w-52 flex flex-col items-center gap-1.5">
+              <div className="w-full h-1 bg-[#1a2c24] rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-[#94A187] rounded-full transition-all duration-100"
+                  style={{ width: `${silenceProgress}%` }}
+                />
+              </div>
+              <p className="text-[10px] text-[#3a5248]">Sender automatisk når du er ferdig...</p>
+            </div>
+          )}
 
           {/* Caption */}
           {caption && (
@@ -507,14 +577,12 @@ export default function InterviewPage({
             </p>
           )}
 
-          {error && (
-            <p className="text-red-400 text-sm text-center max-w-xs">{error}</p>
-          )}
+          {error && <p className="text-red-400 text-sm text-center max-w-xs">{error}</p>}
         </div>
       </div>
 
-      {/* Mic / control button */}
-      <div className="p-10 flex justify-center border-t border-[#29524A]/20">
+      {/* Bottom bar */}
+      <div className="p-8 flex justify-center border-t border-[#29524A]/20">
         {phase === 'completed' ? (
           <Link href="/dashboard/candidate">
             <Button size="lg">
@@ -522,30 +590,21 @@ export default function InterviewPage({
               Tilbake til dashboard
             </Button>
           </Link>
-        ) : phase === 'user-turn' ? (
+        ) : phase === 'listening' ? (
+          // Manual submit button as fallback
           <button
-            onClick={startRecording}
-            className="w-20 h-20 rounded-full bg-[#C5AFA0] hover:bg-[#b09e91] active:scale-95 transition-all duration-150 flex items-center justify-center shadow-[0_0_40px_#29524A60] hover:shadow-[0_0_60px_#29524A80]"
-            aria-label="Start opptak"
+            onClick={submitNow}
+            className="flex items-center gap-2 text-sm text-[#4a6358] hover:text-white border border-[#29524A]/40 hover:border-[#94A187]/40 px-5 py-2.5 rounded-full transition-all"
           >
-            <Mic className="w-8 h-8 text-black" />
-          </button>
-        ) : phase === 'recording' ? (
-          <button
-            onClick={stopRecording}
-            className="w-20 h-20 rounded-full bg-red-500 hover:bg-red-600 active:scale-95 transition-all duration-150 flex items-center justify-center shadow-[0_0_40px_#ef444440] animate-pulse"
-            aria-label="Stopp opptak"
-          >
-            <MicOff className="w-8 h-8 text-white" />
+            <Square className="w-3.5 h-3.5" />
+            Send svar nå
           </button>
         ) : (
-          /* processing / ai-speaking – inactive placeholder */
-          <div className="w-20 h-20 rounded-full bg-[#0e1c17] border border-[#94A187]/25 flex items-center justify-center">
+          /* processing / ai-speaking / uploading – spinner placeholder */
+          <div className="w-14 h-14 rounded-full bg-[#0e1c17] border border-[#94A187]/25 flex items-center justify-center">
             <div className="flex gap-1">
-              {[0, 1, 2].map((i) => (
-                <div
-                  key={i}
-                  className="w-1.5 h-1.5 rounded-full bg-[#444] animate-bounce"
+              {[0, 1, 2].map(i => (
+                <div key={i} className="w-1.5 h-1.5 rounded-full bg-[#444] animate-bounce"
                   style={{ animationDelay: `${i * 0.15}s` }}
                 />
               ))}
