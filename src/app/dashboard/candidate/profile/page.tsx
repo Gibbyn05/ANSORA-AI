@@ -150,7 +150,7 @@ export default function CandidateProfilePage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
-      <Navbar userRole="candidate" userName={profile?.name} />
+      <Navbar userRole="candidate" userName={profile?.name} profilePictureUrl={profile?.profile_picture_url} />
 
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}

@@ -10,9 +10,10 @@ import { Menu, X, Briefcase, User, LogOut, ChevronDown } from 'lucide-react'
 interface NavbarProps {
   userRole?: 'company' | 'candidate' | null
   userName?: string
+  profilePictureUrl?: string | null
 }
 
-export function Navbar({ userRole, userName }: NavbarProps) {
+export function Navbar({ userRole, userName, profilePictureUrl }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const router = useRouter()
@@ -61,8 +62,10 @@ export function Navbar({ userRole, userName }: NavbarProps) {
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/5 transition-colors"
                 >
-                  <div className="w-8 h-8 rounded-full bg-[#d7fe03]/10 flex items-center justify-center">
-                    {userRole === 'company' ? (
+                  <div className="w-8 h-8 rounded-full bg-[#d7fe03]/10 flex items-center justify-center overflow-hidden">
+                    {profilePictureUrl ? (
+                      <img src={profilePictureUrl} alt="Profilbilde" className="w-8 h-8 rounded-full object-cover" />
+                    ) : userRole === 'company' ? (
                       <Briefcase className="w-4 h-4 text-[#d7fe03]" />
                     ) : (
                       <User className="w-4 h-4 text-[#d7fe03]" />
