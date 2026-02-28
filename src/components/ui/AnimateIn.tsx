@@ -10,7 +10,7 @@ interface AnimateInProps {
   animation?: Animation
   delay?: number
   threshold?: number
-  as?: keyof React.JSX.IntrinsicElements
+  as?: keyof HTMLElementTagNameMap
 }
 
 const ANIM_CLASS: Record<Animation, string> = {
