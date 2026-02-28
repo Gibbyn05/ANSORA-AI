@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/Badge'
 import { getIndustryLabel, translateStatus } from '@/lib/utils'
 import {
   Briefcase, Users, Plus, BarChart3, ArrowRight,
-  CheckCircle2, Brain, TrendingUp, Clock, ShieldCheck,
+  CheckCircle2, Brain, TrendingUp, Clock, ShieldCheck, User,
 } from 'lucide-react'
 import Link from 'next/link'
 import type { Industry, ApplicationStatus, Job, Application } from '@/types'
@@ -329,22 +329,27 @@ export default async function CompanyDashboard() {
                           {app.candidates?.profile_picture_url ? (
                             <img
                               src={app.candidates.profile_picture_url}
-                              alt={app.candidates.name}
+                              alt={app.candidates?.name || app.candidates?.email}
                               className="w-8 h-8 object-cover rounded-full"
                             />
-                          ) : (
+                          ) : app.candidates?.name ? (
                             <span className="text-[11px] font-bold text-white">
-                              {app.candidates?.name?.charAt(0).toUpperCase()}
+                              {app.candidates.name.charAt(0).toUpperCase()}
                             </span>
+                          ) : (
+                            <User className="w-4 h-4 text-[#94A187]" />
                           )}
                         </div>
                         <div className="min-w-0">
                           <p className="text-sm font-medium text-white group-hover:text-white transition-colors truncate leading-tight">
-                            {app.candidates?.name}
+                            {app.candidates?.name || app.candidates?.email || 'Ukjent kandidat'}
                           </p>
                           <div className="flex items-center gap-1.5 mt-0.5">
                             {app.candidates?.phone && (
                               <span className="text-[10px] text-[#4a6358] truncate">{app.candidates.phone}</span>
+                            )}
+                            {!app.candidates?.phone && app.candidates?.email && app.candidates?.name && (
+                              <span className="text-[10px] text-[#4a6358] truncate">{app.candidates.email}</span>
                             )}
                             {app.interview_completed && (
                               <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-[#29524A]/20 text-white flex-shrink-0">

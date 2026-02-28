@@ -4,7 +4,7 @@ import { Navbar } from '@/components/ui/Navbar'
 import { Card, CardHeader } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { translateStatus, formatDate } from '@/lib/utils'
-import { ArrowLeft, CheckCircle2, XCircle, MessageSquare, UserCheck, Send, FileText, Bot } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, XCircle, MessageSquare, UserCheck, Send, FileText, Bot, User } from 'lucide-react'
 import Link from 'next/link'
 import type { ApplicationStatus, AIAnalysis, InterviewMessage, Reference } from '@/types'
 import { ApplicationActions } from './ApplicationActions'
@@ -101,16 +101,20 @@ export default async function ApplicationDetailPage({
             <Card>
               <div className="text-center mb-4">
                 <div className="w-16 h-16 rounded-full mx-auto mb-3 overflow-hidden bg-[#29524A]/20 flex items-center justify-center">
-                  {!isAnonymous && application.candidates?.profile_picture_url ? (
+                  {isAnonymous ? (
+                    <span className="text-white font-bold text-xl">?</span>
+                  ) : application.candidates?.profile_picture_url ? (
                     <img
                       src={application.candidates.profile_picture_url}
-                      alt={application.candidates.name}
+                      alt={application.candidates.name || application.candidates.email}
                       className="w-16 h-16 object-cover"
                     />
-                  ) : (
+                  ) : application.candidates?.name ? (
                     <span className="text-white font-bold text-xl">
-                      {isAnonymous ? '?' : application.candidates?.name?.charAt(0).toUpperCase()}
+                      {application.candidates.name.charAt(0).toUpperCase()}
                     </span>
+                  ) : (
+                    <User className="w-8 h-8 text-[#94A187]" />
                   )}
                 </div>
                 {isAnonymous ? (
@@ -120,8 +124,12 @@ export default async function ApplicationDetailPage({
                   </div>
                 ) : (
                   <div>
-                    <p className="font-semibold text-white">{application.candidates?.name}</p>
-                    <p className="text-sm text-[#94A187]">{application.candidates?.email}</p>
+                    <p className="font-semibold text-white">
+                      {application.candidates?.name || application.candidates?.email || 'Ukjent kandidat'}
+                    </p>
+                    {application.candidates?.name && (
+                      <p className="text-sm text-[#94A187]">{application.candidates?.email}</p>
+                    )}
                     {application.candidates?.phone && (
                       <p className="text-sm text-[#94A187]">{application.candidates?.phone}</p>
                     )}
