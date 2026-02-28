@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import { Navbar } from '@/components/ui/Navbar'
 import { Card, CardHeader } from '@/components/ui/Card'
@@ -52,6 +52,27 @@ export default async function ApplicationDetailPage({
     .single()
 
   if (!application) notFound()
+
+  // Hvis kandidat mangler e-post, hent fra auth og oppdater raden
+  const candidate = application.candidates as { id: string; name: string | null; email: string | null; user_id?: string; cv_url?: string; cv_text?: string; language?: string; phone?: string | null; profile_picture_url?: string | null } | null
+  if (candidate && !candidate.email) {
+    try {
+      const admin = createAdminClient()
+      // Hent user_id fra candidates-tabellen
+      const { data: candidateRow } = await admin
+        .from('candidates')
+        .select('user_id')
+        .eq('id', candidate.id)
+        .single()
+      if (candidateRow?.user_id) {
+        const { data: authUser } = await admin.auth.admin.getUserById(candidateRow.user_id)
+        if (authUser?.user?.email) {
+          await admin.from('candidates').update({ email: authUser.user.email }).eq('id', candidate.id)
+          ;(application.candidates as typeof candidate).email = authUser.user.email
+        }
+      }
+    } catch (_) { /* ikke-fatal */ }
+  }
 
   // Hent referanser
   const { data: references } = await supabase

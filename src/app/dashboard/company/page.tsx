@@ -132,13 +132,37 @@ export default async function CompanyDashboard() {
 
   const jobIds = jobs?.map((j: Job) => j.id) || []
 
-  const { data: applications } = jobIds.length > 0
+  const { data: rawApplications } = jobIds.length > 0
     ? await supabase
         .from('applications')
         .select(`*, candidates (id, name, email, phone, bio, profile_picture_url), jobs (id, title)`)
         .in('job_id', jobIds)
         .order('score', { ascending: false, nullsFirst: false })
     : { data: [] }
+
+  // Fyll inn manglende e-post fra auth for kandidater som ble opprettet uten e-post
+  const applications = rawApplications ?? []
+  const missingEmailIds = applications
+    .filter((a: Application) => a.candidates && !(a.candidates as { email?: string }).email)
+    .map((a: Application) => (a.candidates as { id: string }).id)
+
+  if (missingEmailIds.length > 0) {
+    const admin = createAdminClient()
+    const { data: candidateRows } = await admin
+      .from('candidates')
+      .select('id, user_id')
+      .in('id', missingEmailIds)
+    for (const row of candidateRows ?? []) {
+      try {
+        const { data: authUser } = await admin.auth.admin.getUserById(row.user_id)
+        if (authUser?.user?.email) {
+          await admin.from('candidates').update({ email: authUser.user.email }).eq('id', row.id)
+          const app = applications.find((a: Application) => (a.candidates as { id: string })?.id === row.id)
+          if (app) (app.candidates as { email: string }).email = authUser.user.email
+        }
+      } catch (_) { /* ikke-fatal */ }
+    }
+  }
 
   const totalJobs = jobs?.length || 0
   const publishedJobs = jobs?.filter((j: Job) => j.status === 'published').length || 0
