@@ -4,9 +4,13 @@ export type UserRole = 'company' | 'candidate'
 // ===== BEDRIFT =====
 export interface Company {
   id: string
+  user_id?: string
   name: string
   email: string
   logo?: string
+  website?: string
+  description?: string
+  approved: boolean
   created_at: string
 }
 

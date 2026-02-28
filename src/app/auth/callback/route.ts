@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
+import { sendEmail, createAdminNewCompanyEmailHtml } from '@/lib/email/send'
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
@@ -64,6 +64,20 @@ export async function GET(request: NextRequest) {
 
       if (!existing) {
         await admin.from('companies').insert({ user_id: user.id, name: name ?? email, email })
+
+        // Send e-postvarsling til admin (ikke-kritisk)
+        const adminEmail = process.env.ADMIN_EMAIL
+        if (adminEmail) {
+          sendEmail({
+            to: adminEmail,
+            subject: `Ny bedrift venter på godkjenning: ${name ?? email}`,
+            html: createAdminNewCompanyEmailHtml({
+              companyName: name ?? email,
+              companyEmail: email,
+              adminUrl: `${origin}/admin`,
+            }),
+          }).catch(() => {})
+        }
       }
       return NextResponse.redirect(`${origin}/dashboard/company`)
     } else {

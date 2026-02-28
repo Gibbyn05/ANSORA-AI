@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/Badge'
 import { getIndustryLabel, translateStatus } from '@/lib/utils'
 import {
   Briefcase, Users, Plus, BarChart3, ArrowRight,
-  CheckCircle2, Brain, TrendingUp, Clock,
+  CheckCircle2, Brain, TrendingUp, Clock, ShieldCheck,
 } from 'lucide-react'
 import Link from 'next/link'
 import type { Industry, ApplicationStatus, Job, Application } from '@/types'
@@ -79,6 +79,41 @@ export default async function CompanyDashboard() {
         )
       }
     }
+  }
+
+  // Bedriften venter på godkjenning
+  if (!company.approved) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a]">
+        <Navbar userRole="company" userName={company.name} />
+        <div className="min-h-[calc(100vh-64px)] flex items-center justify-center p-6">
+          <div className="max-w-md text-center">
+            <div className="w-20 h-20 bg-[#d7fe03]/10 border border-[#d7fe03]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <ShieldCheck className="w-10 h-10 text-[#d7fe03]" />
+            </div>
+            <h1 className="text-2xl font-bold text-white mb-3">Kontoen din er til godkjenning</h1>
+            <p className="text-[#888] text-sm leading-relaxed mb-8">
+              Vi bekrefter at <span className="text-white font-medium">{company.name}</span> er en reell virksomhet før kontoen aktiveres.
+              Du vil få e-post til <span className="text-white font-medium">{company.email}</span> når vi har behandlet forespørselen din.
+            </p>
+            <div className="bg-[#111] border border-white/[0.07] rounded-xl p-5 text-left mb-6">
+              <p className="text-xs font-semibold uppercase tracking-widest text-[#444] mb-3">Hva skjer nå?</p>
+              <ul className="space-y-2 text-sm text-[#888]">
+                <li className="flex items-start gap-2"><span className="text-[#d7fe03] mt-0.5">1.</span> Ansora-teamet ser over forespørselen din</li>
+                <li className="flex items-start gap-2"><span className="text-[#d7fe03] mt-0.5">2.</span> Du mottar e-post med bekreftelse</li>
+                <li className="flex items-start gap-2"><span className="text-[#d7fe03] mt-0.5">3.</span> Etter godkjenning kan du poste stillinger og se søkere</li>
+              </ul>
+            </div>
+            <a
+              href="/api/auth/signout"
+              className="text-sm text-[#555] hover:text-white transition-colors"
+            >
+              Logg ut
+            </a>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   const { data: jobs } = await supabase

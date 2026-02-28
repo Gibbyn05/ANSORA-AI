@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS companies (
   logo TEXT,
   website TEXT,
   description TEXT,
+  approved BOOLEAN NOT NULL DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -267,3 +268,7 @@ CREATE INDEX IF NOT EXISTS idx_references_application_id ON job_references(appli
 -- ALTER TABLE candidates ADD COLUMN IF NOT EXISTS linkedin_url TEXT;
 -- ALTER TABLE jobs ADD COLUMN IF NOT EXISTS camera_required TEXT NOT NULL DEFAULT 'optional' CHECK (camera_required IN ('disabled', 'optional', 'required'));
 -- Opprett bucket "avatars" med public: true i Supabase Dashboard > Storage
+
+-- Admin-godkjenning for bedrifter:
+-- ALTER TABLE companies ADD COLUMN IF NOT EXISTS approved BOOLEAN NOT NULL DEFAULT FALSE;
+-- UPDATE companies SET approved = TRUE; -- Godkjenn eksisterende bedrifter automatisk

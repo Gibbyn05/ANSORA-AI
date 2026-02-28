@@ -60,12 +60,16 @@ export async function POST(req: NextRequest) {
 
     const { data: company } = await supabase
       .from('companies')
-      .select('id')
+      .select('id, approved')
       .eq('user_id', user.id)
       .single()
 
     if (!company) {
       return NextResponse.json({ error: 'Ingen bedriftsprofil funnet' }, { status: 403 })
+    }
+
+    if (!company.approved) {
+      return NextResponse.json({ error: 'Bedriftskontoen er ikke godkjent ennå' }, { status: 403 })
     }
 
     const body = await req.json()
