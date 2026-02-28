@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/Badge'
 import { translateStatus, formatDate, getIndustryLabel } from '@/lib/utils'
 import {
   FileText, MessageSquare, CheckCircle2, Briefcase,
-  ArrowRight, Bot, Award, Building2, MapPin, Zap,
+  ArrowRight, Bot, Award, Building2, MapPin, Zap, User, Pencil,
 } from 'lucide-react'
 import Link from 'next/link'
 import type { ApplicationStatus, Industry, JobOffer, Application } from '@/types'
@@ -132,16 +132,42 @@ export default async function CandidateDashboard() {
 
         {/* ── Header ────────────────────────────────────────────────── */}
         <div className="flex items-center justify-between mb-10">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#444] mb-1">Mine søknader</p>
-            <h1 className="text-2xl font-bold text-white">Hei, {candidate.name} 👋</h1>
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              {candidate.profile_picture_url ? (
+                <img
+                  src={candidate.profile_picture_url}
+                  alt="Profilbilde"
+                  className="w-14 h-14 rounded-full object-cover border-2 border-white/10"
+                />
+              ) : (
+                <div className="w-14 h-14 rounded-full bg-[#1a1a1a] border-2 border-white/10 flex items-center justify-center">
+                  <User className="w-6 h-6 text-[#444]" />
+                </div>
+              )}
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-[#444] mb-0.5">Mine søknader</p>
+              <h1 className="text-2xl font-bold text-white">Hei, {candidate.name} 👋</h1>
+              {candidate.bio && (
+                <p className="text-xs text-[#666] mt-0.5 max-w-xs truncate">{candidate.bio}</p>
+              )}
+            </div>
           </div>
-          <Link href="/jobs">
-            <button className="inline-flex items-center gap-2 border border-white/[0.1] hover:border-white/[0.2] hover:bg-white/[0.03] text-white font-semibold px-5 py-2.5 rounded-xl transition-all text-sm">
-              <Briefcase className="w-4 h-4" />
-              <span className="hidden sm:inline">Finn stillinger</span>
-            </button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link href="/dashboard/candidate/profile">
+              <button className="inline-flex items-center gap-2 border border-white/[0.1] hover:border-white/[0.2] hover:bg-white/[0.03] text-white font-semibold px-4 py-2.5 rounded-xl transition-all text-sm">
+                <Pencil className="w-4 h-4" />
+                <span className="hidden sm:inline">Min profil</span>
+              </button>
+            </Link>
+            <Link href="/jobs">
+              <button className="inline-flex items-center gap-2 border border-white/[0.1] hover:border-white/[0.2] hover:bg-white/[0.03] text-white font-semibold px-4 py-2.5 rounded-xl transition-all text-sm">
+                <Briefcase className="w-4 h-4" />
+                <span className="hidden sm:inline">Finn stillinger</span>
+              </button>
+            </Link>
+          </div>
         </div>
 
         {/* ── Pending offer alert ───────────────────────────────────── */}

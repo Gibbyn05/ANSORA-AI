@@ -3,6 +3,30 @@ import { createClient } from '@/lib/supabase/server'
 import { runInterviewTurn, summarizeInterview, analyzeCandidate } from '@/lib/openai/prompts'
 import type { InterviewMessage } from '@/types'
 
+// GET - Hent søknad med kamerainnstilling for intervjuet
+export async function GET(req: NextRequest) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Ikke autentisert' }, { status: 401 })
+
+  const applicationId = req.nextUrl.searchParams.get('applicationId')
+  if (!applicationId) return NextResponse.json({ error: 'applicationId påkrevd' }, { status: 400 })
+
+  const { data: application, error } = await supabase
+    .from('applications')
+    .select('id, interview_completed, status, jobs(camera_required)')
+    .eq('id', applicationId)
+    .single()
+
+  if (error || !application) return NextResponse.json({ error: 'Søknad ikke funnet' }, { status: 404 })
+
+  return NextResponse.json({
+    camera_required: (application.jobs as { camera_required?: string })?.camera_required ?? 'optional',
+    interview_completed: application.interview_completed,
+    status: application.status,
+  })
+}
+
 // POST - Send intervjumelding og motta AI-svar
 export async function POST(req: NextRequest) {
   try {

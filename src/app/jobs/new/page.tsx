@@ -10,10 +10,10 @@ import { Input, Textarea, Select } from '@/components/ui/Input'
 import { Card } from '@/components/ui/Card'
 import {
   Sparkles, Save, Eye, ArrowLeft, CheckCircle2, Loader2,
-  Briefcase, MapPin, Percent, FileText
+  Briefcase, MapPin, Percent, FileText, Camera
 } from 'lucide-react'
 import Link from 'next/link'
-import type { Industry } from '@/types'
+import type { Industry, CameraRequired } from '@/types'
 
 const INDUSTRY_OPTIONS = [
   { value: 'helse-og-omsorg', label: 'Helse og omsorg' },
@@ -35,6 +35,7 @@ export default function NewJobPage() {
   const [requirements, setRequirements] = useState('')
   const [keywords, setKeywords] = useState('')
   const [description, setDescription] = useState('')
+  const [cameraRequired, setCameraRequired] = useState<CameraRequired>('optional')
   const [generating, setGenerating] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -94,6 +95,7 @@ export default function NewJobPage() {
           location,
           requirements,
           status,
+          camera_required: cameraRequired,
         }),
       })
 
@@ -206,6 +208,35 @@ export default function NewJobPage() {
                 placeholder="Beskriv krav til utdanning, erfaring og egenskaper..."
                 helperText="AI vil bruke dette til å generere mer presis stillingsannonse"
               />
+
+              {/* Camera setting */}
+              <div>
+                <label className="block text-sm font-medium text-[#ccc] mb-2 flex items-center gap-2">
+                  <Camera className="w-4 h-4 text-[#d7fe03]" />
+                  Kamera under AI-intervju
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {([
+                    { value: 'disabled', label: 'Av', desc: 'Kun stemme' },
+                    { value: 'optional', label: 'Valgfritt', desc: 'Kandidaten velger' },
+                    { value: 'required', label: 'Påkrevd', desc: 'Alltid på' },
+                  ] as { value: CameraRequired; label: string; desc: string }[]).map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setCameraRequired(opt.value)}
+                      className={`px-3 py-3 rounded-xl border text-left transition-all ${
+                        cameraRequired === opt.value
+                          ? 'border-[#d7fe03] bg-[#d7fe03]/10 text-white'
+                          : 'border-white/[0.1] bg-white/[0.02] text-[#888] hover:border-white/20'
+                      }`}
+                    >
+                      <p className="text-sm font-semibold">{opt.label}</p>
+                      <p className="text-xs mt-0.5 opacity-70">{opt.desc}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
 
               <Textarea
                 label="Stikkord og nøkkelord (valgfritt)"

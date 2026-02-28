@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS jobs (
   location TEXT NOT NULL,
   requirements TEXT,
   status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'published', 'closed')),
+  camera_required TEXT NOT NULL DEFAULT 'optional' CHECK (camera_required IN ('disabled', 'optional', 'required')),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -50,6 +51,10 @@ CREATE TABLE IF NOT EXISTS candidates (
   cv_text TEXT,
   language TEXT DEFAULT 'Norwegian',
   phone TEXT,
+  profile_picture_url TEXT,
+  bio TEXT,
+  skills TEXT,
+  linkedin_url TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -252,3 +257,13 @@ CREATE INDEX IF NOT EXISTS idx_applications_score ON applications(score DESC);
 CREATE INDEX IF NOT EXISTS idx_candidates_user_id ON candidates(user_id);
 CREATE INDEX IF NOT EXISTS idx_companies_user_id ON companies(user_id);
 CREATE INDEX IF NOT EXISTS idx_references_application_id ON job_references(application_id);
+
+-- =====================================================
+-- MIGRASJON: Legg til nye kolonner (kjør hvis tabeller allerede eksisterer)
+-- =====================================================
+-- ALTER TABLE candidates ADD COLUMN IF NOT EXISTS profile_picture_url TEXT;
+-- ALTER TABLE candidates ADD COLUMN IF NOT EXISTS bio TEXT;
+-- ALTER TABLE candidates ADD COLUMN IF NOT EXISTS skills TEXT;
+-- ALTER TABLE candidates ADD COLUMN IF NOT EXISTS linkedin_url TEXT;
+-- ALTER TABLE jobs ADD COLUMN IF NOT EXISTS camera_required TEXT NOT NULL DEFAULT 'optional' CHECK (camera_required IN ('disabled', 'optional', 'required'));
+-- Opprett bucket "avatars" med public: true i Supabase Dashboard > Storage

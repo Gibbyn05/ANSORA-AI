@@ -22,6 +22,8 @@ export type Industry =
   | 'it-og-teknologi'
   | 'annet'
 
+export type CameraRequired = 'disabled' | 'optional' | 'required'
+
 export interface Job {
   id: string
   company_id: string
@@ -32,6 +34,7 @@ export interface Job {
   location: string
   requirements?: string
   status: JobStatus
+  camera_required: CameraRequired
   created_at: string
   companies?: Company
 }
@@ -45,6 +48,11 @@ export interface Candidate {
   cv_url?: string
   cv_text?: string
   language: string
+  phone?: string
+  profile_picture_url?: string
+  bio?: string
+  skills?: string
+  linkedin_url?: string
   created_at: string
 }
 

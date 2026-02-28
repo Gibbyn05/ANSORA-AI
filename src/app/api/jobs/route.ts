@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json()
-    const { title, description, industry, percentage, location, requirements, status } = body
+    const { title, description, industry, percentage, location, requirements, status, camera_required } = body
 
     const { data, error } = await supabase
       .from('jobs')
@@ -82,6 +82,7 @@ export async function POST(req: NextRequest) {
         location,
         requirements,
         status: status || 'draft',
+        camera_required: camera_required || 'optional',
       })
       .select()
       .single()
