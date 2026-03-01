@@ -73,21 +73,24 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json()
-    const { title, description, industry, percentage, location, requirements, status, camera_required } = body
+    const { title, description, industry, percentage, location, requirements, status, camera_required, deadline } = body
+
+    const insertData: Record<string, unknown> = {
+      company_id: company.id,
+      title,
+      description,
+      industry,
+      percentage: Number(percentage),
+      location,
+      requirements,
+      status: status || 'draft',
+      camera_required: camera_required || 'optional',
+    }
+    if (deadline) insertData.deadline = deadline
 
     const { data, error } = await supabase
       .from('jobs')
-      .insert({
-        company_id: company.id,
-        title,
-        description,
-        industry,
-        percentage: Number(percentage),
-        location,
-        requirements,
-        status: status || 'draft',
-        camera_required: camera_required || 'optional',
-      })
+      .insert(insertData)
       .select()
       .single()
 

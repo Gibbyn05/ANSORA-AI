@@ -59,8 +59,18 @@ export interface Job {
   requirements?: string
   status: JobStatus
   camera_required: CameraRequired
+  deadline?: string
   created_at: string
   companies?: Company
+}
+
+export interface Message {
+  id: string
+  application_id: string
+  sender_role: 'company' | 'candidate'
+  content: string
+  read_at?: string
+  created_at: string
 }
 
 // ===== KANDIDAT =====

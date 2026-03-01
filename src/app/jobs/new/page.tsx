@@ -10,7 +10,7 @@ import { Input, Textarea, Select } from '@/components/ui/Input'
 import { Card } from '@/components/ui/Card'
 import {
   Sparkles, Save, Eye, ArrowLeft, CheckCircle2, Loader2,
-  Briefcase, MapPin, Percent, FileText, Camera
+  Briefcase, MapPin, Percent, FileText, Camera, Calendar
 } from 'lucide-react'
 import Link from 'next/link'
 import type { Industry, CameraRequired } from '@/types'
@@ -35,6 +35,7 @@ export default function NewJobPage() {
   const [requirements, setRequirements] = useState('')
   const [keywords, setKeywords] = useState('')
   const [description, setDescription] = useState('')
+  const [deadline, setDeadline] = useState('')
   const [cameraRequired, setCameraRequired] = useState<CameraRequired>('optional')
   const [generating, setGenerating] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -96,6 +97,7 @@ export default function NewJobPage() {
           requirements,
           status,
           camera_required: cameraRequired,
+          deadline: deadline || null,
         }),
       })
 
@@ -196,6 +198,16 @@ export default function NewJobPage() {
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     placeholder="F.eks. Oslo, Bergen, Hjemmekontor"
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <Input
+                    label="Søknadsfrist (valgfritt)"
+                    type="date"
+                    value={deadline}
+                    onChange={(e) => setDeadline(e.target.value)}
+                    helperText="La stå tom for løpende søknadsvurdering"
                   />
                 </div>
               </div>

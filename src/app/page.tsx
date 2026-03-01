@@ -19,6 +19,14 @@ export default async function HomePage() {
   if (user) {
     userRole = user.user_metadata?.role as 'company' | 'candidate' | null
     userName = user.user_metadata?.name || user.email?.split('@')[0]
+
+    if (userRole === 'candidate') {
+      const { data: cand } = await supabase.from('candidates').select('name, profile_picture_url').eq('user_id', user.id).single()
+      if (cand?.name) userName = cand.name
+    } else if (userRole === 'company') {
+      const { data: comp } = await supabase.from('companies').select('name').eq('user_id', user.id).single()
+      if (comp?.name) userName = comp.name
+    }
   }
 
   return (

@@ -6,7 +6,7 @@ import { translateStatus, formatDate, getIndustryLabel } from '@/lib/utils'
 import {
   FileText, CheckCircle2, Briefcase,
   ArrowRight, Bot, Award, MapPin, Zap, User, Pencil,
-  Search, TrendingUp,
+  Search, TrendingUp, MessageSquare,
 } from 'lucide-react'
 import Link from 'next/link'
 import type { ApplicationStatus, Industry, JobOffer, Application, Candidate } from '@/types'
@@ -114,11 +114,30 @@ export default async function CandidateDashboard() {
     .eq('candidate_id', candidate.id)
     .order('created_at', { ascending: false })
 
-  const { data: offers } = await supabase
-    .from('job_offers')
-    .select(`*, applications (jobs (title, companies (name)))`)
-    .in('application_id', applications?.map((a: Application) => a.id) || [])
-    .eq('status', 'pending')
+  const appIds = applications?.map((a: Application) => a.id) || []
+
+  const [{ data: offers }, { data: unreadMessages }] = await Promise.all([
+    supabase
+      .from('job_offers')
+      .select(`*, applications (jobs (title, companies (name)))`)
+      .in('application_id', appIds)
+      .eq('status', 'pending'),
+    appIds.length > 0
+      ? supabase
+          .from('messages')
+          .select('application_id')
+          .in('application_id', appIds)
+          .eq('sender_role', 'company')
+          .is('read_at', null)
+      : Promise.resolve({ data: [] }),
+  ])
+
+  // Build a map of applicationId → unread count
+  const unreadByApp: Record<string, number> = {}
+  for (const msg of unreadMessages ?? []) {
+    const m = msg as { application_id: string }
+    unreadByApp[m.application_id] = (unreadByApp[m.application_id] ?? 0) + 1
+  }
 
   // Profilstyrke
   const cand = candidate as unknown as Candidate
@@ -420,6 +439,17 @@ export default async function CandidateDashboard() {
                           </button>
                         </Link>
                       )}
+                      <Link href={`/dashboard/candidate/messages/${app.id}`}>
+                        <button className="relative inline-flex items-center gap-1.5 text-xs text-[#94A187] hover:text-white border border-[#29524A]/30 hover:border-[#94A187]/40 py-2 px-3 rounded-lg hover:bg-[#29524A]/10 transition-colors">
+                          <MessageSquare className="w-3.5 h-3.5" />
+                          Meldinger
+                          {(unreadByApp[app.id] ?? 0) > 0 && (
+                            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[#C5AFA0] text-black text-[10px] font-bold rounded-full flex items-center justify-center">
+                              {unreadByApp[app.id]}
+                            </span>
+                          )}
+                        </button>
+                      </Link>
                       <Link href={`/jobs/${app.job_id}`}>
                         <button className="text-xs text-[#4a6358] hover:text-white flex items-center gap-1 py-2 px-3 rounded-lg hover:bg-[#29524A]/10 transition-colors">
                           Se stilling

@@ -6,8 +6,9 @@ import { Badge } from '@/components/ui/Badge'
 import { translateStatus, formatDate } from '@/lib/utils'
 import { ArrowLeft, CheckCircle2, XCircle, MessageSquare, UserCheck, Send, FileText, Bot, User } from 'lucide-react'
 import Link from 'next/link'
-import type { ApplicationStatus, AIAnalysis, InterviewMessage, Reference } from '@/types'
+import type { ApplicationStatus, AIAnalysis, InterviewMessage, Reference, Message } from '@/types'
 import { ApplicationActions } from './ApplicationActions'
+import { MessageThread } from '@/components/ui/MessageThread'
 
 const STATUS_VARIANT: Record<ApplicationStatus, 'default' | 'success' | 'warning' | 'danger' | 'info' | 'neutral'> = {
   pending: 'neutral',
@@ -74,18 +75,12 @@ export default async function ApplicationDetailPage({
     } catch (_) { /* ikke-fatal */ }
   }
 
-  // Hent referanser
-  const { data: references } = await supabase
-    .from('job_references')
-    .select('*')
-    .eq('application_id', id)
-
-  // Hent jobbtilbud
-  const { data: offer } = await supabase
-    .from('job_offers')
-    .select('*')
-    .eq('application_id', id)
-    .single()
+  // Hent referanser, jobbtilbud og meldinger parallelt
+  const [{ data: references }, { data: offer }, { data: messages }] = await Promise.all([
+    supabase.from('job_references').select('*').eq('application_id', id),
+    supabase.from('job_offers').select('*').eq('application_id', id).single(),
+    supabase.from('messages').select('*').eq('application_id', id).order('created_at', { ascending: true }),
+  ])
 
   const analysis = application.ai_analysis as AIAnalysis | null
   const transcript = application.interview_transcript as InterviewMessage[] | null
@@ -377,6 +372,19 @@ export default async function ApplicationDetailPage({
                 />
               </Card>
             )}
+
+            {/* Meldinger */}
+            <Card>
+              <CardHeader
+                title="Meldinger"
+                subtitle="Ta kontakt med kandidaten direkte"
+              />
+              <MessageThread
+                applicationId={id}
+                senderRole="company"
+                initialMessages={(messages ?? []) as Message[]}
+              />
+            </Card>
 
             {/* Referanser */}
             {references && references.length > 0 && (
