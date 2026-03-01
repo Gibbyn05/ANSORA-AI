@@ -6,7 +6,8 @@ import { AnimateIn } from '@/components/ui/AnimateIn'
 import {
   Briefcase, Users, Brain, MessageSquare, Star, ArrowRight,
   CheckCircle2, Globe, FileText, Zap, TrendingUp, Shield,
-  ChevronRight, Quote,
+  ChevronRight, Quote, Search, User, LayoutDashboard, PlusCircle,
+  ClipboardList,
 } from 'lucide-react'
 
 export default async function HomePage() {
@@ -15,6 +16,7 @@ export default async function HomePage() {
 
   let userRole: 'company' | 'candidate' | null = null
   let userName: string | undefined
+  let profilePictureUrl: string | undefined
 
   if (user) {
     userRole = user.user_metadata?.role as 'company' | 'candidate' | null
@@ -23,12 +25,127 @@ export default async function HomePage() {
     if (userRole === 'candidate') {
       const { data: cand } = await supabase.from('candidates').select('name, profile_picture_url').eq('user_id', user.id).single()
       if (cand?.name) userName = cand.name
+      if (cand?.profile_picture_url) profilePictureUrl = cand.profile_picture_url
     } else if (userRole === 'company') {
       const { data: comp } = await supabase.from('companies').select('name').eq('user_id', user.id).single()
       if (comp?.name) userName = comp.name
     }
   }
 
+  // ── Logged-in home page ──────────────────────────────────────────────────
+  if (user && userRole) {
+    const isCompany = userRole === 'company'
+
+    const companyActions = [
+      { icon: LayoutDashboard, label: 'Dashboard', desc: 'Oversikt over søkere og stillinger', href: '/dashboard/company', accent: 'text-white bg-[#29524A]/20 border-[#94A187]/35' },
+      { icon: PlusCircle, label: 'Opprett stilling', desc: 'Lag en ny stillingsannonse med AI', href: '/jobs/new', accent: 'text-[#C5AFA0] bg-[#C5AFA0]/10 border-[#C5AFA0]/25' },
+      { icon: ClipboardList, label: 'Mine stillinger', desc: 'Se og administrer aktive annonser', href: '/dashboard/company', accent: 'text-blue-400 bg-blue-900/20 border-blue-500/20' },
+      { icon: MessageSquare, label: 'Meldinger', desc: 'Kommuniser med kandidater', href: '/dashboard/company', accent: 'text-orange-400 bg-orange-900/20 border-orange-500/20' },
+    ]
+
+    const candidateActions = [
+      { icon: LayoutDashboard, label: 'Dashboard', desc: 'Se dine søknader og status', href: '/dashboard/candidate', accent: 'text-white bg-[#29524A]/20 border-[#94A187]/35' },
+      { icon: Search, label: 'Finn stillinger', desc: 'Bla gjennom ledige jobber', href: '/jobs', accent: 'text-[#C5AFA0] bg-[#C5AFA0]/10 border-[#C5AFA0]/25' },
+      { icon: User, label: 'Min profil', desc: 'Oppdater CV, bio og kontaktinfo', href: '/dashboard/candidate/profile', accent: 'text-blue-400 bg-blue-900/20 border-blue-500/20' },
+      { icon: MessageSquare, label: 'Meldinger', desc: 'Meldinger fra bedrifter', href: '/dashboard/candidate', accent: 'text-orange-400 bg-orange-900/20 border-orange-500/20' },
+    ]
+
+    const actions = isCompany ? companyActions : candidateActions
+
+    const features = [
+      { icon: Brain, title: 'AI-screening', desc: 'Automatisk CV-analyse og scoring fra 0–100 basert på match mot stillingens krav.' },
+      { icon: MessageSquare, title: 'AI-intervju 24/7', desc: 'Tekstbasert intervju med skreddersydde spørsmål – tilgjengelig hele døgnet.' },
+      { icon: TrendingUp, title: 'Rangert kandidatliste', desc: 'Kandidater sorteres etter AI-score slik at du alltid tar beslutning på informert grunnlag.' },
+      { icon: Globe, title: 'Flerspråklig', desc: 'Kandidaten kommuniserer på sitt morsmål. Du mottar alltid norsk analyse.' },
+      { icon: Shield, title: 'Anonymisert vurdering', desc: 'Skjul personidentifiserende info og ta objektive beslutninger.' },
+      { icon: Zap, title: 'Jobbtilbud digitalt', desc: 'Send og administrer jobbtilbud direkte i plattformen.' },
+    ]
+
+    return (
+      <div className="min-h-screen bg-[#06070E]">
+        <Navbar userRole={userRole} userName={userName} profilePictureUrl={profilePictureUrl} />
+
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+          {/* ── Greeting ── */}
+          <div className="mb-10">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#3a5248] mb-1">Hjem</p>
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <h1 className="text-2xl font-bold text-white">
+                Hei, {userName} 👋
+              </h1>
+              <Link href={isCompany ? '/dashboard/company' : '/dashboard/candidate'}>
+                <button className="inline-flex items-center gap-2 bg-[#C5AFA0] hover:bg-[#b09e91] text-black font-semibold px-5 py-2.5 rounded-xl transition-all text-sm">
+                  Gå til dashboard
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </Link>
+            </div>
+            <p className="text-[#4a6358] mt-2 text-sm">
+              {isCompany
+                ? 'Administrer rekrutteringsprosessen din med AI-drevne verktøy.'
+                : 'Finn din neste jobb og la AI hjelpe deg gjennom søknadsprosessen.'}
+            </p>
+          </div>
+
+          {/* ── Quick actions ── */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
+            {actions.map((action) => (
+              <Link key={action.label} href={action.href}>
+                <div className="bg-[#0e1c17] border border-[#29524A]/25 rounded-2xl p-5 hover:border-[#94A187]/40 hover:-translate-y-0.5 transition-all cursor-pointer h-full">
+                  <div className={`w-10 h-10 rounded-xl border flex items-center justify-center mb-4 ${action.accent}`}>
+                    <action.icon className="w-4 h-4" />
+                  </div>
+                  <h3 className="font-semibold text-white mb-1 text-sm">{action.label}</h3>
+                  <p className="text-xs text-[#4a6358] leading-relaxed">{action.desc}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* ── About Ansora ── */}
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-6">
+              <Image src="/LogoA.png" alt="Ansora" width={90} height={30} className="h-7 w-auto" />
+              <span className="text-[#3a5248] text-sm">— AI-drevet rekrutteringsplattform</span>
+            </div>
+            <div className="bg-[#0e1c17] border border-[#29524A]/25 rounded-2xl p-6 mb-6">
+              <p className="text-[#94A187] leading-relaxed text-sm">
+                Ansora effektiviserer hele rekrutteringsprosessen – fra stillingsannonse til ansettelse.
+                AI screener CV-er, gjennomfører intervjuer og rangerer kandidater automatisk, slik at du
+                kan bruke tid på det som faktisk betyr noe.
+              </p>
+            </div>
+          </div>
+
+          {/* ── Features grid ── */}
+          <p className="text-xs font-semibold uppercase tracking-widest text-[#3a5248] mb-5">Plattformfunksjoner</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+            {features.map((f) => (
+              <div key={f.title} className="bg-[#0e1c17] border border-[#29524A]/25 rounded-2xl p-5 hover:border-[#94A187]/35 transition-colors">
+                <div className="w-9 h-9 rounded-xl bg-[#29524A]/20 border border-[#94A187]/35 flex items-center justify-center mb-4">
+                  <f.icon className="w-4 h-4 text-white" />
+                </div>
+                <h3 className="font-semibold text-white mb-1.5 text-sm">{f.title}</h3>
+                <p className="text-xs text-[#4a6358] leading-relaxed">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* ── Footer strip ── */}
+          <div className="border-t border-[#29524A]/20 pt-6 flex items-center justify-between gap-4 flex-wrap">
+            <p className="text-xs text-[#2a3e36]">© 2025 Ansora. AI-drevet rekrutteringsplattform · Norge</p>
+            <a href="/api/auth/signout" className="text-xs text-[#3a5248] hover:text-white transition-colors">
+              Logg ut
+            </a>
+          </div>
+
+        </div>
+      </div>
+    )
+  }
+
+  // ── Marketing landing page (not logged in) ───────────────────────────────
   return (
     <div className="min-h-screen bg-[#06070E]">
       <Navbar userRole={userRole} userName={userName} />
