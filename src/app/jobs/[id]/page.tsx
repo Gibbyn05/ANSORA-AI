@@ -118,7 +118,9 @@ export default async function JobDetailPage({
 
   const { data: { user } } = await supabase.auth.getUser()
   const userRole = user?.user_metadata?.role as 'company' | 'candidate' | null
-  const userName = user?.user_metadata?.name
+
+  let userName = user?.user_metadata?.name as string | undefined
+  let profilePictureUrl: string | null = null
 
   const { data: job } = await supabase
     .from('jobs')
@@ -134,15 +136,23 @@ export default async function JobDetailPage({
     .eq('job_id', id)
 
   let hasApplied = false
+  let candidateId: string | null = null
   if (user && userRole === 'candidate') {
     const { data: candidate } = await supabase
-      .from('candidates').select('id').eq('user_id', user.id).single()
+      .from('candidates').select('id, name, profile_picture_url').eq('user_id', user.id).single()
     if (candidate) {
+      userName = candidate.name
+      profilePictureUrl = candidate.profile_picture_url
+      candidateId = candidate.id
       const { data: existing } = await supabase
         .from('applications').select('id')
         .eq('job_id', id).eq('candidate_id', candidate.id).single()
       hasApplied = !!existing
     }
+  } else if (user && userRole === 'company') {
+    const { data: comp } = await supabase
+      .from('companies').select('name').eq('user_id', user.id).single()
+    if (comp) userName = comp.name
   }
 
   const sections = parseDescription(job.description)
@@ -157,7 +167,7 @@ export default async function JobDetailPage({
 
   return (
     <div className="min-h-screen bg-[#06070E]">
-      <Navbar userRole={userRole} userName={userName} />
+      <Navbar userRole={userRole} userName={userName} profilePictureUrl={profilePictureUrl} />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
 

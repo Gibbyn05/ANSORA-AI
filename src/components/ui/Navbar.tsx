@@ -42,12 +42,12 @@ export function Navbar({ userRole, userName, profilePictureUrl }: NavbarProps) {
             </Link>
             {userRole === 'company' && (
               <Link href="/dashboard/company" className="text-[#94A187] hover:text-white font-medium transition-colors text-sm">
-                Dashboard
+                Hjem
               </Link>
             )}
             {userRole === 'candidate' && (
               <Link href="/dashboard/candidate" className="text-[#94A187] hover:text-white font-medium transition-colors text-sm">
-                Mine søknader
+                Hjem
               </Link>
             )}
           </div>
@@ -133,7 +133,7 @@ export function Navbar({ userRole, userName, profilePictureUrl }: NavbarProps) {
                 className="block px-4 py-2.5 text-sm text-[#94A187] hover:text-white hover:bg-[#29524A]/15 rounded-lg"
                 onClick={() => setIsOpen(false)}
               >
-                Dashboard
+                Hjem
               </Link>
             )}
             {userRole ? (

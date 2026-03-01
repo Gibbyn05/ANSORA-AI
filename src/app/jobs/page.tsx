@@ -25,7 +25,21 @@ export default async function JobsPage({
 
   const { data: { user } } = await supabase.auth.getUser()
   const userRole = user?.user_metadata?.role as 'company' | 'candidate' | null
-  const userName = user?.user_metadata?.name
+
+  let userName = user?.user_metadata?.name as string | undefined
+  let profilePictureUrl: string | null = null
+
+  if (user) {
+    if (userRole === 'candidate') {
+      const { data: cand } = await supabase
+        .from('candidates').select('name, profile_picture_url').eq('user_id', user.id).single()
+      if (cand) { userName = cand.name; profilePictureUrl = cand.profile_picture_url }
+    } else if (userRole === 'company') {
+      const { data: comp } = await supabase
+        .from('companies').select('name').eq('user_id', user.id).single()
+      if (comp) userName = comp.name
+    }
+  }
 
   let query = supabase
     .from('jobs')
@@ -53,7 +67,7 @@ export default async function JobsPage({
 
   return (
     <div className="min-h-screen bg-[#06070E]">
-      <Navbar userRole={userRole} userName={userName} />
+      <Navbar userRole={userRole} userName={userName} profilePictureUrl={profilePictureUrl} />
 
       {/* ── HERO (Prospect left-aligned style) ───────────────────────── */}
       <section className="pt-16 pb-12 border-b border-[#29524A]/25">
@@ -184,7 +198,9 @@ export default async function JobsPage({
                           />
                         ) : (
                           <div className="w-9 h-9 rounded-lg bg-[#1a2c24] border border-[#94A187]/25 flex items-center justify-center flex-shrink-0">
-                            <Building2 className="w-4 h-4 text-[#3a5248]" />
+                            <span className="text-sm font-bold text-white">
+                              {job.companies?.name?.charAt(0).toUpperCase() ?? '?'}
+                            </span>
                           </div>
                         )}
                         <div>

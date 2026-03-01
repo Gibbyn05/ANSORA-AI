@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/Badge'
 import { getIndustryLabel, translateStatus } from '@/lib/utils'
 import {
   Briefcase, Users, Plus, BarChart3, ArrowRight,
-  CheckCircle2, Brain, TrendingUp, Clock, ShieldCheck, User,
+  CheckCircle2, Brain, TrendingUp, Clock, ShieldCheck, User, Target,
 } from 'lucide-react'
 import Link from 'next/link'
 import type { Industry, ApplicationStatus, Job, Application } from '@/types'
@@ -180,7 +180,7 @@ export default async function CompanyDashboard() {
         {/* ── Header ────────────────────────────────────────────────── */}
         <div className="flex items-center justify-between mb-10">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#3a5248] mb-1">Rekrutteringsdashboard</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#3a5248] mb-1">Hjem</p>
             <h1 className="text-2xl font-bold text-white">Hei, {company.name} 👋</h1>
           </div>
           <div className="flex items-center gap-3">
@@ -242,6 +242,59 @@ export default async function CompanyDashboard() {
               <div className="text-xs text-[#3a5248] mt-0.5">{stat.sub}</div>
             </div>
           ))}
+        </div>
+
+        {/* ── Hurtighandlinger ───────────────────────────────────────── */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          <Link href="/jobs/new">
+            <div className="bg-[#0e1c17] border border-[#29524A]/25 rounded-2xl p-5 hover:border-[#C5AFA0]/40 hover:bg-[#29524A]/[0.08] transition-all cursor-pointer">
+              <div className="w-10 h-10 rounded-xl border flex items-center justify-center mb-4 text-[#C5AFA0] bg-[#C5AFA0]/10 border-[#C5AFA0]/25">
+                <Plus className="w-4 h-4" />
+              </div>
+              <h3 className="font-semibold text-white mb-1 text-sm">Opprett stilling</h3>
+              <p className="text-xs text-[#4a6358]">Publiser en ny stillingsutlysning med AI</p>
+            </div>
+          </Link>
+          <div className="bg-[#0e1c17] border border-[#29524A]/25 rounded-2xl p-5">
+            <div className="w-10 h-10 rounded-xl border flex items-center justify-center mb-4 text-blue-400 bg-blue-900/20 border-blue-500/20">
+              <Target className="w-4 h-4" />
+            </div>
+            <h3 className="font-semibold text-white mb-1 text-sm">Rekrutteringspipeline</h3>
+            <div className="flex items-center gap-2 mt-2">
+              {[
+                { label: 'Søkt', value: totalApplications },
+                { label: 'Vurderes', value: reviewingApplications },
+                { label: 'Ansatt', value: hiredApplications },
+              ].map((stage, i, arr) => (
+                <div key={stage.label} className="flex items-center gap-2">
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-white">{stage.value}</div>
+                    <div className="text-[10px] text-[#4a6358]">{stage.label}</div>
+                  </div>
+                  {i < arr.length - 1 && <ArrowRight className="w-3 h-3 text-[#2a3e36] flex-shrink-0" />}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="bg-[#0e1c17] border border-[#29524A]/25 rounded-2xl p-5">
+            <div className="w-10 h-10 rounded-xl border flex items-center justify-center mb-4 text-green-400 bg-green-900/20 border-green-500/20">
+              <Brain className="w-4 h-4" />
+            </div>
+            <h3 className="font-semibold text-white mb-1 text-sm">AI-innsikt</h3>
+            <p className="text-xs text-[#4a6358]">
+              {totalApplications > 0
+                ? `${Math.round((hiredApplications / totalApplications) * 100)}% konverteringsrate`
+                : 'Ingen data ennå'}
+            </p>
+            {totalApplications > 0 && (
+              <div className="w-full bg-[#29524A]/15 rounded-full h-1.5 mt-3">
+                <div
+                  className="bg-green-500 h-1.5 rounded-full"
+                  style={{ width: `${Math.min(100, Math.round((hiredApplications / totalApplications) * 100))}%` }}
+                />
+              </div>
+            )}
+          </div>
         </div>
 
         {/* ── Main content grid ─────────────────────────────────────── */}

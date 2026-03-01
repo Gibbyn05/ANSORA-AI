@@ -5,7 +5,8 @@ import { Badge } from '@/components/ui/Badge'
 import { translateStatus, formatDate, getIndustryLabel } from '@/lib/utils'
 import {
   FileText, MessageSquare, CheckCircle2, Briefcase,
-  ArrowRight, Bot, Award, Building2, MapPin, Zap, User, Pencil,
+  ArrowRight, Bot, Award, MapPin, Zap, User, Pencil,
+  Search, TrendingUp, Star,
 } from 'lucide-react'
 import Link from 'next/link'
 import type { ApplicationStatus, Industry, JobOffer, Application } from '@/types'
@@ -119,6 +120,15 @@ export default async function CandidateDashboard() {
     .in('application_id', applications?.map((a: Application) => a.id) || [])
     .eq('status', 'pending')
 
+  // Profilstyrke
+  const profileFields = [
+    candidate.name, candidate.bio, candidate.profile_picture_url,
+    (candidate as { phone?: string }).phone,
+    (candidate as { cv_url?: string; cv_text?: string }).cv_url ||
+    (candidate as { cv_url?: string; cv_text?: string }).cv_text,
+  ]
+  const completionPct = Math.round(profileFields.filter(Boolean).length / profileFields.length * 100)
+
   const totalApps = applications?.length || 0
   const activeApps = applications?.filter((a: Application) => !['rejected', 'hired'].includes(a.status)).length || 0
   const interviewApps = applications?.filter((a: Application) => a.status === 'interview').length || 0
@@ -131,42 +141,101 @@ export default async function CandidateDashboard() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* ── Header ────────────────────────────────────────────────── */}
-        <div className="flex items-center justify-between mb-10">
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              {candidate.profile_picture_url ? (
-                <img
-                  src={candidate.profile_picture_url}
-                  alt="Profilbilde"
-                  className="w-14 h-14 rounded-full object-cover border-2 border-[#94A187]/25"
-                />
-              ) : (
-                <div className="w-14 h-14 rounded-full bg-[#1a2c24] border-2 border-[#94A187]/25 flex items-center justify-center">
-                  <User className="w-6 h-6 text-[#3a5248]" />
-                </div>
-              )}
+        <div className="mb-8">
+          <p className="text-xs font-semibold uppercase tracking-widest text-[#3a5248] mb-1">Hjem</p>
+          <div className="flex items-center justify-between gap-4">
+            <h1 className="text-2xl font-bold text-white">Hei, {candidate.name} 👋</h1>
+            <div className="flex items-center gap-2">
+              <Link href="/dashboard/candidate/profile">
+                <button className="inline-flex items-center gap-2 border border-[#29524A]/30 hover:border-[#94A187]/45 hover:bg-[#29524A]/[0.08] text-white font-semibold px-4 py-2.5 rounded-xl transition-all text-sm">
+                  <Pencil className="w-4 h-4" />
+                  <span className="hidden sm:inline">Min profil</span>
+                </button>
+              </Link>
+              <Link href="/jobs">
+                <button className="inline-flex items-center gap-2 bg-[#C5AFA0] hover:bg-[#b09e91] text-black font-semibold px-4 py-2.5 rounded-xl transition-all text-sm">
+                  <Search className="w-4 h-4" />
+                  <span className="hidden sm:inline">Finn stillinger</span>
+                </button>
+              </Link>
             </div>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#3a5248] mb-0.5">Mine søknader</p>
-              <h1 className="text-2xl font-bold text-white">Hei, {candidate.name} 👋</h1>
-              {candidate.bio && (
-                <p className="text-xs text-[#7a8a7d] mt-0.5 max-w-xs truncate">{candidate.bio}</p>
+          </div>
+        </div>
+
+        {/* ── Profilkort ─────────────────────────────────────────────── */}
+        <div className="bg-[#0e1c17] border border-[#29524A]/25 rounded-2xl p-5 mb-8 flex items-center gap-5">
+          <div className="flex-shrink-0">
+            {candidate.profile_picture_url ? (
+              <img
+                src={candidate.profile_picture_url}
+                alt="Profilbilde"
+                className="w-16 h-16 rounded-full object-cover border-2 border-[#94A187]/25"
+              />
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-[#1a2c24] border-2 border-[#94A187]/25 flex items-center justify-center">
+                <User className="w-7 h-7 text-[#3a5248]" />
+              </div>
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-white">{candidate.name}</p>
+            <p className="text-sm text-[#4a6358] mt-0.5 truncate">
+              {candidate.bio || 'Ingen bio ennå – legg til en kort presentasjon av deg selv'}
+            </p>
+            <div className="flex items-center gap-3 mt-3">
+              <div className="flex-1 max-w-[180px]">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] text-[#4a6358]">Profilstyrke</span>
+                  <span className="text-[10px] font-semibold text-white">{completionPct}%</span>
+                </div>
+                <div className="w-full bg-[#29524A]/15 rounded-full h-1.5">
+                  <div
+                    className={`h-1.5 rounded-full transition-all ${completionPct >= 80 ? 'bg-green-500' : completionPct >= 50 ? 'bg-[#C5AFA0]' : 'bg-orange-500'}`}
+                    style={{ width: `${completionPct}%` }}
+                  />
+                </div>
+              </div>
+              {completionPct < 100 && (
+                <Link href="/dashboard/candidate/profile">
+                  <span className="text-xs text-[#94A187] hover:text-white transition-colors">
+                    Fullfør profil →
+                  </span>
+                </Link>
               )}
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Link href="/dashboard/candidate/profile">
-              <button className="inline-flex items-center gap-2 border border-[#29524A]/30 hover:border-[#94A187]/45 hover:bg-[#29524A]/[0.08] text-white font-semibold px-4 py-2.5 rounded-xl transition-all text-sm">
-                <Pencil className="w-4 h-4" />
-                <span className="hidden sm:inline">Min profil</span>
-              </button>
-            </Link>
-            <Link href="/jobs">
-              <button className="inline-flex items-center gap-2 border border-[#29524A]/30 hover:border-[#94A187]/45 hover:bg-[#29524A]/[0.08] text-white font-semibold px-4 py-2.5 rounded-xl transition-all text-sm">
-                <Briefcase className="w-4 h-4" />
-                <span className="hidden sm:inline">Finn stillinger</span>
-              </button>
-            </Link>
+        </div>
+
+        {/* ── Hurtighandlinger ───────────────────────────────────────── */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+          <Link href="/jobs">
+            <div className="bg-[#0e1c17] border border-[#29524A]/25 rounded-2xl p-5 hover:border-[#C5AFA0]/40 hover:bg-[#29524A]/[0.08] transition-all cursor-pointer group">
+              <div className="w-10 h-10 rounded-xl border flex items-center justify-center mb-4 text-[#C5AFA0] bg-[#C5AFA0]/10 border-[#C5AFA0]/25">
+                <Search className="w-4 h-4" />
+              </div>
+              <h3 className="font-semibold text-white mb-1 text-sm">Finn stillinger</h3>
+              <p className="text-xs text-[#4a6358]">Bla gjennom ledige jobber som passer deg</p>
+            </div>
+          </Link>
+          <Link href="/dashboard/candidate/profile">
+            <div className="bg-[#0e1c17] border border-[#29524A]/25 rounded-2xl p-5 hover:border-blue-500/40 hover:bg-blue-900/[0.06] transition-all cursor-pointer group">
+              <div className="w-10 h-10 rounded-xl border flex items-center justify-center mb-4 text-blue-400 bg-blue-900/20 border-blue-500/20">
+                <User className="w-4 h-4" />
+              </div>
+              <h3 className="font-semibold text-white mb-1 text-sm">Min profil</h3>
+              <p className="text-xs text-[#4a6358]">Oppdater CV, bio og kontaktinfo</p>
+            </div>
+          </Link>
+          <div className="bg-[#0e1c17] border border-[#29524A]/25 rounded-2xl p-5">
+            <div className="w-10 h-10 rounded-xl border flex items-center justify-center mb-4 text-orange-400 bg-orange-900/20 border-orange-500/20">
+              <TrendingUp className="w-4 h-4" />
+            </div>
+            <h3 className="font-semibold text-white mb-1 text-sm">Aktivitet</h3>
+            <p className="text-xs text-[#4a6358]">
+              {totalApps > 0
+                ? `${totalApps} søknad${totalApps !== 1 ? 'er' : ''} sendt totalt`
+                : 'Ingen søknader ennå'}
+            </p>
           </div>
         </div>
 
@@ -259,8 +328,14 @@ export default async function CandidateDashboard() {
                     <div className="flex items-start justify-between gap-4 mb-4">
                       {/* Left: Company + Job info */}
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-10 h-10 rounded-xl bg-[#1a2c24] border border-[#94A187]/25 flex items-center justify-center flex-shrink-0">
-                          <Building2 className="w-4 h-4 text-[#3a5248]" />
+                        <div className="w-10 h-10 rounded-xl bg-[#1a2c24] border border-[#94A187]/25 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                          {app.jobs?.companies?.logo ? (
+                            <img src={app.jobs.companies.logo} alt="" className="w-10 h-10 object-cover" />
+                          ) : (
+                            <span className="text-sm font-bold text-white">
+                              {app.jobs?.companies?.name?.charAt(0).toUpperCase() ?? '?'}
+                            </span>
+                          )}
                         </div>
                         <div className="min-w-0">
                           <p className="font-semibold text-white truncate">{app.jobs?.title}</p>
