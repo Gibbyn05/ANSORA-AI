@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/Button'
 import { Input, Textarea } from '@/components/ui/Input'
 import { Card } from '@/components/ui/Card'
@@ -130,11 +131,8 @@ export default function ApplyPage({
       <div className="w-full max-w-2xl">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 bg-[#29524A] rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">A</span>
-            </div>
-            <span className="text-white font-bold text-xl">Ansora</span>
+          <Link href="/" className="inline-flex mb-2">
+            <Image src="/LogoA.png" alt="Ansora" width={120} height={40} className="h-10 w-auto" />
           </Link>
           <h1 className="text-2xl font-bold text-white mt-4">
             {step === 'upload' && 'Send inn søknad'}

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/ui/Navbar'
 import { AnimateIn } from '@/components/ui/AnimateIn'
@@ -585,11 +586,8 @@ export default async function HomePage() {
 
             {/* Brand */}
             <div className="lg:col-span-2">
-              <Link href="/" className="flex items-center gap-2 mb-5">
-                <div className="w-8 h-8 bg-[#29524A] rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">A</span>
-                </div>
-                <span className="text-white font-bold text-xl tracking-tight">Ansora</span>
+              <Link href="/" className="flex mb-5">
+                <Image src="/LogoA.png" alt="Ansora" width={120} height={40} className="h-10 w-auto" />
               </Link>
               <p className="text-sm text-[#3a5248] max-w-xs leading-relaxed mb-6">
                 AI-drevet rekrutteringsplattform som hjelper norske bedrifter å finne de riktige
