@@ -5,6 +5,10 @@ export const metadata: Metadata = {
   title: 'Ansora – AI-drevet rekruttering',
   description: 'Moderne, AI-drevet rekrutteringsplattform som forenkler prosessen for både bedrifter og kandidater.',
   keywords: 'rekruttering, AI, jobb, stillinger, kandidater, intervju',
+  icons: {
+    icon: '/LogoA.png',
+    apple: '/LogoA.png',
+  },
 }
 
 export default function RootLayout({

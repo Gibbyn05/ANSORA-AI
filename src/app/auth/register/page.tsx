@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Input } from '@/components/ui/Input'
@@ -153,11 +154,8 @@ export default function RegisterPage() {
       {/* ── Left decorative panel ─────────────────────────────────── */}
       <div className="hidden lg:flex lg:w-[46%] bg-[#0e1c17] border-r border-[#29524A]/25 flex-col justify-between p-12">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-9 h-9 bg-[#29524A] rounded-xl flex items-center justify-center">
-            <span className="text-white font-bold text-base">A</span>
-          </div>
-          <span className="text-white font-bold text-xl tracking-tight">Ansora</span>
+        <Link href="/">
+          <Image src="/LogoA.png" alt="Ansora" width={120} height={40} className="h-10 w-auto" />
         </Link>
 
         {/* Main content */}
@@ -209,11 +207,8 @@ export default function RegisterPage() {
 
           {/* Mobile logo */}
           <div className="lg:hidden flex justify-center mb-8">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-9 h-9 bg-[#29524A] rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-base">A</span>
-              </div>
-              <span className="text-white font-bold text-xl tracking-tight">Ansora</span>
+            <Link href="/">
+              <Image src="/LogoA.png" alt="Ansora" width={120} height={40} className="h-10 w-auto" />
             </Link>
           </div>
 
