@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/ui/Navbar'
 import { getIndustryLabel, formatDate } from '@/lib/utils'
-import { MapPin, Clock, Briefcase, Search, ArrowRight, Building2, Users } from 'lucide-react'
+import { MapPin, Clock, Briefcase, Search, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import type { Job, Industry } from '@/types'
 
@@ -29,29 +29,29 @@ export default async function JobsPage({
   let userName = user?.user_metadata?.name as string | undefined
   let profilePictureUrl: string | null = null
 
-  if (user) {
-    if (userRole === 'candidate') {
-      const { data: cand } = await supabase
-        .from('candidates').select('name, profile_picture_url').eq('user_id', user.id).single()
-      if (cand) { userName = cand.name; profilePictureUrl = cand.profile_picture_url }
-    } else if (userRole === 'company') {
-      const { data: comp } = await supabase
-        .from('companies').select('name').eq('user_id', user.id).single()
-      if (comp) userName = comp.name
-    }
-  }
+  const profilePromise = user
+    ? userRole === 'candidate'
+      ? supabase.from('candidates').select('name, profile_picture_url').eq('user_id', user.id).single()
+      : userRole === 'company'
+      ? supabase.from('companies').select('name').eq('user_id', user.id).single()
+      : Promise.resolve({ data: null })
+    : Promise.resolve({ data: null })
 
-  let query = supabase
+  let jobsQuery = supabase
     .from('jobs')
     .select(`*, companies (id, name, logo)`)
     .eq('status', 'published')
     .order('created_at', { ascending: false })
 
-  if (industry) {
-    query = query.eq('industry', industry)
-  }
+  if (industry) jobsQuery = jobsQuery.eq('industry', industry)
 
-  const { data: jobs } = await query
+  const [{ data: jobs }, { data: profileData }] = await Promise.all([jobsQuery, profilePromise])
+
+  if (profileData) {
+    const p = profileData as { name?: string; profile_picture_url?: string }
+    if (p.name) userName = p.name
+    if (p.profile_picture_url) profilePictureUrl = p.profile_picture_url
+  }
   const filteredJobs = jobs?.filter((job: Job) => {
     if (!search) return true
     const s = search.toLowerCase()

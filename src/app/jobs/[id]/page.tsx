@@ -122,37 +122,34 @@ export default async function JobDetailPage({
   let userName = user?.user_metadata?.name as string | undefined
   let profilePictureUrl: string | null = null
 
-  const { data: job } = await supabase
-    .from('jobs')
-    .select('*, companies (id, name, logo, website, description)')
-    .eq('id', id)
-    .single()
+  const profilePromise = user
+    ? userRole === 'candidate'
+      ? supabase.from('candidates').select('id, name, profile_picture_url').eq('user_id', user.id).single()
+      : userRole === 'company'
+      ? supabase.from('companies').select('name').eq('user_id', user.id).single()
+      : Promise.resolve({ data: null })
+    : Promise.resolve({ data: null })
+
+  const [{ data: job }, { count: applicationCount }, { data: profileData }] = await Promise.all([
+    supabase.from('jobs').select('*, companies (id, name, logo, website, description)').eq('id', id).single(),
+    supabase.from('applications').select('id', { count: 'exact', head: true }).eq('job_id', id),
+    profilePromise,
+  ])
 
   if (!job) notFound()
 
-  const { count: applicationCount } = await supabase
-    .from('applications')
-    .select('id', { count: 'exact', head: true })
-    .eq('job_id', id)
-
   let hasApplied = false
-  let candidateId: string | null = null
-  if (user && userRole === 'candidate') {
-    const { data: candidate } = await supabase
-      .from('candidates').select('id, name, profile_picture_url').eq('user_id', user.id).single()
-    if (candidate) {
-      userName = candidate.name
-      profilePictureUrl = candidate.profile_picture_url
-      candidateId = candidate.id
-      const { data: existing } = await supabase
-        .from('applications').select('id')
-        .eq('job_id', id).eq('candidate_id', candidate.id).single()
-      hasApplied = !!existing
-    }
-  } else if (user && userRole === 'company') {
-    const { data: comp } = await supabase
-      .from('companies').select('name').eq('user_id', user.id).single()
-    if (comp) userName = comp.name
+  if (user && userRole === 'candidate' && profileData) {
+    const cand = profileData as { id: string; name?: string; profile_picture_url?: string }
+    if (cand.name) userName = cand.name
+    profilePictureUrl = cand.profile_picture_url ?? null
+    const { data: existing } = await supabase
+      .from('applications').select('id')
+      .eq('job_id', id).eq('candidate_id', cand.id).single()
+    hasApplied = !!existing
+  } else if (user && userRole === 'company' && profileData) {
+    const comp = profileData as { name?: string }
+    if (comp.name) userName = comp.name
   }
 
   const sections = parseDescription(job.description)

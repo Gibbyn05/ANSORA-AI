@@ -4,12 +4,12 @@ import { Navbar } from '@/components/ui/Navbar'
 import { Badge } from '@/components/ui/Badge'
 import { translateStatus, formatDate, getIndustryLabel } from '@/lib/utils'
 import {
-  FileText, MessageSquare, CheckCircle2, Briefcase,
+  FileText, CheckCircle2, Briefcase,
   ArrowRight, Bot, Award, MapPin, Zap, User, Pencil,
-  Search, TrendingUp, Star,
+  Search, TrendingUp,
 } from 'lucide-react'
 import Link from 'next/link'
-import type { ApplicationStatus, Industry, JobOffer, Application } from '@/types'
+import type { ApplicationStatus, Industry, JobOffer, Application, Candidate } from '@/types'
 
 const STATUS_VARIANT: Record<ApplicationStatus, 'default' | 'success' | 'warning' | 'danger' | 'info' | 'neutral'> = {
   pending: 'neutral',
@@ -121,12 +121,8 @@ export default async function CandidateDashboard() {
     .eq('status', 'pending')
 
   // Profilstyrke
-  const profileFields = [
-    candidate.name, candidate.bio, candidate.profile_picture_url,
-    (candidate as { phone?: string }).phone,
-    (candidate as { cv_url?: string; cv_text?: string }).cv_url ||
-    (candidate as { cv_url?: string; cv_text?: string }).cv_text,
-  ]
+  const cand = candidate as unknown as Candidate
+  const profileFields = [cand.name, cand.bio, cand.profile_picture_url, cand.phone, cand.cv_url || cand.cv_text]
   const completionPct = Math.round(profileFields.filter(Boolean).length / profileFields.length * 100)
 
   const totalApps = applications?.length || 0
