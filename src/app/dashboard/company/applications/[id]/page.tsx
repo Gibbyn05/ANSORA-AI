@@ -80,7 +80,7 @@ export default async function ApplicationDetailPage({
     supabase.from('job_references').select('*').eq('application_id', id),
     supabase.from('job_offers').select('*').eq('application_id', id).single(),
     supabase.from('messages').select('*').eq('application_id', id).order('created_at', { ascending: true })
-      .then((res) => res.error ? { data: [] } : res),
+      .then((res: { data: unknown[] | null; error: unknown }) => res.error ? { data: [] } : res),
   ])
 
   const analysis = application.ai_analysis as AIAnalysis | null

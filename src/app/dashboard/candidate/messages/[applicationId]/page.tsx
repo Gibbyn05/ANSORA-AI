@@ -48,7 +48,7 @@ export default async function CandidateMessagesPage({
       .select('*')
       .eq('application_id', applicationId)
       .order('created_at', { ascending: true })
-      .then((res) => res.error ? { data: [] } : res),
+      .then((res: { data: unknown[] | null; error: unknown }) => res.error ? { data: [] } : res),
   ])
 
   if (!application) notFound()

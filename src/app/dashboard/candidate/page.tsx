@@ -129,7 +129,7 @@ export default async function CandidateDashboard() {
           .in('application_id', appIds)
           .eq('sender_role', 'company')
           .is('read_at', null)
-          .then((res) => res.error ? { data: [] } : res)
+          .then((res: { data: unknown[] | null; error: unknown }) => res.error ? { data: [] } : res)
       : Promise.resolve({ data: [] }),
   ])
 
